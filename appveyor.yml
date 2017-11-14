@@ -1,0 +1,9 @@
+version: '{build}'
+
+install:
+    - pip install -r requirements_tests.txt
+
+build: off
+
+test_script:
+    - py.test -vvs test_purl.py

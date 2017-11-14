@@ -1,0 +1,11 @@
+language: python
+
+python:
+  - "2.7"
+  - "3.6"
+
+install:
+    - pip install -r requirements_tests.txt
+
+script:
+    - py.test -vvs test_purl.py
