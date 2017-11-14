@@ -1,0 +1,6 @@
+*.pyc
+/tmp/
+/build/
+/dist/
+/.eggs/
+/.cache/
