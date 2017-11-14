@@ -4,3 +4,4 @@
 /dist/
 /.eggs/
 /.cache/
+/purl_python.egg-info/
