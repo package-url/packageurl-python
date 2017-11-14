@@ -8,4 +8,4 @@ install:
     - pip install -r requirements_tests.txt
 
 script:
-    - py.test -vvs test_purl.py
+    - bin/py.test -vvs test_purl.py
