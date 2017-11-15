@@ -1,9 +1,10 @@
 version: '{build}'
 
 install:
-    - pip install -r requirements_tests.txt
+    - virtualenv .
+    - bin/pip install -r requirements_tests.txt
 
 build: off
 
 test_script:
-    - bin/py.test -vvs test_purl.py
+    - bin/py.test -vvs
