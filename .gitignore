@@ -5,3 +5,4 @@
 /.eggs/
 /.cache/
 /purl_python.egg-info/
+/src/purl_python.egg-info/
