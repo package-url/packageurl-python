@@ -5,7 +5,8 @@ python:
   - "3.6"
 
 install:
-    - pip install -r requirements_tests.txt
+    - virtualenv .
+    - bin/pip install -r requirements_tests.txt
 
 script:
-    - py.test
+    - bin/py.test
