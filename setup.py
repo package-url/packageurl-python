@@ -10,7 +10,7 @@ from setuptools import setup
 
 setup(
     name='purl-python',
-    version='0.1.2',
+    version='0.1.3',
     license='MIT',
     description='A "purl" aka. package URL parser and builder.',
     long_description='Python library to parse and build "purl" aka. package URLs.',
