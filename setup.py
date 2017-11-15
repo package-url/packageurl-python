@@ -3,11 +3,6 @@
 
 from __future__ import absolute_import
 from __future__ import print_function
-from __future__ import unicode_literals
-
-from glob import glob
-from os.path import basename
-from os.path import splitext
 
 from setuptools import find_packages
 from setuptools import setup
@@ -21,8 +16,10 @@ setup(
     long_description='Python library to parse and build "purl" aka. package URLs.',
     author='the purl authors',
     url='https://github.com/package-url/purl-python',
+    package_dir={'': 'src'},
     packages=find_packages('src'),
-    py_modules=[splitext(basename(path))[0] for path in glob('src/*.py')],
+    include_package_data=True,
+    zip_safe=False,
     platforms='any',
     keywords='package, url, package manager, package url',
     classifiers=[
