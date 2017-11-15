@@ -9,4 +9,4 @@ install:
     - bin/pip install -r requirements_tests.txt
 
 script:
-    - bin/py.test
+    - bin/py.test -vvs
