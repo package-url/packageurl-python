@@ -16,3 +16,23 @@ Build and tests status
 |   :target: https://travis-ci.org/package-url/purl-python.png                 |
 |   :alt: Linux Master branch tests status                                     |
 +------------------------------------------------------------------------------+
+
+Install
+=======
+::
+
+    pip install purl-python
+
+
+
+Running tests
+=============
+
+install::
+
+    virtualenv .
+    bin/pip install -r requirements_tests.txt
+
+run tests::
+
+    bin/py.test -vvs
