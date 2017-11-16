@@ -28,7 +28,7 @@ import json
 import re
 import unittest
 
-from purl import PackageURL
+from packageurl import PackageURL
 
 # Python 2 and 3 support
 try:
@@ -50,31 +50,50 @@ def create_test_function(description, purl, canonical_purl, is_invalid,
     test arguments. If is_error is True the tests are expected to raise an
     Exception.
     """
-    def test_purl(self):
-        # TODO: add tests for is_invalid data
+    if is_invalid:
+        def test_purl(self):
+            try:
+                PackageURL.from_string(purl)
+                self.fail('Should raise a ValueError')
+            except ValueError:
+                pass
 
-        # parsing the test canonical `purl` then re-building a `purl` from these
-        # parsed components should return the test canonical `purl`
-        cano = PackageURL.from_string(purl)
-        assert canonical_purl == cano.to_string()
+            try:
+                PackageURL.from_string(canonical_purl)
+                self.fail('Should raise a ValueError')
+            except ValueError:
+                pass
 
-        # parsing the test `purl` should return the components parsed from the
-        # test canonical `purl`
-        parsed = PackageURL.from_string(canonical_purl)
-        assert cano.to_dict() == parsed.to_dict()
+            try:
+                PackageURL(type, namespace, name, version, qualifiers, subpath)
+            except ValueError:
+                pass
+    else:
+        def test_purl(self):
+            # parsing the test canonical `purl` then re-building a `purl` from these
+            # parsed components should return the test canonical `purl`
+            cano = PackageURL.from_string(purl)
+            assert canonical_purl == cano.to_string()
 
-        # parsing the test `purl` then re-building a `purl` from these parsed
-        # components should return the test canonical `purl`
-        assert canonical_purl == parsed.to_string()
+            # parsing the test `purl` should return the components parsed from the
+            # test canonical `purl`
+            parsed = PackageURL.from_string(canonical_purl)
+            assert cano.to_dict() == parsed.to_dict()
 
-        # building a `purl` from the test components should return the test
-        # canonical `purl`
-        built = PackageURL(type, namespace, name, version, qualifiers, subpath)
-        assert canonical_purl == built.to_string()
+            # parsing the test `purl` then re-building a `purl` from these parsed
+            # components should return the test canonical `purl`
+            assert canonical_purl == parsed.to_string()
+
+            # building a `purl` from the test components should return the test
+            # canonical `purl`
+            built = PackageURL(type, namespace, name, version, qualifiers, subpath)
+            assert canonical_purl == built.to_string()
 
     # create a good function name for use in test discovery
     if not description:
         description = purl
+    if is_invalid:
+        test_func_prefix += 'is_invalid_'
     test_name = python_safe_name(test_func_prefix + description)
     test_purl.__name__ = test_name
     test_purl.funcname = test_name
