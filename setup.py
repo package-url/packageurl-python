@@ -10,12 +10,12 @@ from setuptools import setup
 
 setup(
     name='purl-python',
-    version='0.2.0',
+    version='0.2.1',
     license='MIT',
-    description='A "purl" aka. package URL parser and builder.',
+    description='A "purl" aka. package URL parser and builder. [deprecated name: use instead packageurl-python ]',
     long_description='Python library to parse and build "purl" aka. package URLs.',
     author='the purl authors',
-    url='https://github.com/package-url/purl-python',
+    url='https://github.com/package-url/packageurl-python',
     package_dir={'': 'src'},
     packages=find_packages('src'),
     include_package_data=True,
