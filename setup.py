@@ -17,7 +17,7 @@ setup(
     license='MIT',
     description='A "purl" aka. package URL parser and builder',
     long_description='Python library to parse and build "purl" aka. package URLs. '
-        'This is a microlibrary implmenting teh purl spec at https://github.com/package-url',
+    'This is a microlibrary implementing the purl spec at https://github.com/package-url',
     author='the purl authors',
     url='https://github.com/package-url/packageurl-python',
     #packages=find_packages('src'),
