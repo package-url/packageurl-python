@@ -13,7 +13,7 @@ from setuptools import setup
 
 setup(
     name='packageurl-python',
-    version='0.3.0',
+    version='0.3.1',
     license='MIT',
     description='A "purl" aka. package URL parser and builder',
     long_description='Python library to parse and build "purl" aka. package URLs. '
