@@ -25,8 +25,15 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 from collections import namedtuple
-from urllib import quote as url_quote
-from urlparse import unquote
+
+from urllib import quote as percent_quote
+from urllib import unquote as percent_unquote
+
+# Python 2 and 3 support
+try:
+    from urlparse import urlsplit
+except ImportError:
+    from urllib.parse import urlsplit
 
 # Python 2 and 3 support
 try:
@@ -50,7 +57,7 @@ def quote(s):
     """
     Percent-encode a string, except for colon :
     """
-    quoted = url_quote(s)
+    quoted = percent_quote(s)
     return quoted.replace('%3A', ':')
 
 
@@ -61,7 +68,7 @@ def normalize(type, namespace, name, version, qualifiers, subpath, encode=True):
     if encode is True:
         quoting = quote
     elif encode is False:
-        quoting = unquote
+        quoting = percent_unquote
     elif encode is None:
         quoting = lambda x: x
 
@@ -216,37 +223,30 @@ class PackageURL(namedtuple('PackageURL', _components)):
             or not purl.strip()):
             raise ValueError('A purl string argument is required.')
 
-        purl = purl.strip().strip('/')
-
-        head, sep, subpath = purl.rpartition('#')
-        if sep:
-            subpath = subpath or None
-        else:
-            head = subpath
-            subpath = None
-
-        head, sep, qualifiers = head.rpartition('?')
-        if sep:
-            qualifiers = qualifiers or None
-        else:
-            head = qualifiers
-            qualifiers = None
-
-        head, sep, version = head.rpartition('@')
-        if sep:
-            version = version or None
-        else:
-            head = version
-            version = None
-
-        type, sep, ns_name = head.partition(':')
-        type = type.strip().lower()
+        type, sep, remainder = purl.partition(':')
         if not type or not sep:
             raise ValueError(
                 'purl is missing the required '
                 'type component: {}.'.format(repr(purl)))
 
-        ns_name = ns_name.strip().strip('/')
+        # this strip '/, // and /// as possible in :// or :///
+        remainder = remainder.strip().strip('/')
+        cleaned = '{}:{}'.format(type, remainder)
+
+        type, authority, path, qualifiers, subpath = urlsplit(
+            url=cleaned, scheme=type, allow_fragments=True)
+
+        if authority:
+            raise ValueError(
+                'Invalid purl {} cannot contain a "user:pass@host:port" URL Authority '
+                'component: {}.'.format(repr(purl)), repr(netloc))
+
+        remainder, sep, version = path.rpartition('@')
+        if not sep:
+            remainder = version
+            version = None
+
+        ns_name = remainder.strip().strip('/')
         ns_name = ns_name.split('/')
         ns_name = [seg for seg in ns_name if seg and seg.strip()]
         namespace = ''
