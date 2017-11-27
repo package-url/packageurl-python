@@ -27,14 +27,17 @@ from __future__ import unicode_literals
 
 from collections import namedtuple
 
-from urllib import quote as percent_quote
-from urllib import unquote as percent_unquote
-
 # Python 2 and 3 support
 try:
+    # Python 2
     from urlparse import urlsplit
+    from urllib import quote as percent_quote
+    from urllib import unquote as percent_unquote
 except ImportError:
+    # Python 3
     from urllib.parse import urlsplit
+    from urllib.parse import quote as percent_quote
+    from urllib.parse import unquote as percent_unquote
 
 # Python 2 and 3 support
 try:
