@@ -18,7 +18,8 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-# Visit https://github.com/package-url/purl-python for support and download.
+# Visit https://github.com/package-url/packageurl-python for support and
+# download.
 
 from __future__ import absolute_import
 from __future__ import print_function

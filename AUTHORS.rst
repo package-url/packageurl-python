@@ -1,3 +1,4 @@
-The following organizations or individuals have contributed to purl-python:
+The following organizations or individuals have contributed to
+packageurl-python:
 
 - Philippe Ombredanne @pombredanne
