@@ -37,10 +37,12 @@ try:
     unicode
     str = unicode
     basestring = basestring
+    py2 = True
 except NameError:
     # Python 3
     unicode = str
     basestring = (bytes, str,)
+    py2 = False
 
 
 def create_test_function(description, purl, canonical_purl, is_invalid,
@@ -113,7 +115,7 @@ def python_safe_name(s):
     s = s.lower()
     s = no_punctuation(' ', s)
     s = '_'.join(s.split())
-    if isinstance(s, unicode):
+    if py2 and isinstance(s, unicode):
         s = s.encode('ascii', 'ignore')
     return s
 
