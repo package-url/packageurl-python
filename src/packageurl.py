@@ -26,6 +26,7 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 from collections import namedtuple
+from collections import OrderedDict
 
 # Python 2 and 3 support
 try:
@@ -43,13 +44,12 @@ except ImportError:
 try:
     # Python 2
     unicode
-    str = unicode
-    basestring = basestring
+    str = unicode  # NOQA
+    basestring = basestring  # NOQA
 except NameError:
     # Python 3
-    unicode = str
-    basestring = (bytes, str,)
-
+    unicode = str  # NOQA
+    basestring = (bytes, str,)  # NOQA
 
 """
 A purl (aka. Package URL) implementation as specified at:
@@ -65,7 +65,7 @@ def quote(s):
     return quoted.replace('%3A', ':')
 
 
-def normalize(type, namespace, name, version, qualifiers, subpath, encode=True):
+def normalize(type, namespace, name, version, qualifiers, subpath, encode=True):  # NOQA
     """
     Return normalized purl components.
     """
@@ -77,7 +77,7 @@ def normalize(type, namespace, name, version, qualifiers, subpath, encode=True):
         quoting = lambda x: x
 
     if type:
-        type = type.strip().lower()
+        type = type.strip().lower()  # NOQA
 
     if namespace:
         namespace = namespace.strip().strip('/')
@@ -110,7 +110,7 @@ def normalize(type, namespace, name, version, qualifiers, subpath, encode=True):
                 qualifiers = [(k, v) for k, _, v in qualifiers]
             else:
                 qualifiers = []
-        elif isinstance(qualifiers, dict):
+        elif isinstance(qualifiers, (dict, OrderedDict,)):
             qualifiers = qualifiers.items()
         else:
             raise ValueError(
@@ -141,13 +141,15 @@ def normalize(type, namespace, name, version, qualifiers, subpath, encode=True):
 
 
 _components = ['type', 'namespace', 'name', 'version', 'qualifiers', 'subpath']
+
+
 class PackageURL(namedtuple('PackageURL', _components)):
     """
     A purl is a package URL as defined at
     https://github.com/package-url/purl-spec
     """
 
-    def __new__(self, type=None, namespace=None, name=None,
+    def __new__(self, type=None, namespace=None, name=None,  # NOQA
                 version=None, qualifiers=None, subpath=None):
 
         required = dict(type=type, name=name)
@@ -165,11 +167,11 @@ class PackageURL(namedtuple('PackageURL', _components)):
             raise ValueError('Invalid purl: {} argument must be a string: {}.'
                              .format(key, repr(value)))
 
-        if qualifiers and not isinstance(qualifiers, dict):
+        if qualifiers and not isinstance(qualifiers, (dict, OrderedDict,)):
             raise ValueError('Invalid purl: {} argument must be a dict: {}.'
                              .format('qualifiers', repr(qualifiers)))
 
-        type, namespace, name, version, qualifiers, subpath = normalize(
+        type, namespace, name, version, qualifiers, subpath = normalize(# NOQA
             type, namespace, name, version, qualifiers, subpath, encode=None)
 
         return super(PackageURL, self).__new__(PackageURL, type=type,
@@ -189,13 +191,13 @@ class PackageURL(namedtuple('PackageURL', _components)):
         """
         Return a purl string built from components.
         """
-        type, namespace, name, version, qualifiers, subpath = normalize(
+        type, namespace, name, version, qualifiers, subpath = normalize(# NOQA
             self.type, self.namespace, self.name, self.version,
             self.qualifiers, self.subpath,
             encode=True
         )
 
-        purl = [type, ':']
+        purl = ['pkg:', type, '/']
 
         if namespace:
             purl.append(namespace)
@@ -227,24 +229,32 @@ class PackageURL(namedtuple('PackageURL', _components)):
             or not purl.strip()):
             raise ValueError('A purl string argument is required.')
 
-        type, sep, remainder = purl.partition(':')
+        scheme, sep, remainder = purl.partition(':')
+        if not sep or scheme != 'pkg':
+            raise ValueError(
+                'purl is missing the required '
+                '"pkg" scheme component: {}.'.format(repr(purl)))
+
+        # this strip '/, // and /// as possible in :// or :///
+        remainder = remainder.strip().lstrip('/')
+
+        type, sep, remainder = remainder.partition('/')  # NOQA
         if not type or not sep:
             raise ValueError(
                 'purl is missing the required '
                 'type component: {}.'.format(repr(purl)))
 
-        # this strip '/, // and /// as possible in :// or :///
-        remainder = remainder.strip().strip('/')
-        cleaned = '{}:{}'.format(type, remainder)
+        scheme, authority, path, qualifiers, subpath = urlsplit(
+            url=remainder, scheme='', allow_fragments=True)
 
-        type, authority, path, qualifiers, subpath = urlsplit(
-            url=cleaned, scheme=type, allow_fragments=True)
+        if scheme or authority:
+            msg = ('Invalid purl {} cannot contain a "user:pass@host:port" '
+                   'URL Authority component: {}.')
+            raise ValueError(msg.format(
+                repr(purl), repr(authority)
+                                        ))
 
-        if authority:
-            raise ValueError(
-                'Invalid purl {} cannot contain a "user:pass@host:port" URL Authority '
-                'component: {}.'.format(repr(purl)), repr(netloc))
-
+        path = path.lstrip('/')
         remainder, sep, version = path.rpartition('@')
         if not sep:
             remainder = version
@@ -267,7 +277,7 @@ class PackageURL(namedtuple('PackageURL', _components)):
                 'purl is missing the required '
                 'name component: {}'.format(repr(purl)))
 
-        type, namespace, name, version, qualifiers, subpath = normalize(
+        type, namespace, name, version, qualifiers, subpath = normalize(# NOQA
             type, namespace, name, version, qualifiers, subpath,
             encode=False
         )
