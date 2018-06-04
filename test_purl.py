@@ -28,6 +28,10 @@ from __future__ import unicode_literals
 import json
 import re
 import unittest
+import os
+src= os.path.abspath("packageurl.py")
+import sys
+sys.path.append("src")
 
 from packageurl import PackageURL
 
