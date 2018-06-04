@@ -10,17 +10,16 @@ from os.path import splitext
 
 from setuptools import setup
 
-
 setup(
     name='packageurl-python',
-    version='0.4.0',
+    version='0.5.0',
     license='MIT',
     description='A "purl" aka. package URL parser and builder',
     long_description='Python library to parse and build "purl" aka. package URLs. '
     'This is a microlibrary implementing the purl spec at https://github.com/package-url',
     author='the purl authors',
     url='https://github.com/package-url/packageurl-python',
-    #packages=find_packages('src'),
+    # packages=find_packages('src'),
     package_dir={'': 'src'},
     py_modules=[splitext(basename(path))[0] for path in glob('src/*.py')],
 

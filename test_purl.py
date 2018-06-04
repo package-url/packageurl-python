@@ -35,25 +35,26 @@ from packageurl import PackageURL
 try:
     # Python 2
     unicode
-    str = unicode
-    basestring = basestring
+    str = unicode  # NOQA
+    basestring = basestring  # NOQA
     py2 = True
 except NameError:
     # Python 3
-    unicode = str
-    basestring = (bytes, str,)
+    unicode = str  # NOQA
+    basestring = (bytes, str,)  # NOQA
     py2 = False
 
 
 def create_test_function(description, purl, canonical_purl, is_invalid,
-                         type, name, namespace, version, qualifiers, subpath,
-                         test_func_prefix='test_purl_', **kwargs):
+                         type, name, namespace, version, qualifiers, subpath,  # NOQA
+                         test_func_prefix='test_purl_pkg_', **kwargs):
     """
     Return a new (test function, test_name) where the test_function closed on
     test arguments. If is_error is True the tests are expected to raise an
     Exception.
     """
     if is_invalid:
+
         def test_purl(self):
             try:
                 PackageURL.from_string(purl)
@@ -71,7 +72,9 @@ def create_test_function(description, purl, canonical_purl, is_invalid,
                 PackageURL(type, namespace, name, version, qualifiers, subpath)
             except ValueError:
                 pass
+
     else:
+
         def test_purl(self):
             # parsing the test canonical `purl` then re-building a `purl` from these
             # parsed components should return the test canonical `purl`
