@@ -65,6 +65,55 @@ def quote(s):
     return quoted.replace('%3A', ':')
 
 
+def normalize_qualifiers(qualifiers, encode=True):
+    """
+    Return normalized qualifiers.
+
+    If `qualifiers` is a dictionary of qualifiers and values and `encode` is true,
+    the dictionary is then converted to a string of qualifiers, formatted to the purl specifications.
+
+    If `qualifiers` is a string of qualfiers, formatted to the purl specifications, and `encode`
+    is false, the string is then converted to a dictionary of qualifiers and their values.
+    """
+    if encode is True:
+        quoting = quote
+    elif encode is False:
+        quoting = percent_unquote
+    elif encode is None:
+        quoting = lambda x: x
+
+    if qualifiers:
+        if isinstance(qualifiers, basestring):
+            # decode string to dict
+            qualifiers = qualifiers.split('&')
+            qualifiers = [kv.partition('=') for kv in qualifiers]
+            if qualifiers:
+                qualifiers = [(k, v) for k, _, v in qualifiers]
+            else:
+                qualifiers = []
+        elif isinstance(qualifiers, (dict, OrderedDict,)):
+            qualifiers = qualifiers.items()
+        else:
+            raise ValueError(
+                'Invalid qualifier. '
+                'Must be a string or dict:{}'.format(repr(qualifiers)))
+
+        if qualifiers:
+            qualifiers = {
+                k.strip().lower(): quoting(v)
+                for k, v in qualifiers
+                if k and k.strip() and v and v.strip()
+            }
+
+            if qualifiers and encode is True:
+                # encode dict as a string
+                qualifiers = sorted(qualifiers.items())
+                qualifiers = ['{}={}'.format(k, v) for k, v in qualifiers]
+                qualifiers = '&'.join(qualifiers)
+
+            return qualifiers
+
+
 def normalize(type, namespace, name, version, qualifiers, subpath, encode=True):  # NOQA
     """
     Return normalized purl components.
@@ -101,34 +150,7 @@ def normalize(type, namespace, name, version, qualifiers, subpath, encode=True):
     if version:
         version = quoting(version.strip())
 
-    if qualifiers:
-        if isinstance(qualifiers, basestring):
-            # decode string to dict
-            qualifiers = qualifiers.split('&')
-            qualifiers = [kv.partition('=') for kv in qualifiers]
-            if qualifiers:
-                qualifiers = [(k, v) for k, _, v in qualifiers]
-            else:
-                qualifiers = []
-        elif isinstance(qualifiers, (dict, OrderedDict,)):
-            qualifiers = qualifiers.items()
-        else:
-            raise ValueError(
-                'Invalid qualifier. '
-                'Must be a string or dict:{}'.format(repr(qualifiers)))
-
-        if qualifiers:
-            qualifiers = {
-                k.strip().lower(): quoting(v)
-                for k, v in qualifiers
-                if k and k.strip() and v and v.strip()
-            }
-
-            if qualifiers and encode is True:
-                # encode dict as a string
-                qualifiers = sorted(qualifiers.items())
-                qualifiers = ['{}={}'.format(k, v) for k, v in qualifiers]
-                qualifiers = '&'.join(qualifiers)
+    qualifiers = normalize_qualifiers(qualifiers, encode)
 
     if subpath:
         segments = subpath.split('/')
@@ -167,8 +189,8 @@ class PackageURL(namedtuple('PackageURL', _components)):
             raise ValueError('Invalid purl: {} argument must be a string: {}.'
                              .format(key, repr(value)))
 
-        if qualifiers and not isinstance(qualifiers, (dict, OrderedDict,)):
-            raise ValueError('Invalid purl: {} argument must be a dict: {}.'
+        if qualifiers and not isinstance(qualifiers, (basestring, dict, OrderedDict,)):
+            raise ValueError('Invalid purl: {} argument must be a dict or a string: {}.'
                              .format('qualifiers', repr(qualifiers)))
 
         type, namespace, name, version, qualifiers, subpath = normalize(# NOQA
