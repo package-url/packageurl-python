@@ -65,6 +65,18 @@ def quote(s):
     return quoted.replace('%3A', ':')
 
 
+def get_quoter(encode=True):
+    """
+    Return quoting callable given an `encode` tri-boolean (True, False or None)
+    """
+    if encode is True:
+        return quote
+    elif encode is False:
+        return percent_unquote
+    elif encode is None:
+        return lambda x: x
+
+
 def normalize_qualifiers(qualifiers, encode=True):
     """
     Return normalized qualifiers.
@@ -75,12 +87,7 @@ def normalize_qualifiers(qualifiers, encode=True):
     If `qualifiers` is a string of qualfiers, formatted to the purl specifications, and `encode`
     is false, the string is then converted to a dictionary of qualifiers and their values.
     """
-    if encode is True:
-        quoting = quote
-    elif encode is False:
-        quoting = percent_unquote
-    elif encode is None:
-        quoting = lambda x: x
+    quoting = get_quoter(encode)
 
     if qualifiers:
         if isinstance(qualifiers, basestring):
@@ -111,26 +118,21 @@ def normalize_qualifiers(qualifiers, encode=True):
                 qualifiers = ['{}={}'.format(k, v) for k, v in qualifiers]
                 qualifiers = '&'.join(qualifiers)
 
-            return qualifiers
+            return qualifiers or None
 
 
 def normalize(type, namespace, name, version, qualifiers, subpath, encode=True):  # NOQA
     """
     Return normalized purl components.
     """
-    if encode is True:
-        quoting = quote
-    elif encode is False:
-        quoting = percent_unquote
-    elif encode is None:
-        quoting = lambda x: x
+    quoting = get_quoter(encode)
 
     if type:
         type = type.strip().lower()  # NOQA
 
     if namespace:
         namespace = namespace.strip().strip('/')
-        if type and type in ('bitbucket', 'github', 'pypi'):
+        if type in ('bitbucket', 'github', 'pypi'):
             namespace = namespace.lower()
         segments = namespace.split('/')
         segments = [seg for seg in segments if seg and seg.strip()]
