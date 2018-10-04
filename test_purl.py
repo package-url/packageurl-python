@@ -29,6 +29,7 @@ import json
 import re
 import unittest
 
+from packageurl import normalize_qualifiers
 from packageurl import PackageURL
 
 # Python 2 and 3 support
@@ -141,3 +142,31 @@ def build_tests(clazz=PurlTest, test_file='test-suite-data.json'):
 
 
 build_tests()
+
+
+class NormalizePurlQualifiersTest(unittest.TestCase):
+    canonical_purl = 'pkg:maven/org.apache.xmlgraphics/batik-anim@1.9.1?classifier=sources&repository_url=repo.spring.io/release'
+    type = 'maven'
+    namespace = 'org.apache.xmlgraphics'
+    name = 'batik-anim'
+    version = '1.9.1'
+    qualifiers_as_dict = {
+        'classifier': 'sources',
+        'repository_url': 'repo.spring.io/release'
+    }
+    qualifiers_as_string = 'classifier=sources&repository_url=repo.spring.io/release'
+    subpath = None
+
+    def test_normalize_qualifiers_as_string(self):
+        assert self.qualifiers_as_string == normalize_qualifiers(self.qualifiers_as_dict, encode=True)
+
+    def test_normalize_qualifiers_as_dict(self):
+        assert self.qualifiers_as_dict == normalize_qualifiers(self.qualifiers_as_string, encode=False)
+
+    def test_create_PackageURL_from_qualifiers_string(self):
+        assert self.canonical_purl == PackageURL(self.type, self.namespace, self.name, self.version,
+                                                    self.qualifiers_as_string, self.subpath).to_string()
+
+    def test_create_PackageURL_from_qualifiers_dict(self):
+        assert self.canonical_purl == PackageURL(self.type, self.namespace, self.name, self.version,
+                                                    self.qualifiers_as_dict, self.subpath).to_string()
