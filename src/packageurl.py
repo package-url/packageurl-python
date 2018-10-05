@@ -65,41 +65,29 @@ def quote(s):
     return quoted.replace('%3A', ':')
 
 
-def normalize(type, namespace, name, version, qualifiers, subpath, encode=True):  # NOQA
+def get_quoter(encode=True):
     """
-    Return normalized purl components.
+    Return quoting callable given an `encode` tri-boolean (True, False or None)
     """
     if encode is True:
-        quoting = quote
+        return quote
     elif encode is False:
-        quoting = percent_unquote
+        return percent_unquote
     elif encode is None:
-        quoting = lambda x: x
+        return lambda x: x
 
-    if type:
-        type = type.strip().lower()  # NOQA
 
-    if namespace:
-        namespace = namespace.strip().strip('/')
-        if type and type in ('bitbucket', 'github', 'pypi'):
-            namespace = namespace.lower()
-        segments = namespace.split('/')
-        segments = [seg for seg in segments if seg and seg.strip()]
-        segments = map(quoting, segments)
-        namespace = '/'.join(segments)
+def normalize_qualifiers(qualifiers, encode=True):
+    """
+    Return normalized qualifiers.
 
-    if name:
-        name = name.strip().strip('/')
-        if type in ('bitbucket', 'github', 'pypi',):
-            name = name.lower()
-        if type in ('pypi',):
-            name = name.replace('_', '-')
-        name = quoting(name)
+    If `qualifiers` is a dictionary of qualifiers and values and `encode` is true,
+    the dictionary is then converted to a string of qualifiers, formatted to the purl specifications.
 
-    name = name or None
-
-    if version:
-        version = quoting(version.strip())
+    If `qualifiers` is a string of qualfiers, formatted to the purl specifications, and `encode`
+    is false, the string is then converted to a dictionary of qualifiers and their values.
+    """
+    quoting = get_quoter(encode)
 
     if qualifiers:
         if isinstance(qualifiers, basestring):
@@ -129,6 +117,42 @@ def normalize(type, namespace, name, version, qualifiers, subpath, encode=True):
                 qualifiers = sorted(qualifiers.items())
                 qualifiers = ['{}={}'.format(k, v) for k, v in qualifiers]
                 qualifiers = '&'.join(qualifiers)
+
+            return qualifiers or None
+
+
+def normalize(type, namespace, name, version, qualifiers, subpath, encode=True):  # NOQA
+    """
+    Return normalized purl components.
+    """
+    quoting = get_quoter(encode)
+
+    if type:
+        type = type.strip().lower()  # NOQA
+
+    if namespace:
+        namespace = namespace.strip().strip('/')
+        if type in ('bitbucket', 'github', 'pypi'):
+            namespace = namespace.lower()
+        segments = namespace.split('/')
+        segments = [seg for seg in segments if seg and seg.strip()]
+        segments = map(quoting, segments)
+        namespace = '/'.join(segments)
+
+    if name:
+        name = name.strip().strip('/')
+        if type in ('bitbucket', 'github', 'pypi',):
+            name = name.lower()
+        if type in ('pypi',):
+            name = name.replace('_', '-')
+        name = quoting(name)
+
+    name = name or None
+
+    if version:
+        version = quoting(version.strip())
+
+    qualifiers = normalize_qualifiers(qualifiers, encode)
 
     if subpath:
         segments = subpath.split('/')
@@ -167,8 +191,8 @@ class PackageURL(namedtuple('PackageURL', _components)):
             raise ValueError('Invalid purl: {} argument must be a string: {}.'
                              .format(key, repr(value)))
 
-        if qualifiers and not isinstance(qualifiers, (dict, OrderedDict,)):
-            raise ValueError('Invalid purl: {} argument must be a dict: {}.'
+        if qualifiers and not isinstance(qualifiers, (basestring, dict, OrderedDict,)):
+            raise ValueError('Invalid purl: {} argument must be a dict or a string: {}.'
                              .format('qualifiers', repr(qualifiers)))
 
         type, namespace, name, version, qualifiers, subpath = normalize(# NOQA
