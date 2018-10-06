@@ -23,12 +23,14 @@
 # Visit https://github.com/package-url/packageurl-python for support and
 # download.
 
+
 from __future__ import absolute_import
 from __future__ import print_function
 from __future__ import unicode_literals
 
 from collections import namedtuple
 from collections import OrderedDict
+import string
 
 # Python 2 and 3 support
 try:
@@ -172,8 +174,30 @@ def normalize_qualifiers(qualifiers, encode=True):  # NOQA
             'Must be a string or dict:{}'.format(repr(qualifiers)))
 
     quoter = get_quoter(encode)
-    qualifiers = {quoter(k.strip().lower()): quoter(v)
+    qualifiers = {k.strip().lower(): quoter(v)
         for k, v in qualifiers if k and k.strip() and v and v.strip()}
+
+    valid_chars = string.ascii_letters + string.digits + '.-_'
+    for key in qualifiers:
+        if not key:
+            raise ValueError('A qualifier key cannot be empty')
+
+        if '%' in key:
+            raise ValueError(
+                "A qualifier key cannot be percent encoded: {}".format(repr(key)))
+
+        if ' ' in key:
+            raise ValueError(
+                "A qualifier key cannot contain spaces: {}".format(repr(key)))
+
+        if not all(c in valid_chars for c in key):
+            raise ValueError(
+                "A qualifier key must be composed only of ASCII letters and numbers"
+                "period, dash and underscore: {}".format(repr(key)))
+
+        if key[0] in string.digits:
+            raise ValueError(
+                "A qualifier key cannot start with a number: {}".format(repr(key)))
 
     if encode:
         qualifiers = sorted(qualifiers.items())
