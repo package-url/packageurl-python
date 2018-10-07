@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+#
 # Copyright (c) the purl authors
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -30,7 +32,9 @@ import re
 import unittest
 
 from packageurl import normalize_qualifiers
+from packageurl import normalize
 from packageurl import PackageURL
+
 
 # Python 2 and 3 support
 try:
@@ -144,29 +148,99 @@ def build_tests(clazz=PurlTest, test_file='test-suite-data.json'):
 build_tests()
 
 
-class NormalizePurlQualifiersTest(unittest.TestCase):
-    canonical_purl = 'pkg:maven/org.apache.xmlgraphics/batik-anim@1.9.1?classifier=sources&repository_url=repo.spring.io/release'
-    type = 'maven'
-    namespace = 'org.apache.xmlgraphics'
-    name = 'batik-anim'
-    version = '1.9.1'
-    qualifiers_as_dict = {
-        'classifier': 'sources',
-        'repository_url': 'repo.spring.io/release'
-    }
-    qualifiers_as_string = 'classifier=sources&repository_url=repo.spring.io/release'
-    subpath = None
+class NormalizePurlTest(unittest.TestCase):
 
     def test_normalize_qualifiers_as_string(self):
-        assert self.qualifiers_as_string == normalize_qualifiers(self.qualifiers_as_dict, encode=True)
+        qualifiers_as_dict = {
+            'classifier': 'sources',
+            'repository_url': 'repo.spring.io/release'
+        }
+        qualifiers_as_string = 'classifier=sources&repository_url=repo.spring.io/release'
+        assert qualifiers_as_string == normalize_qualifiers(
+            qualifiers_as_dict, encode=True)
 
     def test_normalize_qualifiers_as_dict(self):
-        assert self.qualifiers_as_dict == normalize_qualifiers(self.qualifiers_as_string, encode=False)
+        qualifiers_as_dict = {
+            'classifier': 'sources',
+            'repository_url': 'repo.spring.io/release'
+        }
+        qualifiers_as_string = 'classifier=sources&repository_url=repo.spring.io/release'
+        assert qualifiers_as_dict == normalize_qualifiers(
+            qualifiers_as_string, encode=False)
 
     def test_create_PackageURL_from_qualifiers_string(self):
-        assert self.canonical_purl == PackageURL(self.type, self.namespace, self.name, self.version,
-                                                    self.qualifiers_as_string, self.subpath).to_string()
+        canonical_purl = 'pkg:maven/org.apache.xmlgraphics/batik-anim@1.9.1?classifier=sources&repository_url=repo.spring.io/release'
+        type = 'maven'  # NOQA
+        namespace = 'org.apache.xmlgraphics'
+        name = 'batik-anim'
+        version = '1.9.1'
+        qualifiers_as_string = 'classifier=sources&repository_url=repo.spring.io/release'
+        subpath = None
+
+        purl = PackageURL(type, namespace, name, version,
+            qualifiers_as_string,
+            subpath)
+        assert canonical_purl == purl.to_string()
 
     def test_create_PackageURL_from_qualifiers_dict(self):
-        assert self.canonical_purl == PackageURL(self.type, self.namespace, self.name, self.version,
-                                                    self.qualifiers_as_dict, self.subpath).to_string()
+        canonical_purl = 'pkg:maven/org.apache.xmlgraphics/batik-anim@1.9.1?classifier=sources&repository_url=repo.spring.io/release'
+        type = 'maven'  # NOQA
+        namespace = 'org.apache.xmlgraphics'
+        name = 'batik-anim'
+        version = '1.9.1'
+        qualifiers_as_dict = {
+            'classifier': 'sources',
+            'repository_url': 'repo.spring.io/release'
+        }
+        subpath = None
+
+        purl = PackageURL(type, namespace, name, version,
+            qualifiers_as_dict,
+            subpath)
+        assert canonical_purl == purl.to_string()
+
+
+    def test_normalize_encode_can_take_unicode_with_non_ascii_with_slash(self):
+        uncd = u'núcleo/núcleo'
+        normal = normalize(
+            type=uncd, namespace=uncd, name=uncd, version=uncd,
+            qualifiers='a=' + uncd, subpath=uncd, encode=True)
+        expected = (
+            'n%c3%bacleo/n%c3%bacleo',
+            'n%C3%BAcleo/n%C3%BAcleo',
+            'n%C3%BAcleo/n%C3%BAcleo',
+            'n%C3%BAcleo/n%C3%BAcleo',
+            'a=n%C3%BAcleo/n%C3%BAcleo',
+            'n%C3%BAcleo/n%C3%BAcleo'
+        )
+        assert expected == normal
+
+    def test_normalize_decode_can_take_unicode_with_non_ascii_with_slash(self):
+        uncd = u'núcleo/núcleo'
+        normal = normalize(
+            type=uncd, namespace=uncd, name=uncd, version=uncd,
+            qualifiers='a=' + uncd, subpath=uncd, encode=False)
+        expected = (
+            'núcleo/núcleo',
+            'núcleo/núcleo',
+            'núcleo/núcleo',
+            'núcleo/núcleo',
+            {'a': 'núcleo/núcleo'},
+            'núcleo/núcleo',
+        )
+        assert expected == normal
+
+    def test_normalize_encode_always_reencodes(self):
+        uncd = u'n%c3%bacleo/n%c3%bacleo'
+        normal = normalize(
+            type=uncd, namespace=uncd, name=uncd, version=uncd,
+            qualifiers='a=' + uncd, subpath=uncd, encode=True)
+        expected = (
+            u'n%25c3%25bacleo/n%25c3%25bacleo',
+            u'n%25c3%25bacleo/n%25c3%25bacleo',
+            u'n%25c3%25bacleo/n%25c3%25bacleo',
+            u'n%25c3%25bacleo/n%25c3%25bacleo',
+            u'a=n%25c3%25bacleo/n%25c3%25bacleo',
+            u'n%25c3%25bacleo/n%25c3%25bacleo'
+        )
+        assert expected == normal

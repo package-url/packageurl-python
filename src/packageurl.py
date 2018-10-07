@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+#
 # Copyright (c) the purl authors
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,31 +23,33 @@
 # Visit https://github.com/package-url/packageurl-python for support and
 # download.
 
+
 from __future__ import absolute_import
 from __future__ import print_function
 from __future__ import unicode_literals
 
 from collections import namedtuple
-from collections import OrderedDict
+import string
 
 # Python 2 and 3 support
 try:
     # Python 2
-    from urlparse import urlsplit
-    from urllib import quote as percent_quote
-    from urllib import unquote as percent_unquote
+    from urlparse import urlsplit as _urlsplit
+    from urllib import quote as _percent_quote
+    from urllib import unquote as _percent_unquote
 except ImportError:
     # Python 3
-    from urllib.parse import urlsplit
-    from urllib.parse import quote as percent_quote
-    from urllib.parse import unquote as percent_unquote
+    from urllib.parse import urlsplit as _urlsplit
+    from urllib.parse import quote as _percent_quote
+    from urllib.parse import unquote as _percent_unquote
 
 # Python 2 and 3 support
 try:
     # Python 2
     unicode
-    str = unicode  # NOQA
     basestring = basestring  # NOQA
+    bytes = str  # NOQA
+    str = unicode  # NOQA
 except NameError:
     # Python 3
     unicode = str  # NOQA
@@ -59,10 +63,27 @@ https://github.com/package-url/purl-spec
 
 def quote(s):
     """
-    Percent-encode a string, except for colon :
+    Return a percent-encoded unicode string, except for colon :, given an `s`
+    byte or unicode string.
     """
-    quoted = percent_quote(s)
-    return quoted.replace('%3A', ':')
+    if isinstance(s, unicode):
+        s = s.encode('utf-8')
+    quoted = _percent_quote(s)
+    if not isinstance(quoted, unicode):
+        quoted = quoted.decode('utf-8')
+    quoted = quoted.replace('%3A', ':')
+    return quoted
+
+
+def unquote(s):
+    """
+    Return a percent-decoded unicode string, given an `s` byte or unicode
+    string.
+    """
+    unquoted = _percent_unquote(s)
+    if not isinstance(unquoted, unicode):
+        unquoted = unquoted .decode('utf-8')
+    return unquoted
 
 
 def get_quoter(encode=True):
@@ -72,96 +93,146 @@ def get_quoter(encode=True):
     if encode is True:
         return quote
     elif encode is False:
-        return percent_unquote
+        return unquote
     elif encode is None:
         return lambda x: x
 
 
-def normalize_qualifiers(qualifiers, encode=True):
+def normalize_type(type, encode=True):  # NOQA
+    if not type:
+        return
+    if not isinstance(type, unicode):
+        type = type.decode('utf-8')  # NOQA
+
+    quoter = get_quoter(encode)
+    type = quoter(type)  # NOQA
+    return type.strip().lower() or None
+
+
+def normalize_namespace(namespace, ptype, encode=True):  # NOQA
+    if not namespace:
+        return
+    if not isinstance(namespace, unicode):
+        namespace = namespace.decode('utf-8')
+
+    namespace = namespace.strip().strip('/')
+    if ptype in ('bitbucket', 'github', 'pypi'):
+        namespace = namespace.lower()
+    segments = [seg for seg in namespace.split('/') if seg.strip()]
+    segments = map(get_quoter(encode), segments)
+    return '/'.join(segments) or None
+
+
+def normalize_name(name, ptype, encode=True):  # NOQA
+    if not name:
+        return
+    if not isinstance(name, unicode):
+        name = name.decode('utf-8')
+
+    quoter = get_quoter(encode)
+    name = quoter(name)
+    name = name.strip().strip('/')
+    if ptype in ('bitbucket', 'github', 'pypi',):
+        name = name.lower()
+    if ptype in ('pypi',):
+        name = name.replace('_', '-')
+    return name or None
+
+
+def normalize_version(version, encode=True):  # NOQA
+    if not version:
+        return
+    if not isinstance(version, unicode):
+        version = version.decode('utf-8')
+
+    quoter = get_quoter(encode)
+    version = quoter(version.strip())
+    return version or None
+
+
+def normalize_qualifiers(qualifiers, encode=True):  # NOQA
     """
-    Return normalized qualifiers.
-
-    If `qualifiers` is a dictionary of qualifiers and values and `encode` is true,
-    the dictionary is then converted to a string of qualifiers, formatted to the purl specifications.
-
-    If `qualifiers` is a string of qualfiers, formatted to the purl specifications, and `encode`
-    is false, the string is then converted to a dictionary of qualifiers and their values.
+    Return normalized `qualifiers` as a mapping (or as a string if `encode` is
+    True). The `qualifiers` arg is either a mapping or a string.
+    Always return a mapping if decode is True (and never None).
+    Raise ValueError on errors.
     """
-    quoting = get_quoter(encode)
+    if not qualifiers:
+        return None if encode else {}
 
-    if qualifiers:
-        if isinstance(qualifiers, basestring):
-            # decode string to dict
-            qualifiers = qualifiers.split('&')
-            qualifiers = [kv.partition('=') for kv in qualifiers]
-            if qualifiers:
-                qualifiers = [(k, v) for k, _, v in qualifiers]
-            else:
-                qualifiers = []
-        elif isinstance(qualifiers, (dict, OrderedDict,)):
-            qualifiers = qualifiers.items()
-        else:
+    if isinstance(qualifiers, basestring):
+        if not isinstance(qualifiers, unicode):
+            qualifiers = qualifiers.decode('utf-8')
+        # decode string to list of tuples
+        qualifiers = qualifiers.split('&')
+        qualifiers = [kv.partition('=') for kv in qualifiers]
+        qualifiers = [(k, v) for k, _, v in qualifiers]
+    elif isinstance(qualifiers, dict):
+        qualifiers = qualifiers.items()
+    else:
+        raise ValueError(
+            'Invalid qualifier. '
+            'Must be a string or dict:{}'.format(repr(qualifiers)))
+
+    quoter = get_quoter(encode)
+    qualifiers = {k.strip().lower(): quoter(v)
+        for k, v in qualifiers if k and k.strip() and v and v.strip()}
+
+    valid_chars = string.ascii_letters + string.digits + '.-_'
+    for key in qualifiers:
+        if not key:
+            raise ValueError('A qualifier key cannot be empty')
+
+        if '%' in key:
             raise ValueError(
-                'Invalid qualifier. '
-                'Must be a string or dict:{}'.format(repr(qualifiers)))
+                "A qualifier key cannot be percent encoded: {}".format(repr(key)))
 
-        if qualifiers:
-            qualifiers = {
-                k.strip().lower(): quoting(v)
-                for k, v in qualifiers
-                if k and k.strip() and v and v.strip()
-            }
+        if ' ' in key:
+            raise ValueError(
+                "A qualifier key cannot contain spaces: {}".format(repr(key)))
 
-            if qualifiers and encode is True:
-                # encode dict as a string
-                qualifiers = sorted(qualifiers.items())
-                qualifiers = ['{}={}'.format(k, v) for k, v in qualifiers]
-                qualifiers = '&'.join(qualifiers)
+        if not all(c in valid_chars for c in key):
+            raise ValueError(
+                "A qualifier key must be composed only of ASCII letters and numbers"
+                "period, dash and underscore: {}".format(repr(key)))
 
-            return qualifiers or None
+        if key[0] in string.digits:
+            raise ValueError(
+                "A qualifier key cannot start with a number: {}".format(repr(key)))
+
+    if encode:
+        qualifiers = sorted(qualifiers.items())
+        qualifiers = ['{}={}'.format(k, v) for k, v in qualifiers]
+        qualifiers = '&'.join(qualifiers)
+        return qualifiers or None
+    else:
+        return qualifiers or {}
+
+
+def normalize_subpath(subpath, encode=True):  # NOQA
+    if not subpath:
+        return None
+    if not isinstance(subpath, unicode):
+        subpath = subpath.decode('utf-8')
+
+    quoter = get_quoter(encode)
+    segments = subpath.split('/')
+    segments = [quoter(s) for s in segments if s.strip() and s not in ('.', '..')]
+    subpath = '/'.join(segments)
+    return subpath or None
 
 
 def normalize(type, namespace, name, version, qualifiers, subpath, encode=True):  # NOQA
     """
-    Return normalized purl components.
+    Return normalized purl components
     """
-    quoting = get_quoter(encode)
-
-    if type:
-        type = type.strip().lower()  # NOQA
-
-    if namespace:
-        namespace = namespace.strip().strip('/')
-        if type in ('bitbucket', 'github', 'pypi'):
-            namespace = namespace.lower()
-        segments = namespace.split('/')
-        segments = [seg for seg in segments if seg and seg.strip()]
-        segments = map(quoting, segments)
-        namespace = '/'.join(segments)
-
-    if name:
-        name = name.strip().strip('/')
-        if type in ('bitbucket', 'github', 'pypi',):
-            name = name.lower()
-        if type in ('pypi',):
-            name = name.replace('_', '-')
-        name = quoting(name)
-
-    name = name or None
-
-    if version:
-        version = quoting(version.strip())
-
+    type = normalize_type(type, encode)  # NOQA
+    namespace = normalize_namespace(namespace, type, encode)
+    name = normalize_name(name, type, encode)
+    version = normalize_version(version, encode)
     qualifiers = normalize_qualifiers(qualifiers, encode)
-
-    if subpath:
-        segments = subpath.split('/')
-        segments = [quoting(s) for s in segments if s and s.strip()
-                    and s not in ('.', '..')]
-        subpath = '/'.join(segments)
-
-    return (type or None, namespace or None, name or None, version or None,
-            qualifiers or None, subpath or None)
+    subpath = normalize_subpath(subpath, encode)
+    return type, namespace, name, version, qualifiers, subpath
 
 
 _components = ['type', 'namespace', 'name', 'version', 'qualifiers', 'subpath']
@@ -191,7 +262,7 @@ class PackageURL(namedtuple('PackageURL', _components)):
             raise ValueError('Invalid purl: {} argument must be a string: {}.'
                              .format(key, repr(value)))
 
-        if qualifiers and not isinstance(qualifiers, (basestring, dict, OrderedDict,)):
+        if qualifiers and not isinstance(qualifiers, (basestring, dict,)):
             raise ValueError('Invalid purl: {} argument must be a dict or a string: {}.'
                              .format('qualifiers', repr(qualifiers)))
 
@@ -268,7 +339,7 @@ class PackageURL(namedtuple('PackageURL', _components)):
                 'purl is missing the required '
                 'type component: {}.'.format(repr(purl)))
 
-        scheme, authority, path, qualifiers, subpath = urlsplit(
+        scheme, authority, path, qualifiers, subpath = _urlsplit(
             url=remainder, scheme='', allow_fragments=True)
 
         if scheme or authority:
