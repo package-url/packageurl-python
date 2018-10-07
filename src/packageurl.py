@@ -29,7 +29,6 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 from collections import namedtuple
-from collections import OrderedDict
 import string
 
 # Python 2 and 3 support
@@ -155,9 +154,11 @@ def normalize_qualifiers(qualifiers, encode=True):  # NOQA
     """
     Return normalized `qualifiers` as a mapping (or as a string if `encode` is
     True). The `qualifiers` arg is either a mapping or a string.
+    Always return a mapping if decode is True (and never None).
+    Raise ValueError on errors.
     """
     if not qualifiers:
-        return
+        return None if encode else {}
 
     if isinstance(qualifiers, basestring):
         if not isinstance(qualifiers, unicode):
@@ -203,8 +204,9 @@ def normalize_qualifiers(qualifiers, encode=True):  # NOQA
         qualifiers = sorted(qualifiers.items())
         qualifiers = ['{}={}'.format(k, v) for k, v in qualifiers]
         qualifiers = '&'.join(qualifiers)
-
-    return qualifiers or None
+        return qualifiers or None
+    else:
+        return qualifiers or {}
 
 
 def normalize_subpath(subpath, encode=True):  # NOQA
@@ -260,7 +262,7 @@ class PackageURL(namedtuple('PackageURL', _components)):
             raise ValueError('Invalid purl: {} argument must be a string: {}.'
                              .format(key, repr(value)))
 
-        if qualifiers and not isinstance(qualifiers, (basestring, dict, OrderedDict,)):
+        if qualifiers and not isinstance(qualifiers, (basestring, dict,)):
             raise ValueError('Invalid purl: {} argument must be a dict or a string: {}.'
                              .format('qualifiers', repr(qualifiers)))
 
