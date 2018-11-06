@@ -165,6 +165,10 @@ def normalize_qualifiers(qualifiers, encode=True):  # NOQA
             qualifiers = qualifiers.decode('utf-8')
         # decode string to list of tuples
         qualifiers = qualifiers.split('&')
+        if not all('=' in kv for kv in qualifiers):
+            raise ValueError(
+                'Invalid qualifier. '
+                'Must be a string of key=value pairs:{}'.format(repr(qualifiers)))
         qualifiers = [kv.partition('=') for kv in qualifiers]
         qualifiers = [(k, v) for k, _, v in qualifiers]
     elif isinstance(qualifiers, dict):

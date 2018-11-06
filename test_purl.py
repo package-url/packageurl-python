@@ -199,7 +199,6 @@ class NormalizePurlTest(unittest.TestCase):
             subpath)
         assert canonical_purl == purl.to_string()
 
-
     def test_normalize_encode_can_take_unicode_with_non_ascii_with_slash(self):
         uncd = u'núcleo/núcleo'
         normal = normalize(
@@ -244,3 +243,11 @@ class NormalizePurlTest(unittest.TestCase):
             u'n%25c3%25bacleo/n%25c3%25bacleo'
         )
         assert expected == normal
+
+    def test_qualifiers_must_be_key_value_pairs(self):
+        purl = 'pkg:maven/org.apache.xmlgraphics/batik-anim@1.9.1?this+is+not+a+key_value'
+        try:
+            PackageURL.from_string(purl)
+            self.fail('Failed to raise exception for invalid qualifiers')
+        except ValueError as ve:
+            assert 'Invalid qualifier. Must be a string of key=value pairs' in str(ve)
