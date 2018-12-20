@@ -13,7 +13,7 @@ Build and tests status
 |                         **Linux (Travis) on Python 2 and 3**                       |
 +====================================================================================+
 |.. image:: https://api.travis-ci.org/package-url/packageurl-python.png?branch=master|
-|   :target: https://travis-ci.org/package-url/packageurl-python.png                 |
+|   :target: https://travis-ci.org/package-url/packageurl-python                     |
 |   :alt: Linux Master branch tests status                                           |
 +------------------------------------------------------------------------------------+
 
