@@ -28,6 +28,7 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 import json
+import os
 import re
 import unittest
 
@@ -137,6 +138,9 @@ def build_tests(clazz=PurlTest, test_file='test-suite-data.json'):
     Dynamically build test methods for each purl test found in the `test_file`
     JSON file and attach a test method to the `clazz` class.
     """
+    test_data_dir = os.path.join(os.path.dirname(__file__), 'data')
+    test_file = os.path.join(test_data_dir, test_file)
+
     with open(test_file) as tf:
         tests_data = json.load(tf)
     for items in tests_data:
@@ -149,7 +153,6 @@ build_tests()
 
 
 class NormalizePurlTest(unittest.TestCase):
-
     def test_normalize_qualifiers_as_string(self):
         qualifiers_as_dict = {
             'classifier': 'sources',
