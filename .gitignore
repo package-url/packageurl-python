@@ -5,3 +5,10 @@
 /.eggs/
 /.cache/
 /src/packageurl_python.egg-info/
+lib
+bin
+.idea
+include
+pip-selfcheck.json
+pyvenv.cfg
+.Python

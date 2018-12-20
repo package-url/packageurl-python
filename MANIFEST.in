@@ -1,4 +1,5 @@
 graft src
+graft tests
 
 include mit.LICENSE
 include setup.py
@@ -8,7 +9,5 @@ include MANIFEST.in
 include requirements_tests.txt
 include CHANGELOG.rst
 include CONTRIBUTING.rst
-include test-suite-data.json
-include test_purl.py
 
 global-exclude *.py[co] __pycache__
