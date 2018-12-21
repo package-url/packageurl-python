@@ -112,12 +112,12 @@ class PackageURLMixin(models.Model):
 
     def set_package_url(self, package_url):
         """
-        Set values for each related field of the provided `package_url` string.
-        Empty/Null values are normalized to `None` and are set as well
-        to replace any existing values.
-        This prevent mixing newly provided values with old ones.
+        Set each field values to the values of the provided `package_url` string
+        or PackageURL object. Existing values are overwritten including setting
+        values to None for provided empty values.
         """
-        purl = PackageURL.from_string(package_url)
+        if not isinstance(package_url, PackageURL):
+            package_url = PackageURL.from_string(package_url)
 
-        for field_name, value in purl.to_dict().items():
+        for field_name, value in package_url.to_dict(encode=True).items():
             setattr(self, field_name, value or None)

@@ -27,6 +27,7 @@ from __future__ import absolute_import
 from __future__ import print_function
 from __future__ import unicode_literals
 
+from collections import OrderedDict
 import json
 import os
 import re
@@ -180,9 +181,8 @@ class NormalizePurlTest(unittest.TestCase):
         qualifiers_as_string = 'classifier=sources&repository_url=repo.spring.io/release'
         subpath = None
 
-        purl = PackageURL(type, namespace, name, version,
-            qualifiers_as_string,
-            subpath)
+        purl = PackageURL(type, namespace, name, version, qualifiers_as_string,
+                          subpath)
         assert canonical_purl == purl.to_string()
 
     def test_create_PackageURL_from_qualifiers_dict(self):
@@ -198,8 +198,7 @@ class NormalizePurlTest(unittest.TestCase):
         subpath = None
 
         purl = PackageURL(type, namespace, name, version,
-            qualifiers_as_dict,
-            subpath)
+                          qualifiers_as_dict, subpath)
         assert canonical_purl == purl.to_string()
 
     def test_normalize_encode_can_take_unicode_with_non_ascii_with_slash(self):
@@ -254,3 +253,36 @@ class NormalizePurlTest(unittest.TestCase):
             self.fail('Failed to raise exception for invalid qualifiers')
         except ValueError as ve:
             assert 'Invalid qualifier. Must be a string of key=value pairs' in str(ve)
+
+    def test_to_dict_optionally_returns_qualifiers_as_string(self):
+        purl = PackageURL(
+            type='maven',
+            namespace='org.apache',
+            name='commons-logging',
+            version='12.3',
+            qualifiers='this=12&that=13',
+            subpath='this/is/a/path',
+        )
+
+        expected = OrderedDict([
+            ('type', 'maven'),
+            ('namespace', 'org.apache'),
+            ('name', 'commons-logging'),
+            ('version', '12.3'),
+            ('qualifiers', OrderedDict([
+                ('that', '13'),
+                ('this', '12'),
+            ])),
+            ('subpath', 'this/is/a/path')
+        ])
+        assert expected == purl.to_dict()
+
+        expected = OrderedDict([
+            ('type', u'maven'),
+            ('namespace', u'org.apache'),
+            ('name', u'commons-logging'),
+            ('version', u'12.3'),
+            ('qualifiers', u'that=13&this=12'),
+            ('subpath', u'this/is/a/path')
+        ])
+        assert expected == purl.to_dict(encode=True)
