@@ -29,6 +29,7 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 from collections import namedtuple
+from collections import OrderedDict
 import string
 
 # Python 2 and 3 support
@@ -158,7 +159,7 @@ def normalize_qualifiers(qualifiers, encode=True):  # NOQA
     Raise ValueError on errors.
     """
     if not qualifiers:
-        return None if encode else {}
+        return None if encode else OrderedDict()
 
     if isinstance(qualifiers, basestring):
         if not isinstance(qualifiers, unicode):
@@ -204,9 +205,10 @@ def normalize_qualifiers(qualifiers, encode=True):  # NOQA
             raise ValueError(
                 "A qualifier key cannot start with a number: {}".format(repr(key)))
 
+    qualifiers = sorted(qualifiers.items())
+    qualifiers = OrderedDict(qualifiers)
     if encode:
-        qualifiers = sorted(qualifiers.items())
-        qualifiers = ['{}={}'.format(k, v) for k, v in qualifiers]
+        qualifiers = ['{}={}'.format(k, v) for k, v in qualifiers.items()]
         qualifiers = '&'.join(qualifiers)
         return qualifiers or None
     else:
@@ -280,11 +282,17 @@ class PackageURL(namedtuple('PackageURL', _components)):
     def __str__(self, *args, **kwargs):
         return self.to_string()
 
-    def to_dict(self):
+    def to_dict(self, encode=False):
         """
-        Return a dict of purl components.
+        Return an ordered dict of purl components as {key: value}. If `encode`
+        is True, then "qualifiers" are encoded as a normalized string.
+        Otherwise, qualifiers is a mapping.
         """
-        return self._asdict()
+        data = self._asdict()
+        if encode:
+            data['qualifiers'] = normalize_qualifiers(self.qualifiers,
+                                                      encode=encode)
+        return data
 
     def to_string(self):
         """
