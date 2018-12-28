@@ -29,6 +29,7 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 import os
+import re
 
 try:
     from urlparse import urlparse  # Python 2
@@ -65,9 +66,24 @@ def get_purl(uri):
             return
 
 
+def purl_from_pattern(type_, pattern, uri):
+    uri = unquote_plus(uri)
+    compiled_pattern = re.compile(pattern, re.VERBOSE)
+    match = compiled_pattern.match(uri)
+
+    if not match:
+        return
+
+    return PackageURL(
+        type_,
+        name=match.group('name'),
+        version=match.group('version'),
+    )
+
+
 @purl_router.route('https?://registry.npmjs.*/.*',
                    'https?://registry.yarnpkg.com/.*')
-def build_npm_url(uri):
+def build_npm_purl(uri):
     # npm URLs are difficult to disambiguate with regex
     if '/-/' in uri:
         return build_npm_download_purl(uri)
@@ -157,14 +173,14 @@ def build_maven_purl(uri):
     return PackageURL('maven', namespace, name, version, qualifiers)
 
 
-@purl_router.route('https?://rubygems.org/downloads/.*')
-def build_rubygems_url(uri):
-    if uri.endswith('/') or not uri.endswith('.gem'):
-        return
+# https://rubygems.org/downloads/jwt-0.1.8.gem
+rubygems_pattern = (
+    r"^https?://rubygems.org/downloads/"
+    r"(?P<name>.+-?)-(?P<version>.*?)"
+    r"(\.gem)$"
+)
 
-    path = unquote_plus(urlparse(uri).path)
-    last_segment = path.split('/')[-1]
-    archive_basename = last_segment.rstrip('.gem')
-    name, _, version = archive_basename.rpartition('-')
 
-    return PackageURL('rubygems', name=name, version=version)
+@purl_router.route(rubygems_pattern)
+def build_rubygems_purl(uri):
+    return purl_from_pattern('rubygems', rubygems_pattern, uri)
