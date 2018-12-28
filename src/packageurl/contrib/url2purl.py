@@ -75,7 +75,11 @@ def purl_from_pattern(type_, pattern, uri):
     match = compiled_pattern.match(uri)
 
     if match:
-        return PackageURL(type_, **match.groupdict())
+        purl_data = {
+            field: value for field, value in match.groupdict().items()
+            if field in PackageURL._fields
+        }
+        return PackageURL(type_, **purl_data)
 
 
 @purl_router.route('https?://registry.npmjs.*/.*',
