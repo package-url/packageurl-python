@@ -104,5 +104,13 @@
   "https://pypi.python.org/packages/py2.py3/w/wheel/wheel-0.29.0-py2.py3-none-any.whl#md5=d7db45db5c131af262b8ffccde46a88a": "pkg:pypi/wheel@0.29.0",
   "https://pypi.python.org/packages/f6/ae/bbc6a204f33d9d57c798fb3857a072cd14b836792244eea4b446fdb674c6/pycryptodome-3.4.7-cp27-cp27m-win32.whl#md5=78b341de1cd686077745cd9e3a93d8d3": "pkg:pypi/pycryptodome@3.4.7",
   "https://pypi.python.org/packages/bd/e8/ea44ba5357a0b4fd16e5fb60c355fc8722eae31b93d7597eec50f7c35a52/pycryptodome-3.4.7-cp27-cp27m-win_amd64.whl#md5=f20bb847322baf7ae24700e5cbb15e07": "pkg:pypi/pycryptodome@3.4.7",
-  "https://pypi.python.org/packages/1e/75/8005d086cac4cc41d3b320d338972c5e5c6a21f88472f21ac9d0e031d300/pyahocorasick-1.1.4.tar.bz2#md5=ad445b6648dc06e9040705ce1ccb4384": "pkg:pypi/pyahocorasick@1.1.4"
+  "https://pypi.python.org/packages/1e/75/8005d086cac4cc41d3b320d338972c5e5c6a21f88472f21ac9d0e031d300/pyahocorasick-1.1.4.tar.bz2#md5=ad445b6648dc06e9040705ce1ccb4384": "pkg:pypi/pyahocorasick@1.1.4",
+
+  "http://nuget.org/packages/EntityFramework/4.2.0.0": "pkg:nuget/EntityFramework@4.2.0.0",
+  "http://www.nuget.org/packages/SharpGIS.GZipWebClient/1.2.0": "pkg:nuget/SharpGIS.GZipWebClient@1.2.0",
+  "https://www.nuget.org/api/v2/package/Newtonsoft.Json/11.0.1": "pkg:nuget/Newtonsoft.Json@11.0.1",
+  "http://www.nuget.org/api/v2/package/EntityFramework/6.1.0": "pkg:nuget/EntityFramework@6.1.0",
+  "https://www.nuget.org/api/v2/package/MvvmLightLibs/4.1.23": "pkg:nuget/MvvmLightLibs@4.1.23",
+  "https://www.nuget.org/api/v2/package/Twilio/3.4.1": "pkg:nuget/Twilio@3.4.1",
+  "https://api.nuget.org/v3-flatcontainer/newtonsoft.json/10.0.1/newtonsoft.json.10.0.1.nupkg": "pkg:nuget/newtonsoft.json@10.0.1"
 }

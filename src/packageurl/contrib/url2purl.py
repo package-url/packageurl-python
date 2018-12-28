@@ -210,3 +210,29 @@ def build_pypi_purl(uri):
         return PackageURL('pypi', name=wheel.name, version=wheel.version)
 
     return purl_from_pattern('pypi', pypi_pattern, last_segment)
+
+
+# http://nuget.org/packages/EntityFramework/4.2.0.0
+# https://www.nuget.org/api/v2/package/Newtonsoft.Json/11.0.1
+nuget_pattern1 = (
+    r"^https?://.*nuget.org/(api/v2/)?packages?/"
+    r"(?P<name>.+-?)/(?P<version>.*?)$"
+)
+
+
+@purl_router.route(nuget_pattern1)
+def build_nuget_purl(uri):
+    return purl_from_pattern('nuget', nuget_pattern1, uri)
+
+
+# https://api.nuget.org/v3-flatcontainer/newtonsoft.json/10.0.1/newtonsoft.json.10.0.1.nupkg
+nuget_pattern2 = (
+    r"^https?://api.nuget.org/v3-flatcontainer/"
+    r"(?P<name>.+-?)/(?P<version>.*?)/"
+    r".*nupkg$"
+)
+
+
+@purl_router.route(nuget_pattern2)
+def build_nuget_purl(uri):
+    return purl_from_pattern('nuget', nuget_pattern2, uri)
