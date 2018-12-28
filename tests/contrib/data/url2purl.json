@@ -121,10 +121,12 @@
   "http://master.dl.sourceforge.net/project/wxmozilla/wxMozilla/0.5.5/wxMozilla-0.5.5.exe": "pkg:sourceforge/wxmozilla/wxMozilla@0.5.5",
   "http://iweb.dl.sourceforge.net/project/sblim/sblim-cim-client2/2.2.5/sblim-cim-client2-2.2.5-src.zip": "pkg:sourceforge/sblim/sblim-cim-client2@2.2.5",
   "http://master.dl.sourceforge.net/project/zinnia/zinnia-win32/0.06/zinnia-win32-0.06.zip": "pkg:sourceforge/zinnia/zinnia-win32@0.06",
+  "http://iweb.dl.sourceforge.net/project/findbugs/findbugs/1.3.4/findbugs-1.3.4.tar.gz/": null,
   "http://master.dl.sourceforge.net/project/pwiki/pwiki/0.1.2/0.1.2.zip": null,
   "http://master.dl.sourceforge.net/project/iswraid/iswraid/0.1.4.3/2.4.28-pre3-iswraid.patch.gz": null,
   "http://master.dl.sourceforge.net/project/aloyscore/aloyscore/0.1a1%20stable/0.1a1_stable_AloysCore.zip": null,
   "http://master.dl.sourceforge.net/project/myenterprise/OldFiles/1.0.0.2.MyEnterprise.Source.zip": null,
   "http://master.dl.sourceforge.net/project/wxhaskell/wxhaskell/wxhaskell-0.9/wxhaskell-src-0.9.zip": null,
-  "http://master.dl.sourceforge.net/project/a2freedom/A2/1.2/a2freedom-1.2.zip": null
+  "http://master.dl.sourceforge.net/project/a2freedom/A2/1.2/a2freedom-1.2.zip": null,
+  "http://master.dl.sourceforge.net/project/zclasspath/maven2/org/zclasspath/zclasspath/1.5/zclasspath-1.5.jar": null
 }

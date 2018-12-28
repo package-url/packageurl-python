@@ -173,7 +173,7 @@ def build_maven_purl(uri):
 # https://rubygems.org/downloads/jwt-0.1.8.gem
 rubygems_pattern = (
     r"^https?://rubygems.org/downloads/"
-    r"(?P<name>.+-?)-(?P<version>.*?)"
+    r"(?P<name>.+)-(?P<version>.+)"
     r"(\.gem)$"
 )
 
@@ -185,7 +185,7 @@ def build_rubygems_purl(uri):
 
 # https://pypi.python.org/packages/source/p/python-openid/python-openid-2.2.5.zip
 pypi_pattern = (
-    r"(?P<name>.+-?)-(?P<version>.*?)"
+    r"(?P<name>.+)-(?P<version>.+)"
     r"\.(zip|tar.gz|tar.bz2)$"
 )
 
@@ -210,7 +210,8 @@ def build_pypi_purl(uri):
 # https://www.nuget.org/api/v2/package/Newtonsoft.Json/11.0.1
 nuget_pattern1 = (
     r"^https?://.*nuget.org/(api/v2/)?packages?/"
-    r"(?P<name>.+-?)/(?P<version>.*?)$"
+    r"(?P<name>.+)/"
+    r"(?P<version>.+)$"
 )
 
 
@@ -222,8 +223,9 @@ def build_nuget_purl(uri):
 # https://api.nuget.org/v3-flatcontainer/newtonsoft.json/10.0.1/newtonsoft.json.10.0.1.nupkg
 nuget_pattern2 = (
     r"^https?://api.nuget.org/v3-flatcontainer/"
-    r"(?P<name>.+-?)/(?P<version>.*?)/"
-    r".*nupkg$"
+    r"(?P<name>.+)/"
+    r"(?P<version>.+)/"
+    r".*(nupkg)$"  # ends with "nupkg"
 )
 
 
@@ -235,8 +237,11 @@ def build_nuget_purl(uri):
 # http://master.dl.sourceforge.net/project/libpng/zlib/1.2.3/zlib-1.2.3.tar.bz2
 sourceforge_pattern = (
     r"^https?://.*sourceforge.net/project/"
-    r"(?P<namespace>.+-?)/(?P<name>.+-?)/(?P<version>[\.0-9]*?)/"
-    r"(?P=name)-(?P=version).*$"
+    r"(?P<namespace>([^/]+))/"  # do not allow more "/" segments
+    r"(?P<name>.+)/"
+    r"(?P<version>[0-9\.]+)/"  # version restricted to digits and dots
+    r"(?P=name)-(?P=version).*"  # {name}-{version} repeated in the filename
+    r"[^/]$"  # not ending with "/"
 )
 
 
