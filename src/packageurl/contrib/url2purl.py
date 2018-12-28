@@ -38,6 +38,9 @@ except ImportError:
     from urllib.parse import urlparse  # Python 3
     from urllib.parse import unquote_plus
 
+from pip._internal.wheel import Wheel
+from pip._internal.exceptions import InvalidWheelFilename
+
 from packageurl import PackageURL
 from packageurl.contrib.route import Router
 from packageurl.contrib.route import NoRouteAvailable
@@ -184,3 +187,26 @@ rubygems_pattern = (
 @purl_router.route(rubygems_pattern)
 def build_rubygems_purl(uri):
     return purl_from_pattern('rubygems', rubygems_pattern, uri)
+
+
+# https://pypi.python.org/packages/source/p/python-openid/python-openid-2.2.5.zip
+pypi_pattern = (
+    r"(?P<name>.+-?)-(?P<version>.*?)"
+    r"\.(zip|tar.gz|tar.bz2)$"
+)
+
+
+@purl_router.route('https?://pypi.python.org/packages/.*')
+def build_pypi_purl(uri):
+    path = unquote_plus(urlparse(uri).path)
+    last_segment = path.split('/')[-1]
+
+    # https://pypi.python.org/packages/py2.py3/w/wheel/wheel-0.29.0-py2.py3-none-any.whl
+    if last_segment.endswith('.whl'):
+        try:
+            wheel = Wheel(last_segment)
+        except InvalidWheelFilename:
+            return
+        return PackageURL('pypi', name=wheel.name, version=wheel.version)
+
+    return purl_from_pattern('pypi', pypi_pattern, last_segment)

@@ -94,5 +94,15 @@
   "https://rubygems.org/downloads/ref-1.0.5.gem": "pkg:rubygems/ref@1.0.5", 
   "https://rubygems.org/downloads/talentbox-delayed_job_sequel-4.0.0.gem": "pkg:rubygems/talentbox-delayed_job_sequel@4.0.0", 
   "https://rubygems.org/downloads/unf-0.1.3.gem": "pkg:rubygems/unf@0.1.3", 
-  "https://rubygems.org/downloads/yajl-ruby-1.2.0.gem": "pkg:rubygems/yajl-ruby@1.2.0"
+  "https://rubygems.org/downloads/yajl-ruby-1.2.0.gem": "pkg:rubygems/yajl-ruby@1.2.0",
+
+  "https://pypi.python.org/packages/source/z/zc.recipe.egg/zc.recipe.egg-2.0.0.tar.gz": "pkg:pypi/zc.recipe.egg@2.0.0",
+  "https://pypi.python.org/packages/source/p/python-openid/python-openid-2.2.5.zip": "pkg:pypi/python-openid@2.2.5",
+  "https://pypi.python.org/packages/38/e2/b23434f4030bbb1af3bcdbb2ecff6b11cf2e467622446ce66a08e99f2ea9/pluggy-0.4.0.zip#md5=447a92368175965d2fbacaef9f3df842": "pkg:pypi/pluggy@0.4.0",
+  "https://pypi.python.org/packages/py2.py3/w/wheel/bad-wheel-name-any.whl": null,
+  "https://pypi.python.org/packages/py2.py3/w/wheel/wheel-0.29.0-py2.py3-none-any.whl": "pkg:pypi/wheel@0.29.0",
+  "https://pypi.python.org/packages/py2.py3/w/wheel/wheel-0.29.0-py2.py3-none-any.whl#md5=d7db45db5c131af262b8ffccde46a88a": "pkg:pypi/wheel@0.29.0",
+  "https://pypi.python.org/packages/f6/ae/bbc6a204f33d9d57c798fb3857a072cd14b836792244eea4b446fdb674c6/pycryptodome-3.4.7-cp27-cp27m-win32.whl#md5=78b341de1cd686077745cd9e3a93d8d3": "pkg:pypi/pycryptodome@3.4.7",
+  "https://pypi.python.org/packages/bd/e8/ea44ba5357a0b4fd16e5fb60c355fc8722eae31b93d7597eec50f7c35a52/pycryptodome-3.4.7-cp27-cp27m-win_amd64.whl#md5=f20bb847322baf7ae24700e5cbb15e07": "pkg:pypi/pycryptodome@3.4.7",
+  "https://pypi.python.org/packages/1e/75/8005d086cac4cc41d3b320d338972c5e5c6a21f88472f21ac9d0e031d300/pyahocorasick-1.1.4.tar.bz2#md5=ad445b6648dc06e9040705ce1ccb4384": "pkg:pypi/pyahocorasick@1.1.4"
 }
