@@ -74,14 +74,8 @@ def purl_from_pattern(type_, pattern, uri):
     compiled_pattern = re.compile(pattern, re.VERBOSE)
     match = compiled_pattern.match(uri)
 
-    if not match:
-        return
-
-    return PackageURL(
-        type_,
-        name=match.group('name'),
-        version=match.group('version'),
-    )
+    if match:
+        return PackageURL(type_, **match.groupdict())
 
 
 @purl_router.route('https?://registry.npmjs.*/.*',
@@ -236,3 +230,16 @@ nuget_pattern2 = (
 @purl_router.route(nuget_pattern2)
 def build_nuget_purl(uri):
     return purl_from_pattern('nuget', nuget_pattern2, uri)
+
+
+# http://master.dl.sourceforge.net/project/libpng/zlib/1.2.3/zlib-1.2.3.tar.bz2
+sourceforge_pattern = (
+    r"^https?://.*sourceforge.net/project/"
+    r"(?P<namespace>.+-?)/(?P<name>.+-?)/(?P<version>[\.0-9]*?)/"
+    r"(?P=name)-(?P=version).*$"
+)
+
+
+@purl_router.route(sourceforge_pattern)
+def build_sourceforge_purl(uri):
+    return purl_from_pattern('sourceforge', sourceforge_pattern, uri)

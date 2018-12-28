@@ -112,5 +112,19 @@
   "http://www.nuget.org/api/v2/package/EntityFramework/6.1.0": "pkg:nuget/EntityFramework@6.1.0",
   "https://www.nuget.org/api/v2/package/MvvmLightLibs/4.1.23": "pkg:nuget/MvvmLightLibs@4.1.23",
   "https://www.nuget.org/api/v2/package/Twilio/3.4.1": "pkg:nuget/Twilio@3.4.1",
-  "https://api.nuget.org/v3-flatcontainer/newtonsoft.json/10.0.1/newtonsoft.json.10.0.1.nupkg": "pkg:nuget/newtonsoft.json@10.0.1"
+  "https://api.nuget.org/v3-flatcontainer/newtonsoft.json/10.0.1/newtonsoft.json.10.0.1.nupkg": "pkg:nuget/newtonsoft.json@10.0.1",
+
+  "http://master.dl.sourceforge.net/project/zznotes/zznotes/1.1.2/zznotes-1.1.2.tar.gz": "pkg:sourceforge/zznotes/zznotes@1.1.2",
+  "http://master.dl.sourceforge.net/project/zapping/zvbi/0.2.35/zvbi-0.2.35.tar.bz2": "pkg:sourceforge/zapping/zvbi@0.2.35",
+  "http://master.dl.sourceforge.net/project/libpng/zlib/1.2.3/zlib-1.2.3.tar.bz2": "pkg:sourceforge/libpng/zlib@1.2.3",
+  "http://master.dl.sourceforge.net/project/xmlstar/xmlstarlet/1.0.0/xmlstarlet-1.0.0-1.src.rpm": "pkg:sourceforge/xmlstar/xmlstarlet@1.0.0",
+  "http://master.dl.sourceforge.net/project/wxmozilla/wxMozilla/0.5.5/wxMozilla-0.5.5.exe": "pkg:sourceforge/wxmozilla/wxMozilla@0.5.5",
+  "http://iweb.dl.sourceforge.net/project/sblim/sblim-cim-client2/2.2.5/sblim-cim-client2-2.2.5-src.zip": "pkg:sourceforge/sblim/sblim-cim-client2@2.2.5",
+  "http://master.dl.sourceforge.net/project/zinnia/zinnia-win32/0.06/zinnia-win32-0.06.zip": "pkg:sourceforge/zinnia/zinnia-win32@0.06",
+  "http://master.dl.sourceforge.net/project/pwiki/pwiki/0.1.2/0.1.2.zip": null,
+  "http://master.dl.sourceforge.net/project/iswraid/iswraid/0.1.4.3/2.4.28-pre3-iswraid.patch.gz": null,
+  "http://master.dl.sourceforge.net/project/aloyscore/aloyscore/0.1a1%20stable/0.1a1_stable_AloysCore.zip": null,
+  "http://master.dl.sourceforge.net/project/myenterprise/OldFiles/1.0.0.2.MyEnterprise.Source.zip": null,
+  "http://master.dl.sourceforge.net/project/wxhaskell/wxhaskell/wxhaskell-0.9/wxhaskell-src-0.9.zip": null,
+  "http://master.dl.sourceforge.net/project/a2freedom/A2/1.2/a2freedom-1.2.zip": null
 }
