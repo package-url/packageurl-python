@@ -29,6 +29,7 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 import os
+import re
 
 try:
     from urlparse import urlparse  # Python 2
@@ -65,9 +66,22 @@ def get_purl(uri):
             return
 
 
+def purl_from_pattern(type_, pattern, uri):
+    uri = unquote_plus(uri)
+    compiled_pattern = re.compile(pattern, re.VERBOSE)
+    match = compiled_pattern.match(uri)
+
+    if match:
+        purl_data = {
+            field: value for field, value in match.groupdict().items()
+            if field in PackageURL._fields
+        }
+        return PackageURL(type_, **purl_data)
+
+
 @purl_router.route('https?://registry.npmjs.*/.*',
                    'https?://registry.yarnpkg.com/.*')
-def build_npm_url(uri):
+def build_npm_purl(uri):
     # npm URLs are difficult to disambiguate with regex
     if '/-/' in uri:
         return build_npm_download_purl(uri)
@@ -157,14 +171,95 @@ def build_maven_purl(uri):
     return PackageURL('maven', namespace, name, version, qualifiers)
 
 
-@purl_router.route('https?://rubygems.org/downloads/.*')
-def build_rubygems_url(uri):
-    if uri.endswith('/') or not uri.endswith('.gem'):
-        return
+# https://rubygems.org/downloads/jwt-0.1.8.gem
+rubygems_pattern = (
+    r"^https?://rubygems.org/downloads/"
+    r"(?P<name>.+)-(?P<version>.+)"
+    r"(\.gem)$"
+)
 
+
+@purl_router.route(rubygems_pattern)
+def build_rubygems_purl(uri):
+    return purl_from_pattern('rubygems', rubygems_pattern, uri)
+
+
+# https://pypi.python.org/packages/source/a/anyjson/anyjson-0.3.3.tar.gz
+pypi_pattern = (
+    r"(?P<name>.+)-(?P<version>.+)"
+    r"\.(zip|tar.gz|tar.bz2|.tgz)$"
+)
+
+# This pattern can be found in the following locations:
+# - wheel.wheelfile.WHEEL_INFO_RE
+# - distlib.wheel.FILENAME_RE
+# - setuptools.wheel.WHEEL_NAME
+# - pip._internal.wheel.Wheel.wheel_file_re
+wheel_file_re = re.compile(
+    r"^(?P<namever>(?P<name>.+?)-(?P<version>.*?))"
+    r"((-(?P<build>\d[^-]*?))?-(?P<pyver>.+?)-(?P<abi>.+?)-(?P<plat>.+?)"
+    r"\.whl)$",
+    re.VERBOSE
+)
+
+
+@purl_router.route('https?://.+python.+org/packages/.*')
+def build_pypi_purl(uri):
     path = unquote_plus(urlparse(uri).path)
     last_segment = path.split('/')[-1]
-    archive_basename = last_segment.rstrip('.gem')
-    name, _, version = archive_basename.rpartition('-')
 
-    return PackageURL('rubygems', name=name, version=version)
+    # /wheel-0.29.0-py2.py3-none-any.whl
+    if last_segment.endswith('.whl'):
+        match = wheel_file_re.match(last_segment)
+        if match:
+            return PackageURL(
+                'pypi',
+                name=match.group('name'),
+                version=match.group('version'),
+            )
+
+    return purl_from_pattern('pypi', pypi_pattern, last_segment)
+
+
+# http://nuget.org/packages/EntityFramework/4.2.0.0
+# https://www.nuget.org/api/v2/package/Newtonsoft.Json/11.0.1
+nuget_pattern1 = (
+    r"^https?://.*nuget.org/(api/v2/)?packages?/"
+    r"(?P<name>.+)/"
+    r"(?P<version>.+)$"
+)
+
+
+@purl_router.route(nuget_pattern1)
+def build_nuget_purl(uri):
+    return purl_from_pattern('nuget', nuget_pattern1, uri)
+
+
+# https://api.nuget.org/v3-flatcontainer/newtonsoft.json/10.0.1/newtonsoft.json.10.0.1.nupkg
+nuget_pattern2 = (
+    r"^https?://api.nuget.org/v3-flatcontainer/"
+    r"(?P<name>.+)/"
+    r"(?P<version>.+)/"
+    r".*(nupkg)$"  # ends with "nupkg"
+)
+
+
+@purl_router.route(nuget_pattern2)
+def build_nuget_purl(uri):
+    return purl_from_pattern('nuget', nuget_pattern2, uri)
+
+
+# http://master.dl.sourceforge.net/project/libpng/zlib/1.2.3/zlib-1.2.3.tar.bz2
+sourceforge_pattern = (
+    r"^https?://.*sourceforge.net/project/"
+    r"(?P<namespace>([^/]+))/"  # do not allow more "/" segments
+    r"(?P<name>.+)/"
+    r"(?P<version>[0-9\.]+)/"  # version restricted to digits and dots
+    r"(?P=name)-(?P=version).*"  # {name}-{version} repeated in the filename
+    r"[^/]$"  # not ending with "/"
+)
+
+
+@purl_router.route(sourceforge_pattern)
+def build_sourceforge_purl(uri):
+    return purl_from_pattern('sourceforge', sourceforge_pattern, uri)
