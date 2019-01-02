@@ -38,9 +38,6 @@ except ImportError:
     from urllib.parse import urlparse  # Python 3
     from urllib.parse import unquote_plus
 
-from pip._internal.wheel import Wheel
-from pip._internal.exceptions import InvalidWheelFilename
-
 from packageurl import PackageURL
 from packageurl.contrib.route import Router
 from packageurl.contrib.route import NoRouteAvailable
@@ -187,25 +184,39 @@ def build_rubygems_purl(uri):
     return purl_from_pattern('rubygems', rubygems_pattern, uri)
 
 
-# https://pypi.python.org/packages/source/p/python-openid/python-openid-2.2.5.zip
+# https://pypi.python.org/packages/source/a/anyjson/anyjson-0.3.3.tar.gz
 pypi_pattern = (
     r"(?P<name>.+)-(?P<version>.+)"
-    r"\.(zip|tar.gz|tar.bz2)$"
+    r"\.(zip|tar.gz|tar.bz2|.tgz)$"
+)
+
+# This pattern can be found in the following locations:
+# - wheel.wheelfile.WHEEL_INFO_RE
+# - distlib.wheel.FILENAME_RE
+# - setuptools.wheel.WHEEL_NAME
+# - pip._internal.wheel.Wheel.wheel_file_re
+wheel_file_re = re.compile(
+    r"^(?P<namever>(?P<name>.+?)-(?P<version>.*?))"
+    r"((-(?P<build>\d[^-]*?))?-(?P<pyver>.+?)-(?P<abi>.+?)-(?P<plat>.+?)"
+    r"\.whl)$",
+    re.VERBOSE
 )
 
 
-@purl_router.route('https?://pypi.python.org/packages/.*')
+@purl_router.route('https?://.+python.+org/packages/.*')
 def build_pypi_purl(uri):
     path = unquote_plus(urlparse(uri).path)
     last_segment = path.split('/')[-1]
 
-    # https://pypi.python.org/packages/py2.py3/w/wheel/wheel-0.29.0-py2.py3-none-any.whl
+    # /wheel-0.29.0-py2.py3-none-any.whl
     if last_segment.endswith('.whl'):
-        try:
-            wheel = Wheel(last_segment)
-        except InvalidWheelFilename:
-            return
-        return PackageURL('pypi', name=wheel.name, version=wheel.version)
+        match = wheel_file_re.match(last_segment)
+        if match:
+            return PackageURL(
+                'pypi',
+                name=match.group('name'),
+                version=match.group('version'),
+            )
 
     return purl_from_pattern('pypi', pypi_pattern, last_segment)
 
