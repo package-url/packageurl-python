@@ -12,3 +12,4 @@ include
 pip-selfcheck.json
 pyvenv.cfg
 .Python
+/.tox/
