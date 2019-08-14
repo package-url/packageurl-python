@@ -28,6 +28,7 @@ from __future__ import absolute_import
 from __future__ import print_function
 from __future__ import unicode_literals
 
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
@@ -120,4 +121,9 @@ class PackageURLMixin(models.Model):
             package_url = PackageURL.from_string(package_url)
 
         for field_name, value in package_url.to_dict(encode=True).items():
+            model_field = self._meta.get_field(field_name)
+
+            if value and len(value) > model_field.max_length:
+                raise ValidationError(_(f'Value too long for field "{field_name}".'))
+
             setattr(self, field_name, value or None)
