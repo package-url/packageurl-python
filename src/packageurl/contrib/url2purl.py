@@ -263,3 +263,16 @@ sourceforge_pattern = (
 @purl_router.route(sourceforge_pattern)
 def build_sourceforge_purl(uri):
     return purl_from_pattern('sourceforge', sourceforge_pattern, uri)
+
+
+cargo_pattern= (
+    r"^https?://crates.io/api/v1/crates/"
+    r"(?P<name>.+)/(?P<version>.+)"
+    r"(\/download)$"
+)
+
+
+#https://crates.io/api/v1/crates/rand/0.7.2/download
+@purl_router.route(cargo_pattern)
+def build_cargo_purl(uri):
+    return purl_from_pattern('cargo', cargo_pattern, uri)

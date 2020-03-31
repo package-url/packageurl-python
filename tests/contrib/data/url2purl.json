@@ -135,5 +135,9 @@
   "http://master.dl.sourceforge.net/project/a2freedom/A2/1.2/a2freedom-1.2.zip": null,
   "http://master.dl.sourceforge.net/project/tinyos/OldFiles/tinyos/1.1.0/tinyos-1.1.0.tar.gz": null,
   "http://master.dl.sourceforge.net/project/urlchecker/lu/ng/urlchecker/urlchecker/1.7/urlchecker-1.7-javadoc.jar": null,
-  "http://master.dl.sourceforge.net/project/zclasspath/maven2/org/zclasspath/zclasspath/1.5/zclasspath-1.5.jar": null
+  "http://master.dl.sourceforge.net/project/zclasspath/maven2/org/zclasspath/zclasspath/1.5/zclasspath-1.5.jar": null,
+
+  "https://crates.io/api/v1/crates/rand/0.7.2/download": "pkg:cargo/rand@0.7.2",
+  "https://crates.io/api/v1/crates/clap/2.33.0/download" : "pkg:cargo/clap@2.33.0",
+  "https://crates.io/api/v1/crates/structopt/0.3.11/download" : "pkg:cargo/structopt@0.3.11"
 }
