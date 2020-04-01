@@ -276,3 +276,17 @@ cargo_pattern= (
 @purl_router.route(cargo_pattern)
 def build_cargo_purl(uri):
     return purl_from_pattern('cargo', cargo_pattern, uri)
+
+
+hackage_pattern= (
+    r"^https?://hackage.haskell.org/package/"
+    r"(?P<name>.+)-(?P<version>.+)/"
+    r"(?P=name)-(?P=version).*"
+    r"[^/]$"
+)
+
+
+#https://hackage.haskell.org/package/a50-0.5/a50-0.5.tar.gz
+@purl_router.route(hackage_pattern)
+def build_hackage_purl(uri):
+    return purl_from_pattern('hackage', hackage_pattern, uri)
