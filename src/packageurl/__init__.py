@@ -282,6 +282,9 @@ class PackageURL(namedtuple('PackageURL', _components)):
     def __str__(self, *args, **kwargs):
         return self.to_string()
 
+    def __hash__(self):
+        return hash(self.to_string())
+
     def to_dict(self, encode=False):
         """
         Return an ordered dict of purl components as {key: value}. If `encode`
