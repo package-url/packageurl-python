@@ -51,7 +51,7 @@ This simple library support this kind of arbitrary URI routing.
 
 This is inspired by Guido's http://www.artima.com/weblogs/viewpost.jsp?thread=101605
 and Django, Flask, Werkzeug and other url dispatch and routing design from web
-frameworks. 
+frameworks.
 https://github.com/douban/brownant has a similar approach, using
 Werkzeug with the limitation that it does not route based on URI scheme and is
 limited to HTTP.
