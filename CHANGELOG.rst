@@ -5,3 +5,4 @@ Changelog
 ------------------
 
 - Make PackageURL hashable.
+- Add cargo type or url2purl
