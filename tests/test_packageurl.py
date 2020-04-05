@@ -286,3 +286,9 @@ class NormalizePurlTest(unittest.TestCase):
             ('subpath', u'this/is/a/path')
         ])
         assert expected == purl.to_dict(encode=True)
+
+
+def test_purl_is_hashable():
+    s = {PackageURL(name='hashable', type='pypi')}
+    assert len(s) == 1
+
