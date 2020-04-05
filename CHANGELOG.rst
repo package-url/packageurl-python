@@ -1,7 +1,7 @@
 Changelog
 =========
 
-x.x.x (2017-xx-xx)
+0.9.0 (2020-04-06)
 ------------------
 
-Initial release
+- Make PackageURL hashable.
