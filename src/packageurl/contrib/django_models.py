@@ -69,7 +69,7 @@ class PackageURLMixin(models.Model):
     )
 
     version = models.CharField(
-        max_length=50,
+        max_length=100,
         blank=True,
         null=True,
         help_text=_('Version of the package.'),
