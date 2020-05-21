@@ -4,3 +4,7 @@ packageurl-python:
 - Philippe Ombredanne @pombredanne
 - Jiri Popelka @jpopelka
 - Thomas Druez @tdruez
+- Jono Yang @JonoYang
+- Sebastain Schuberth @sschuberth
+- Tushar Goel @TG1999
+- Haiko Schol @haikoschol
