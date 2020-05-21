@@ -69,7 +69,7 @@ class PackageURLMixin(models.Model):
     )
 
     version = models.CharField(
-        max_length=50,
+        max_length=100,
         blank=True,
         null=True,
         help_text=_('Version of the package.'),
@@ -124,6 +124,6 @@ class PackageURLMixin(models.Model):
             model_field = self._meta.get_field(field_name)
 
             if value and len(value) > model_field.max_length:
-                raise ValidationError(_(f'Value too long for field "{field_name}".'))
+                raise ValidationError(_('Value too long for field "{}".'.format(field_name)))
 
             setattr(self, field_name, value or None)
