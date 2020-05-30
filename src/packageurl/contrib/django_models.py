@@ -31,6 +31,7 @@ from __future__ import unicode_literals
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
+from django.contrib.postgres.fields import JSONField
 
 from packageurl import PackageURL
 
@@ -75,7 +76,8 @@ class PackageURLMixin(models.Model):
         help_text=_('Version of the package.'),
     )
 
-    qualifiers = models.CharField(
+    # Use  models.JSONField once Django 3.1 is officially released
+    qualifiers = JSONField(
         max_length=1024,
         blank=True,
         null=True,
@@ -120,7 +122,7 @@ class PackageURLMixin(models.Model):
         if not isinstance(package_url, PackageURL):
             package_url = PackageURL.from_string(package_url)
 
-        for field_name, value in package_url.to_dict(encode=True).items():
+        for field_name, value in package_url.to_dict().items():
             model_field = self._meta.get_field(field_name)
 
             if value and len(value) > model_field.max_length:
