@@ -31,7 +31,11 @@ from __future__ import unicode_literals
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
-from django.contrib.postgres.fields import JSONField
+try:
+    from models import JSONField
+except ImportError:
+    from django.contrib.postgres.fields import JSONField
+
 
 from packageurl import PackageURL
 
@@ -78,8 +82,7 @@ class PackageURLMixin(models.Model):
 
     # Use  models.JSONField once Django 3.1 is officially released
     qualifiers = JSONField(
-        max_length=1024,
-        blank=True,
+        default=dict,
         null=True,
         help_text=_(
             'Extra qualifying data for a package such as the name of an OS, '
