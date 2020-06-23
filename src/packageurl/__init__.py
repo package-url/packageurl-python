@@ -69,7 +69,7 @@ def quote(s):
     """
     if isinstance(s, unicode):
         s = s.encode('utf-8')
-    quoted = _percent_quote(s)
+    quoted = _percent_quote(s, safe='')
     if not isinstance(quoted, unicode):
         quoted = quoted.decode('utf-8')
     quoted = quoted.replace('%3A', ':')
