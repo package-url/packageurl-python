@@ -62,14 +62,14 @@ https://github.com/package-url/purl-spec
 """
 
 
-def quote(s):
+def quote(s, safe='/'):
     """
     Return a percent-encoded unicode string, except for colon :, given an `s`
     byte or unicode string.
     """
     if isinstance(s, unicode):
         s = s.encode('utf-8')
-    quoted = _percent_quote(s, safe='')
+    quoted = _percent_quote(s, safe=safe)
     if not isinstance(quoted, unicode):
         quoted = quoted.decode('utf-8')
     quoted = quoted.replace('%3A', ':')
@@ -131,7 +131,10 @@ def normalize_name(name, ptype, encode=True):  # NOQA
         name = name.decode('utf-8')
 
     quoter = get_quoter(encode)
-    name = quoter(name)
+    if encode:
+        name = quoter(name, safe='')
+    else:
+        name = quoter(name)
     name = name.strip().strip('/')
     if ptype in ('bitbucket', 'github', 'pypi',):
         name = name.lower()
