@@ -69,6 +69,8 @@ def quote(s, safe='/'):
     """
     if isinstance(s, unicode):
         s = s.encode('utf-8')
+    if isinstance(safe, unicode):
+        safe = safe.encode('utf-8')
     quoted = _percent_quote(s, safe=safe)
     if not isinstance(quoted, unicode):
         quoted = quoted.decode('utf-8')
@@ -83,7 +85,7 @@ def unquote(s):
     """
     unquoted = _percent_unquote(s)
     if not isinstance(unquoted, unicode):
-        unquoted = unquoted .decode('utf-8')
+        unquoted = unquoted.decode('utf-8')
     return unquoted
 
 
