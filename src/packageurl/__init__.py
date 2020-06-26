@@ -124,14 +124,14 @@ def normalize_namespace(namespace, ptype, encode=True):  # NOQA
     return '/'.join(segments) or None
 
 
-def normalize_name(name, ptype, encode=True):  # NOQA
+def normalize_name(name, ptype, encode=True, name_has_slash=False):  # NOQA
     if not name:
         return
     if not isinstance(name, unicode):
         name = name.decode('utf-8')
 
     quoter = get_quoter(encode)
-    if encode:
+    if encode and name_has_slash:
         name = quoter(name, safe='')
     else:
         name = quoter(name)
@@ -231,13 +231,13 @@ def normalize_subpath(subpath, encode=True):  # NOQA
     return subpath or None
 
 
-def normalize(type, namespace, name, version, qualifiers, subpath, encode=True):  # NOQA
+def normalize(type, namespace, name, version, qualifiers, subpath, encode=True, name_has_slash=False):  # NOQA
     """
     Return normalized purl components
     """
     type = normalize_type(type, encode)  # NOQA
     namespace = normalize_namespace(namespace, type, encode)
-    name = normalize_name(name, type, encode)
+    name = normalize_name(name, type, encode, name_has_slash=name_has_slash)
     version = normalize_version(version, encode)
     qualifiers = normalize_qualifiers(qualifiers, encode)
     subpath = normalize_subpath(subpath, encode)
@@ -254,7 +254,7 @@ class PackageURL(namedtuple('PackageURL', _components)):
     """
 
     def __new__(self, type=None, namespace=None, name=None,  # NOQA
-                version=None, qualifiers=None, subpath=None):
+                version=None, qualifiers=None, subpath=None, name_has_slash=False):
 
         required = dict(type=type, name=name)
         for key, value in required.items():
@@ -276,7 +276,7 @@ class PackageURL(namedtuple('PackageURL', _components)):
                              .format('qualifiers', repr(qualifiers)))
 
         type, namespace, name, version, qualifiers, subpath = normalize(# NOQA
-            type, namespace, name, version, qualifiers, subpath, encode=None)
+            type, namespace, name, version, qualifiers, subpath, encode=None, name_has_slash=name_has_slash)
 
         return super(PackageURL, self).__new__(PackageURL, type=type,
             namespace=namespace, name=name, version=version,

@@ -201,6 +201,24 @@ class NormalizePurlTest(unittest.TestCase):
                           qualifiers_as_dict, subpath)
         assert canonical_purl == purl.to_string()
 
+    def test_create_PackageURL_from_qualifiers_dict_with_name_has_slash(self):
+        type = 'generic' #NOQA
+        namespace = 'namespace.test'
+        name = 'Contains/Slash'
+        version = '1.2.3'
+        qualifiers_as_dict = {
+            'classifier': 'sources',
+            'repository_url': 'repo.test.io/release'
+        }
+        subpath = None
+
+        purl = PackageURL(type, namespace, name, version,
+                          qualifiers_as_dict, subpath, name_has_slash=True)
+        assert name == purl.name
+
+        purl_from_str = PackageURL.from_string(purl.to_string())
+        assert purl.to_string() == purl_from_str.to_string()
+
     def test_normalize_encode_can_take_unicode_with_non_ascii_with_slash(self):
         uncd = u'núcleo/núcleo'
         normal = normalize(
