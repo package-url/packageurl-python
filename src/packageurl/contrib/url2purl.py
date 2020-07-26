@@ -66,10 +66,10 @@ def get_purl(uri):
             return
 
 
-def purl_from_pattern(type_, pattern, uri):
-    uri = unquote_plus(uri)
+def purl_from_pattern(type_, pattern, url):
+    url = unquote_plus(url)
     compiled_pattern = re.compile(pattern, re.VERBOSE)
-    match = compiled_pattern.match(uri)
+    match = compiled_pattern.match(url)
 
     if match:
         purl_data = {
@@ -77,6 +77,19 @@ def purl_from_pattern(type_, pattern, uri):
             if field in PackageURL._fields
         }
         return PackageURL(type_, **purl_data)
+
+
+def get_path_segments(url):
+    """
+    Return a list of path segments from a `url` string. This list may be empty. 
+    """
+    path = unquote_plus(urlparse(url).path)
+    segments = [seg for seg in path.split("/") if seg]
+
+    if len(segments) <= 1:
+        segments = []
+
+    return segments
 
 
 @purl_router.route('https?://registry.npmjs.*/.*',
@@ -272,7 +285,193 @@ cargo_pattern = (
 )
 
 
-# https://crates.io/api/v1/crates/rand/0.7.2/download
 @purl_router.route(cargo_pattern)
-def build_cargo_purl(uri):
-    return purl_from_pattern('cargo', cargo_pattern, uri)
+def build_cargo_purl(url):
+    """
+    Return a PackageURL from a crates.io URL.
+    For example: https://crates.io/api/v1/crates/rand/0.7.2/download
+    """
+    return purl_from_pattern(type_='cargo', pattern=cargo_pattern, url=url)
+
+
+github_raw_content_pattern = (
+    r"^https?://raw.githubusercontent.com/"
+    r"(?P<namespace>.+)/(?P<name>.+)/(?P<version>.+)/"
+    r"(?P<subpath>.+)$"
+)
+
+
+@purl_router.route(github_raw_content_pattern)
+def build_github_raw_content_purl(url):
+    """
+    Return a PackageURL object from GitHub Raw Content `url`.
+    For example:
+    https://raw.githubusercontent.com/volatilityfoundation/dwarf2json/master/LICENSE.txt
+    """
+    return purl_from_pattern(type_='github', pattern=github_raw_content_pattern, url=url)
+
+
+@purl_router.route("https?://api.github\\.com/repos/.*")
+def build_github_api_purl(url):
+    """
+    Return a PackageURL object from GitHub API `url`.
+    For example:
+    https://api.github.com/repos/nexB/scancode-toolkit/commits/40593af0df6c8378d2b180324b97cb439fa11d66
+    https://api.github.com/repos/nexB/scancode-toolkit/ 
+    and returns a `PackageURL` object
+    """
+    segments = get_path_segments(url)
+
+    if not(len(segments) >= 3):
+        return
+    namespace = segments[1]
+    name = segments[2]
+    version = None
+
+    #https://api.github.com/repos/nexB/scancode-toolkit/
+    if len(segments) == 4 and segments[3] != 'commits':
+        version = segments[3]
+
+    #https://api.github.com/repos/nexB/scancode-toolkit/commits/40593af0df6c8378d2b180324b97cb439fa11d66
+    if len(segments) == 5 and segments[3] == "commits":
+        version = segments[4]
+
+    return PackageURL(
+        type='github', namespace=namespace, name=name, version=version
+    )
+
+
+github_codeload_pattern = (
+    r"https?://codeload.github.com/"
+    r"(?P<namespace>.+)/(?P<name>.+)/(zip|tar.gz|tar.bz2|.tgz)/v(?P<version>.+)$"
+)
+
+
+@purl_router.route(github_codeload_pattern)
+def build_github_codeload_purl(url):
+    """
+    Return a PackageURL object from GitHub codeload `url`.
+    For example:
+    https://codeload.github.com/nexB/scancode-toolkit/tar.gz/v3.1.1
+    """
+    return purl_from_pattern(type_='github', pattern=github_codeload_pattern, url=url)
+
+
+@purl_router.route("https?://github\\.com/.*")
+def build_github_purl(url):
+    """
+    Return a PackageURL object from GitHub `url`.
+    For example:
+    https://github.com/package-url/packageurl-js/tree/master/test/data or
+    https://github.com/package-url/packageurl-js/tree/master or
+    https://github.com/package-url/packageurl-js or
+    https://github.com/nexB/scancode-toolkit/archive/v3.1.1.zip
+    """
+    #https://github.com/nexB/scancode-toolkit/archive/v3.1.1.zip
+    gh_pattern = r"https?://github.com/(?P<namespace>.+)/(?P<name>.+)/archive/v(?P<version>.+).(zip|tar.gz|tar.bz2|.tgz)"
+    matches = re.search(gh_pattern, url)
+
+    if matches:
+        return purl_from_pattern(type_='github', pattern=gh_pattern, url=url)
+
+    segments = get_path_segments(url)
+
+    if segments==[]:
+        return
+    namespace = segments[0]
+    name = segments[1]
+    version = None
+    subpath = None
+
+    # https://github.com/TG1999/fetchcode/master
+    if len(segments) >= 3 and segments[2] != 'tree':
+        version = segments[2]
+        subpath = '/'.join(segments[3:])
+
+    # https://github.com/TG1999/fetchcode/tree/master
+    if len(segments) >= 4 and segments[2] == 'tree':
+        version = segments[3]
+        subpath = '/'.join(segments[4:])
+
+    return PackageURL(
+        type='github',
+        namespace=namespace,
+        name=name,
+        version=version,
+        subpath=subpath,
+    )
+
+
+@purl_router.route("https?://bitbucket\\.org/.*")
+def build_bitbucket_purl(url):
+    """
+    Return a PackageURL object from BitBucket `url`.
+    For example:
+    https://bitbucket.org/TG1999/first_repo/src/master or
+    https://bitbucket.org/TG1999/first_repo/src or
+    https://bitbucket.org/TG1999/first_repo/src/master/new_folder 
+    """
+    segments = get_path_segments(url)
+
+    if not segments:
+        return
+    namespace = segments[0]
+    name = segments[1]
+    version = None
+    subpath = None
+
+    # https://bitbucket.org/TG1999/first_repo/new_folder/
+    if len(segments) >= 3 and segments[2] != 'src':
+        version = segments[2]
+        subpath = '/'.join(segments[3:])
+
+    # https://bitbucket.org/TG1999/first_repo/src/master/new_folder/
+    if len(segments) >= 4 and segments[2] == 'src':
+        version = segments[3]
+        subpath = '/'.join(segments[4:])
+
+    return PackageURL(
+        type='bitbucket',
+        namespace=namespace,
+        name=name,
+        version=version,
+        subpath=subpath,
+    )
+
+
+@purl_router.route("https?://gitlab\\.com/.*")
+def build_gitlab_purl(url):
+    """
+    Return a PackageURL object from Gitlab `url`.
+    For example:
+    https://gitlab.com/TG1999/firebase/-/tree/1a122122/views
+    https://gitlab.com/TG1999/firebase/-/tree
+    https://gitlab.com/TG1999/firebase/-/master
+    https://gitlab.com/tg1999/Firebase/-/tree/master
+    """
+    segments = get_path_segments(url)
+
+    if not segments:
+        return
+    namespace = segments[0]
+    name = segments[1]
+    version = None
+    subpath = None
+
+    # https://gitlab.com/TG1999/firebase/master
+    if (len(segments) >= 3) and segments[2] != '-' and segments[2] != 'tree':
+        version = segments[2]
+        subpath = '/'.join(segments[3:])
+
+    # https://gitlab.com/TG1999/firebase/-/tree/master
+    if len(segments) >= 5 and (segments[2] == '-' and segments[3] == 'tree'):
+        version = segments[4]
+        subpath = '/'.join(segments[5:])
+
+    return PackageURL(
+        type='gitlab',
+        namespace=namespace,
+        name=name,
+        version=version,
+        subpath=subpath,
+    )
