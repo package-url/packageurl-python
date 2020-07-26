@@ -117,7 +117,7 @@ def normalize_namespace(namespace, ptype, encode=True):  # NOQA
         namespace = namespace.decode('utf-8')
 
     namespace = namespace.strip().strip('/')
-    if ptype in ('bitbucket', 'github', 'pypi'):
+    if ptype in ('bitbucket', 'github', 'pypi', 'gitlab'):
         namespace = namespace.lower()
     segments = [seg for seg in namespace.split('/') if seg.strip()]
     segments = map(get_quoter(encode), segments)
@@ -133,7 +133,7 @@ def normalize_name(name, ptype, encode=True):  # NOQA
     quoter = get_quoter(encode)
     name = quoter(name)
     name = name.strip().strip('/')
-    if ptype in ('bitbucket', 'github', 'pypi',):
+    if ptype in ('bitbucket', 'github', 'pypi', 'gitlab'):
         name = name.lower()
     if ptype in ('pypi',):
         name = name.replace('_', '-')
