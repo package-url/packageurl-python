@@ -285,16 +285,21 @@ class PackageURL(namedtuple('PackageURL', _components)):
     def __hash__(self):
         return hash(self.to_string())
 
-    def to_dict(self, encode=False):
+    def to_dict(self, encode=False, empty=None):
         """
-        Return an ordered dict of purl components as {key: value}. If `encode`
-        is True, then "qualifiers" are encoded as a normalized string.
-        Otherwise, qualifiers is a mapping.
+        Return an ordered dict of purl components as {key: value}.
+        If `encode` is True, then "qualifiers" are encoded as a normalized
+        string. Otherwise, qualifiers is a mapping.
+        You can provide a value for `empty` to be used in place of default None.
         """
         data = self._asdict()
         if encode:
             data['qualifiers'] = normalize_qualifiers(self.qualifiers,
                                                       encode=encode)
+
+        if empty is not None:
+            data = OrderedDict((k, v or empty) for k, v in data.items())
+
         return data
 
     def to_string(self):

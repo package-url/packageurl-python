@@ -42,7 +42,6 @@ class PackageURLMixin(models.Model):
     type = models.CharField(
         max_length=16,
         blank=True,
-        null=True,
         help_text=_(
             'A short code to identify the type of this package. '
             'For example: gem for a Rubygem, docker for a container, '
@@ -54,7 +53,6 @@ class PackageURLMixin(models.Model):
     namespace = models.CharField(
         max_length=255,
         blank=True,
-        null=True,
         help_text=_(
             'Package name prefix, such as Maven groupid, Docker image owner, '
             'GitHub user or organization, etc.'
@@ -64,21 +62,18 @@ class PackageURLMixin(models.Model):
     name = models.CharField(
         max_length=100,
         blank=True,
-        null=True,
         help_text=_('Name of the package.'),
     )
 
     version = models.CharField(
         max_length=100,
         blank=True,
-        null=True,
         help_text=_('Version of the package.'),
     )
 
     qualifiers = models.CharField(
         max_length=1024,
         blank=True,
-        null=True,
         help_text=_(
             'Extra qualifying data for a package such as the name of an OS, '
             'architecture, distro, etc.'
@@ -88,7 +83,6 @@ class PackageURLMixin(models.Model):
     subpath = models.CharField(
         max_length=200,
         blank=True,
-        null=True,
         help_text=_(
             'Extra subpath within a package, relative to the package root.'
         ),
@@ -114,16 +108,20 @@ class PackageURLMixin(models.Model):
     def set_package_url(self, package_url):
         """
         Set each field values to the values of the provided `package_url` string
-        or PackageURL object. Existing values are overwritten including setting
-        values to None for provided empty values.
+        or PackageURL object.
+        Existing values are always overwritten, forcing the new value or an
+        empty string on all the `package_url` fields since we do not want to
+        keep any previous values.
         """
         if not isinstance(package_url, PackageURL):
             package_url = PackageURL.from_string(package_url)
 
-        for field_name, value in package_url.to_dict(encode=True).items():
+        package_url_dict = package_url.to_dict(encode=True, empty='')
+        for field_name, value in package_url_dict.items():
             model_field = self._meta.get_field(field_name)
 
             if value and len(value) > model_field.max_length:
-                raise ValidationError(_('Value too long for field "{}".'.format(field_name)))
+                message = _('Value too long for field "{}".'.format(field_name))
+                raise ValidationError(message)
 
-            setattr(self, field_name, value or None)
+            setattr(self, field_name, value)
