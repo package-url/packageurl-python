@@ -475,3 +475,21 @@ def build_gitlab_purl(url):
         version=version,
         subpath=subpath,
     )
+
+
+hackage_pattern= (
+    r"^https?://hackage.haskell.org/package/"
+    r"(?P<name>.+)-(?P<version>.+)/"
+    r"(?P=name)-(?P=version).*"
+    r"[^/]$"
+)
+
+
+@purl_router.route(hackage_pattern)
+def build_hackage_purl(url):
+    """
+    Return a PackageURL object from GitHub Raw Content `url`.
+    For example:
+    https://hackage.haskell.org/package/a50-0.5/a50-0.5.tar.gz
+    """
+    return purl_from_pattern(type_='hackage', pattern=hackage_pattern, url=url)
