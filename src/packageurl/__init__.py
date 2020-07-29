@@ -298,7 +298,8 @@ class PackageURL(namedtuple('PackageURL', _components)):
                                                       encode=encode)
 
         if empty is not None:
-            data = OrderedDict((k, v or empty) for k, v in data.items())
+            for field, value in data.items():
+                data[field] = value or empty
 
         return data
 
