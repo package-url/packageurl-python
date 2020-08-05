@@ -290,10 +290,22 @@ class NormalizePurlTest(unittest.TestCase):
     def test_to_dict_custom_empty_value(self):
         purl = PackageURL(
             type='maven',
+            namespace='',
             name='commons-logging',
             version='12.3',
             qualifiers=None,
         )
+
+        expected = OrderedDict([
+            ('type', 'maven'),
+            ('namespace', None),
+            ('name', 'commons-logging'),
+            ('version', '12.3'),
+            ('qualifiers', None),
+            ('subpath', None)
+        ])
+        assert expected == purl.to_dict()
+        assert expected == purl.to_dict(empty=None)
 
         expected = OrderedDict([
             ('type', 'maven'),
@@ -304,7 +316,6 @@ class NormalizePurlTest(unittest.TestCase):
             ('subpath', '')
         ])
         assert expected == purl.to_dict(empty='')
-        assert expected == purl.to_dict(encode=True, empty='')
 
 
 def test_purl_is_hashable():

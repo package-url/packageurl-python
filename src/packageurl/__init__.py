@@ -294,12 +294,10 @@ class PackageURL(namedtuple('PackageURL', _components)):
         """
         data = self._asdict()
         if encode:
-            data['qualifiers'] = normalize_qualifiers(self.qualifiers,
-                                                      encode=encode)
+            data['qualifiers'] = normalize_qualifiers(self.qualifiers, encode=encode)
 
-        if empty is not None:
-            for field, value in data.items():
-                data[field] = value or empty
+        for field, value in data.items():
+            data[field] = value or empty
 
         return data
 
