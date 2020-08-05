@@ -1,6 +1,19 @@
 Changelog
 =========
 
+0.9.1 (2020-08-05)
+------------------
+
+- Add and improve URL <-> Package URL conversion for gitlab, github, cargo,
+  bitbucket and hackage URL conversions
+- Add new purl2url conversion utility
+- Remove the null=True on Django CharField fields of the PackageURLMixin
+- PackageURL.to_dict() now takes an optional "empty" argument with the value
+  that empty values to have. It defaults to None which was the current behaviour.
+  For some use cases, having an empty string may be a better option and this
+  enables this.
+
+
 0.9.0 (2020-05-21)
 ------------------
 

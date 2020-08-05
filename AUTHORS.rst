@@ -5,6 +5,6 @@ packageurl-python:
 - Jiri Popelka @jpopelka
 - Thomas Druez @tdruez
 - Jono Yang @JonoYang
-- Sebastain Schuberth @sschuberth
+- Sebastian Schuberth @sschuberth
 - Tushar Goel @TG1999
 - Haiko Schol @haikoschol
