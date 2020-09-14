@@ -343,7 +343,7 @@ def build_github_api_purl(url):
 
 github_codeload_pattern = (
     r"https?://codeload.github.com/"
-    r"(?P<namespace>.+)/(?P<name>.+)/(zip|tar.gz|tar.bz2|.tgz)/v(?P<version>.+)$"
+    r"(?P<namespace>.+)/(?P<name>.+)/(zip|tar.gz|tar.bz2|.tgz)/v?(?P<version>.+)$"
 )
 
 
@@ -370,13 +370,13 @@ def build_github_purl(url):
     # https://github.com/nexB/scancode-toolkit/archive/v3.1.1.zip
     archive_pattern = (
         r"https?://github.com/(?P<namespace>.+)/(?P<name>.+)"
-        r"/archive/v(?P<version>.+).(zip|tar.gz|tar.bz2|.tgz)"
+        r"/archive/v?(?P<version>.+).(zip|tar.gz|tar.bz2|.tgz)"
     )
 
     # https://github.com/pypa/get-virtualenv/raw/20.0.31/public/virtualenv.pyz
     raw_pattern = (
         r"https?://github.com/(?P<namespace>.+)/(?P<name>.+)"
-        r"/raw/(?P<version>[^/]+)/(?P<subpath>.*)$"
+        r"/raw/v?(?P<version>[^/]+)/(?P<subpath>.*)$"
     )
 
     for pattern in [archive_pattern, raw_pattern]:
