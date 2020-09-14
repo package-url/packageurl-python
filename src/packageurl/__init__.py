@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # Copyright (c) the purl authors
+# SPDX-License-Identifier: MIT
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -47,7 +48,7 @@ except ImportError:
 # Python 2 and 3 support
 try:
     # Python 2
-    unicode
+    unicode  # NOQA
     basestring = basestring  # NOQA
     bytes = str  # NOQA
     str = unicode  # NOQA
@@ -55,6 +56,7 @@ except NameError:
     # Python 3
     unicode = str  # NOQA
     basestring = (bytes, str,)  # NOQA
+    OrderedDict = dict
 
 """
 A purl (aka. Package URL) implementation as specified at:
@@ -260,8 +262,14 @@ class PackageURL(namedtuple('PackageURL', _components)):
             raise ValueError('Invalid purl: {} is a required argument.'
                              .format(key))
 
-        strings = dict(type=type, namespace=namespace, name=name,
-                       version=version, subpath=subpath)
+        strings = dict(
+            type=type,
+            namespace=namespace,
+            name=name,
+            version=version,
+            subpath=subpath,
+        )
+
         for key, value in strings.items():
             if value and isinstance(value, basestring) or not value:
                 continue
@@ -275,9 +283,15 @@ class PackageURL(namedtuple('PackageURL', _components)):
         type, namespace, name, version, qualifiers, subpath = normalize(# NOQA
             type, namespace, name, version, qualifiers, subpath, encode=None)
 
-        return super(PackageURL, self).__new__(PackageURL, type=type,
-            namespace=namespace, name=name, version=version,
-            qualifiers=qualifiers, subpath=subpath)
+        return super(PackageURL, self).__new__(
+            PackageURL,
+            type=type,
+            namespace=namespace,
+            name=name,
+            version=version,
+            qualifiers=qualifiers,
+            subpath=subpath,
+        )
 
     def __str__(self, *args, **kwargs):
         return self.to_string()
@@ -292,7 +306,7 @@ class PackageURL(namedtuple('PackageURL', _components)):
         string. Otherwise, qualifiers is a mapping.
         You can provide a value for `empty` to be used in place of default None.
         """
-        data = self._asdict()
+        data = OrderedDict(self._asdict())
         if encode:
             data['qualifiers'] = normalize_qualifiers(self.qualifiers, encode=encode)
 
@@ -306,9 +320,13 @@ class PackageURL(namedtuple('PackageURL', _components)):
         Return a purl string built from components.
         """
         type, namespace, name, version, qualifiers, subpath = normalize(# NOQA
-            self.type, self.namespace, self.name, self.version,
-            self.qualifiers, self.subpath,
-            encode=True
+            self.type,
+            self.namespace,
+            self.name,
+            self.version,
+            self.qualifiers,
+            self.subpath,
+            encode=True,
         )
 
         purl = ['pkg:', type, '/']
@@ -364,9 +382,7 @@ class PackageURL(namedtuple('PackageURL', _components)):
         if scheme or authority:
             msg = ('Invalid purl {} cannot contain a "user:pass@host:port" '
                    'URL Authority component: {}.')
-            raise ValueError(msg.format(
-                repr(purl), repr(authority)
-                                        ))
+            raise ValueError(msg.format(repr(purl), repr(authority)))
 
         path = path.lstrip('/')
         remainder, sep, version = path.rpartition('@')
@@ -392,8 +408,13 @@ class PackageURL(namedtuple('PackageURL', _components)):
                 'name component: {}'.format(repr(purl)))
 
         type, namespace, name, version, qualifiers, subpath = normalize(# NOQA
-            type, namespace, name, version, qualifiers, subpath,
-            encode=False
+            type,
+            namespace,
+            name,
+            version,
+            qualifiers,
+            subpath,
+            encode=False,
         )
 
         return PackageURL(type, namespace, name, version, qualifiers, subpath)
