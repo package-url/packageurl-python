@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # Copyright (c) the purl authors
+# SPDX-License-Identifier: MIT
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -23,7 +24,6 @@
 # Visit https://github.com/package-url/packageurl-python for support and
 # download.
 
-
 from __future__ import absolute_import
 from __future__ import print_function
 from __future__ import unicode_literals
@@ -41,7 +41,6 @@ try:  # Python 2
 except NameError:  # Python 3
     unicode = str  # NOQA
 
-
 from packageurl.contrib.url2purl import get_purl as purl_getter
 
 
@@ -51,6 +50,7 @@ def get_purl(url):
 
 
 class TestURL2PURL(TestCase):
+
     def test_get_purl_empty_string(self):
         self.assertEqual(None, get_purl(''))
 
@@ -72,8 +72,10 @@ def python_safe(s):
 
 
 def get_url2purl_test_method(test_url, expected_purl):
+
     def test_method(self):
         self.assertEqual(expected_purl, get_purl(test_url))
+
     return test_method
 
 

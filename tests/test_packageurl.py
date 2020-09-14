@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # Copyright (c) the purl authors
+# SPDX-License-Identifier: MIT
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -36,7 +37,6 @@ import unittest
 from packageurl import normalize_qualifiers
 from packageurl import normalize
 from packageurl import PackageURL
-
 
 # Python 2 and 3 support
 try:
@@ -154,6 +154,7 @@ build_tests()
 
 
 class NormalizePurlTest(unittest.TestCase):
+
     def test_normalize_qualifiers_as_string(self):
         qualifiers_as_dict = {
             'classifier': 'sources',

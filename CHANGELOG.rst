@@ -1,6 +1,15 @@
 Changelog
 =========
 
+0.9.2 (2020-09-15)
+------------------
+
+- Document usage in README
+- Adopt SPDX license identifier
+- Add support for GitHub "raw" URLs in url2purl #43
+- Improve GitHub support for "v" prefixed version in url2purl #43 
+
+
 0.9.1 (2020-08-05)
 ------------------
 

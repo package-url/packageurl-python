@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- encoding: utf-8 -*-
 
+# SPDX-License-Identifier: MIT
+
 from __future__ import absolute_import
 from __future__ import print_function
 
@@ -11,13 +13,12 @@ from os.path import splitext
 from setuptools import find_packages
 from setuptools import setup
 
-
 setup(
     name='packageurl-python',
-    version='0.9.1',
+    version='0.9.2',
     license='MIT',
-    description='A "purl" aka. package URL parser and builder',
-    long_description='Python library to parse and build "purl" aka. package URLs. '
+    description='A "purl" aka. Package URL parser and builder',
+    long_description='Python library to parse and build "purl" aka. Package URLs. '
     'This is a microlibrary implementing the purl spec at https://github.com/package-url',
     author='the purl authors',
     url='https://github.com/package-url/packageurl-python',
