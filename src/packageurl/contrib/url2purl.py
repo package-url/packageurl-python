@@ -367,17 +367,27 @@ def build_github_purl(url):
     https://github.com/package-url/packageurl-js or
     https://github.com/nexB/scancode-toolkit/archive/v3.1.1.zip
     """
-    #https://github.com/nexB/scancode-toolkit/archive/v3.1.1.zip
-    gh_pattern = r"https?://github.com/(?P<namespace>.+)/(?P<name>.+)/archive/v(?P<version>.+).(zip|tar.gz|tar.bz2|.tgz)"
-    matches = re.search(gh_pattern, url)
+    # https://github.com/nexB/scancode-toolkit/archive/v3.1.1.zip
+    archive_pattern = (
+        r"https?://github.com/(?P<namespace>.+)/(?P<name>.+)"
+        r"/archive/v(?P<version>.+).(zip|tar.gz|tar.bz2|.tgz)"
+    )
 
-    if matches:
-        return purl_from_pattern(type_='github', pattern=gh_pattern, url=url)
+    # https://github.com/pypa/get-virtualenv/raw/20.0.31/public/virtualenv.pyz
+    raw_pattern = (
+        r"https?://github.com/(?P<namespace>.+)/(?P<name>.+)"
+        r"/raw/(?P<version>[^/]+)/(?P<subpath>.*)$"
+    )
+
+    for pattern in [archive_pattern, raw_pattern]:
+        matches = re.search(pattern, url)
+        if matches:
+            return purl_from_pattern(type_='github', pattern=pattern, url=url)
 
     segments = get_path_segments(url)
-
-    if segments==[]:
+    if not segments:
         return
+
     namespace = segments[0]
     name = segments[1]
     version = None
