@@ -40,9 +40,8 @@ Usage
 Other utilities:
 
 - packageurl.contrib.django_models.PackageURLMixin is a Django abstract model mixin to use Package URLs in Django.
-- packageurl.contrib.purl2url.purl2url(purl) (and get_url) returns the download URL inferred from a Package URL.
-- packageurl.contrib.url2purl.url2purl(url) (and get_purl) returns a Package URL inferred from URL.
-
+- packageurl.contrib.purl2url.get_url(purl) returns the download URL inferred from a Package URL.
+- packageurl.contrib.url2purl.get_purl(url) returns a Package URL inferred from URL.
 
 
 Install
