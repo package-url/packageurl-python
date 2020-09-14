@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # Copyright (c) the purl authors
+# SPDX-License-Identifier: MIT
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -23,6 +24,11 @@
 # Visit https://github.com/package-url/packageurl-python for support and
 # download.
 
+
+from __future__ import absolute_import
+from __future__ import print_function
+from __future__ import unicode_literals
+
 from packageurl import PackageURL
 from packageurl.contrib.route import Router
 from packageurl.contrib.route import NoRouteAvailable
@@ -40,6 +46,9 @@ def purl2url(purl):
             return router.process(purl)
         except NoRouteAvailable:
             return
+
+
+get_url = purl2url
 
 
 @router.route("pkg:cargo/.*")

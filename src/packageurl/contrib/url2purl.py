@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # Copyright (c) the purl authors
+# SPDX-License-Identifier: MIT
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -55,15 +56,18 @@ in this single Python script.
 purl_router = Router()
 
 
-def get_purl(uri):
+def url2purl(url):
     """
-    Return a PackageURL inferred from the `uri` string or None.
+    Return a PackageURL inferred from the `url` string or None.
     """
-    if uri:
+    if url:
         try:
-            return purl_router.process(uri)
+            return purl_router.process(url)
         except NoRouteAvailable:
             return
+
+
+get_purl = url2purl
 
 
 def purl_from_pattern(type_, pattern, url):
@@ -244,7 +248,7 @@ nuget_pattern1 = (
 
 
 @purl_router.route(nuget_pattern1)
-def build_nuget_purl(uri):
+def build_nuget_purl1(uri):
     return purl_from_pattern('nuget', nuget_pattern1, uri)
 
 
@@ -258,7 +262,7 @@ nuget_pattern2 = (
 
 
 @purl_router.route(nuget_pattern2)
-def build_nuget_purl(uri):
+def build_nuget_purl2(uri):
     return purl_from_pattern('nuget', nuget_pattern2, uri)
 
 
