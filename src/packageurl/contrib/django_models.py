@@ -36,6 +36,57 @@ from django.utils.translation import gettext_lazy as _
 from packageurl import PackageURL
 
 
+def without_empty_values(input_dict):
+    """
+    Return a new dict not including empty value entries from `input_dict`.
+
+    `None`, empty string, empty list, and empty dict/set are cleaned.
+    `0` and `False` values are kept.
+    """
+    empty_values = ([], (), {}, '', None)
+
+    return {
+        key: value
+        for key, value in input_dict.items()
+        if value not in empty_values
+    }
+
+
+def purl_to_lookups(purl):
+    """
+    Return a lookups dict built from the provided `purl` string.
+    Those lookups can be used as QuerySet filters.
+    """
+    normalized_purl = f'pkg:{purl}' if not purl.startswith('pkg:') else purl
+
+    try:
+        package_url = PackageURL.from_string(normalized_purl)
+    except ValueError:
+        return  # Not a valid PackageURL
+
+    package_url_dict = package_url.to_dict(encode=True)
+    return without_empty_values(package_url_dict)
+
+
+class PackageURLQuerySetMixin:
+    """
+    Add Package URL filtering method to a django.db.models.QuerySet.
+    """
+    def for_package_url(self, purl_str):
+        """
+        Filter the QuerySet with the provided Package URL string.
+        The purl string is validated and transformed into filtering lookups.
+        """
+        lookups = purl_to_lookups(purl_str)
+        if lookups:
+            return self.filter(**lookups)
+        return self.none()
+
+
+class PackageURLQuerySet(PackageURLQuerySetMixin, models.QuerySet):
+    pass
+
+
 class PackageURLMixin(models.Model):
     """
     Abstract Model for Package URL "purl" fields support.
@@ -88,6 +139,8 @@ class PackageURLMixin(models.Model):
             'Extra subpath within a package, relative to the package root.'
         ),
     )
+
+    objects = PackageURLQuerySet.as_manager()
 
     class Meta:
         abstract = True
