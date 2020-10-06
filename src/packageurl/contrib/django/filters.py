@@ -29,12 +29,22 @@ from __future__ import absolute_import
 from __future__ import print_function
 from __future__ import unicode_literals
 
-import warnings
+import django_filters
 
-# Backward compatibility
-from packageurl.contrib.django.models import *
-warnings.warn(
-    'The `django_models` module location is deprecated. '
-    'Replace the `packageurl.contrib.django_models` imports with '
-    '`packageurl.contrib.django.models`.'
-)
+
+class PackageURLFilter(django_filters.CharFilter):
+    """
+    Filter by a Package URL string.
+    Empty values are not applied to the QuerySet.
+
+    This filter depends on a `for_package_url` method available on the Model
+    Manager, see for example `PackageURLQuerySetMixin`.
+    """
+    def filter(self, qs, value):
+        empty_values = ([], (), {}, '', None)
+        if value in empty_values:
+            return qs
+
+        if self.distinct:
+            qs = qs.distinct()
+        return qs.for_package_url(value)
