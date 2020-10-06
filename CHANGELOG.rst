@@ -1,6 +1,14 @@
 Changelog
 =========
 
+0.9.3 (2020-10-06)
+------------------
+
+- Add QuerySet utils to lookup and filter along the PackageURLMixin Django class #48
+- Add a PackageURLFilter class for Django FilterSet implementations #48
+- Move the django_models module to django.models #48
+  Replace `packageurl.contrib.django_models` imports with `packageurl.contrib.django.models`.
+
 0.9.2 (2020-09-15)
 ------------------
 
