@@ -81,10 +81,13 @@ Make a new release
 
     pip install --upgrade pip wheel twine setuptools
 
-- dele the "dist" and "build" directories
-- run::
+- delete the "dist" and "build" directories::
 
-   python setup.py bdist wheel
+    rm -rf dist/ build/
+
+- create a source distribution and wheel with::
+
+    python setup.py sdist bdist_wheel
 
 - finally, upload to PyPI::
 
