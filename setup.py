@@ -15,7 +15,7 @@ from setuptools import setup
 
 setup(
     name='packageurl-python',
-    version='0.9.2',
+    version='0.9.3',
     license='MIT',
     description='A "purl" aka. Package URL parser and builder',
     long_description='Python library to parse and build "purl" aka. Package URLs. '
