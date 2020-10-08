@@ -425,12 +425,30 @@ def build_bitbucket_purl(url):
     https://bitbucket.org/TG1999/first_repo/src or
     https://bitbucket.org/TG1999/first_repo/src/master/new_folder 
     """
+
     segments = get_path_segments(url)
 
     if not segments:
         return
     namespace = segments[0]
     name = segments[1]
+
+    bitbucket_download_pattern = (
+    r"https?://bitbucket.org/"
+    r"(?P<namespace>.+)/(?P<name>.+)/downloads/(?P<version>.+).(zip|tar.gz|tar.bz2|.tgz)"
+    )
+    matches = re.search(bitbucket_download_pattern, url)
+
+    qualifiers = {}
+    if matches:
+        qualifiers['download_url'] = url
+        return PackageURL(
+        type='bitbucket',
+        namespace=namespace,
+        name=name,
+        qualifiers=qualifiers
+        )
+
     version = None
     subpath = None
 
