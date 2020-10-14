@@ -165,6 +165,10 @@
   "https://github.com/nexB/scancode-toolkit/archive/v3.1.1.zip": "pkg:github/nexb/scancode-toolkit@3.1.1",
   "https://github.com/pypa/get-virtualenv/raw/20.0.31/public/virtualenv.pyz": "pkg:github/pypa/get-virtualenv@20.0.31#public/virtualenv.pyz",
   "https://github.com/pypa/get-virtualenv/raw/v20.0.31/public/virtualenv.pyz": "pkg:github/pypa/get-virtualenv@20.0.31#public/virtualenv.pyz",
+  "https://github.com/fanf2/unifdef/blob/master/unifdef.c": "pkg:github/fanf2/unifdef@master#unifdef.c",
+  "https://github.com/joebeeson/amazon/blob/master/vendors/aws-sdk/sdk.class.php": "pkg:github/joebeeson/amazon@master#vendors/aws-sdk/sdk.class.php",
+  "https://github.com/modelfabric/yowl/blob/master/bin/yowl": "pkg:github/modelfabric/yowl@master#bin/yowl",
+
 
   "https://bitbucket.org/TG1999/first_repo/src/qa/": "pkg:bitbucket/tg1999/first_repo@qa",
   "https://bitbucket.org/TG1999/first_repo/src/QA/": "pkg:bitbucket/tg1999/first_repo@QA",

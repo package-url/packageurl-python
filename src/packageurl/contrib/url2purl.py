@@ -383,7 +383,12 @@ def build_github_purl(url):
         r"/raw/v?(?P<version>[^/]+)/(?P<subpath>.*)$"
     )
 
-    for pattern in [archive_pattern, raw_pattern]:
+    blob_pattern = (
+        r"https?://github.com/"
+        r"(?P<namespace>.+)/(?P<name>.+)/blob/(?P<version>[^/]+)/(?P<subpath>.*)$"
+    )
+
+    for pattern in [archive_pattern, raw_pattern, blob_pattern]:
         matches = re.search(pattern, url)
         if matches:
             return purl_from_pattern(type_='github', pattern=pattern, url=url)
@@ -403,7 +408,7 @@ def build_github_purl(url):
         subpath = '/'.join(segments[3:])
 
     # https://github.com/TG1999/fetchcode/tree/master
-    if len(segments) >= 4 and segments[2] == 'tree':
+    if len(segments) >= 4 and segments[2] == 'tree' :
         version = segments[3]
         subpath = '/'.join(segments[4:])
 
