@@ -173,7 +173,10 @@
   "https://github.com/fanf2/unifdef/blob/master/unifdef.c": "pkg:github/fanf2/unifdef@master#unifdef.c",
   "https://github.com/joebeeson/amazon/blob/master/vendors/aws-sdk/sdk.class.php": "pkg:github/joebeeson/amazon@master#vendors/aws-sdk/sdk.class.php",
   "https://github.com/modelfabric/yowl/blob/master/bin/yowl": "pkg:github/modelfabric/yowl@master#bin/yowl",
-
+  "https://github.com/syncthing/syncthing/releases/download/v0.14.36/syncthing-source-v0.14.36.tar.gz": "pkg:github/syncthing/syncthing@v0.14.36?download_url=https://github.com/syncthing/syncthing/releases/download/v0.14.36/syncthing-source-v0.14.36.tar.gz",
+  "https://github.com/torakiki/pdfsam/releases/download/v3.3.2/pdfsam-3.3.2-bin.zip": "pkg:github/torakiki/pdfsam@v3.3.2?download_url=https://github.com/torakiki/pdfsam/releases/download/v3.3.2/pdfsam-3.3.2-bin.zip",
+  "https://github.com/yarnpkg/yarn/releases/download/v1.3.2/yarn-v1.3.2.tar.gz": "pkg:github/yarnpkg/yarn@v1.3.2?download_url=https://github.com/yarnpkg/yarn/releases/download/v1.3.2/yarn-v1.3.2.tar.gz",
+  "https://github.com/z3APA3A/3proxy/releases/download/0.8.11/3proxy-0.8.11.zip": "pkg:github/z3apa3a/3proxy@0.8.11?download_url=https://github.com/z3APA3A/3proxy/releases/download/0.8.11/3proxy-0.8.11.zip",
 
   "https://bitbucket.org/TG1999/first_repo/src/qa/": "pkg:bitbucket/tg1999/first_repo@qa",
   "https://bitbucket.org/TG1999/first_repo/src/QA/": "pkg:bitbucket/tg1999/first_repo@QA",
