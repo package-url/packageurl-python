@@ -299,9 +299,8 @@ def build_cargo_purl(url):
 
 
 github_raw_content_pattern = (
-    r"^https?://raw.githubusercontent.com/"
-    r"(?P<namespace>.+)/(?P<name>.+)/(?P<version>.+)/"
-    r"(?P<subpath>.+)$"
+    r"https?://raw.githubusercontent.com/(?P<namespace>.+)/(?P<name>.+)/"
+    r"(?P<version>[^/]+)/(?P<subpath>.*)$"
 )
 
 
