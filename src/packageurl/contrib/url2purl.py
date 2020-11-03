@@ -104,6 +104,7 @@ def get_path_segments(url):
 
     return segments
 
+
 @purl_router.route('https?://registry.npmjs.*/.*',
                    'https?://registry.yarnpkg.com/.*',
                    'https?://(www\\.)?npmjs.*/package/.*',
@@ -159,6 +160,7 @@ def build_npm_download_purl(uri):
     version = base_filename.split('-')[-1]
 
     return PackageURL('npm', namespace, name, version)
+
 
 def build_npm_web_purl(uri):
     path = unquote_plus(urlparse(uri).path)
@@ -369,7 +371,7 @@ def build_github_api_purl(url):
 # https://codeload.github.com/nexB/scancode-toolkit/tar.gz/v3.1.1
 github_codeload_pattern = (
     r"https?://codeload.github.com/"
-    r"(?P<namespace>.+)/(?P<name>.+)/(zip|tar.gz|tar.bz2|.tgz)/v?(?P<version>.+)$"
+    r"(?P<namespace>.+)/(?P<name>.+)/(zip|tar.gz|tar.bz2|tgz)/v?(?P<version>.+)$"
 )
 
 register_pattern('github', github_codeload_pattern)
@@ -411,7 +413,7 @@ def build_github_purl(url):
         matches = re.search(pattern, url)
         qualifiers = {}
         if matches:
-            if pattern not in [releases_download_pattern]:
+            if pattern != releases_download_pattern:
                 return purl_from_pattern(type_='github', pattern=pattern, url=url)
             qualifiers['download_url'] = url
             purl = purl_from_pattern(type_='github', pattern=pattern, url=url)
