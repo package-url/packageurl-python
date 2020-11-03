@@ -104,12 +104,15 @@ def get_path_segments(url):
 
     return segments
 
-
 @purl_router.route('https?://registry.npmjs.*/.*',
-                   'https?://registry.yarnpkg.com/.*')
+                   'https?://registry.yarnpkg.com/.*',
+                   'https?://(www\\.)?npmjs.*/package/.*',
+                   'https?://(www\\.)?yarnpkg.com/package/.*')
 def build_npm_purl(uri):
     # npm URLs are difficult to disambiguate with regex
-    if '/-/' in uri:
+    if '/package/' in uri:
+        return build_npm_web_purl(uri)
+    elif '/-/' in uri:
         return build_npm_download_purl(uri)
     else:
         return build_npm_api_purl(uri)
@@ -154,6 +157,41 @@ def build_npm_download_purl(uri):
 
     base_filename, ext = os.path.splitext(filename)
     version = base_filename.split('-')[-1]
+
+    return PackageURL('npm', namespace, name, version)
+
+def build_npm_web_purl(uri):
+    path = unquote_plus(urlparse(uri).path)
+    if path.startswith('/package/'):
+        path = path[9:]
+
+    segments = [seg for seg in path.split('/') if seg]
+    len_segments = len(segments)
+    namespace = version = None
+
+    # @angular/cli/v/10.1.2
+    if len_segments == 4:
+        namespace = segments[0]
+        name = segments[1]
+        version = segments[3]
+
+    # express/v/4.17.1
+    elif len_segments == 3:
+        namespace = None
+        name = segments[0]
+        version = segments[2]
+
+    # @angular/cli
+    elif len_segments == 2:
+        namespace = segments[0]
+        name = segments[1]
+
+    # express
+    elif len_segments == 1 and len(segments) > 0 and segments[0][0] != '@':
+        name = segments[0]
+
+    else:
+        return
 
     return PackageURL('npm', namespace, name, version)
 
@@ -291,9 +329,8 @@ register_pattern('cargo', cargo_pattern)
 
 # https://raw.githubusercontent.com/volatilityfoundation/dwarf2json/master/LICENSE.txt
 github_raw_content_pattern = (
-    r"^https?://raw.githubusercontent.com/"
-    r"(?P<namespace>.+)/(?P<name>.+)/(?P<version>.+)/"
-    r"(?P<subpath>.+)$"
+    r"https?://raw.githubusercontent.com/(?P<namespace>[^/]+)/(?P<name>[^/]+)/"
+    r"(?P<version>[^/]+)/(?P<subpath>.*)$"
 )
 
 register_pattern('github', github_raw_content_pattern)
@@ -360,10 +397,31 @@ def build_github_purl(url):
         r"/raw/v?(?P<version>[^/]+)/(?P<subpath>.*)$"
     )
 
-    for pattern in [archive_pattern, raw_pattern]:
+    blob_pattern = (
+        r"https?://github.com/"
+        r"(?P<namespace>.+)/(?P<name>.+)/blob/(?P<version>[^/]+)/(?P<subpath>.*)$"
+    )
+
+    releases_download_pattern= (
+        r"https?://github.com/(?P<namespace>.+)/(?P<name>.+)"
+        r"/releases/download/(?P<version>[^/]+)/.*$"
+    )
+
+    for pattern in [archive_pattern, raw_pattern, blob_pattern, releases_download_pattern]:
         matches = re.search(pattern, url)
+        qualifiers = {}
         if matches:
-            return purl_from_pattern(type_='github', pattern=pattern, url=url)
+            if pattern not in [releases_download_pattern]:
+                return purl_from_pattern(type_='github', pattern=pattern, url=url)
+            qualifiers['download_url'] = url
+            purl = purl_from_pattern(type_='github', pattern=pattern, url=url)
+            return PackageURL(
+                type=purl.type,
+                name=purl.name,
+                namespace=purl.namespace,
+                version=purl.version,
+                qualifiers=qualifiers
+            )
 
     segments = get_path_segments(url)
     if not segments:
@@ -402,12 +460,30 @@ def build_bitbucket_purl(url):
     https://bitbucket.org/TG1999/first_repo/src or
     https://bitbucket.org/TG1999/first_repo/src/master/new_folder
     """
+
     segments = get_path_segments(url)
 
     if not segments:
         return
     namespace = segments[0]
     name = segments[1]
+
+    bitbucket_download_pattern = (
+        r"https?://bitbucket.org/"
+        r"(?P<namespace>.+)/(?P<name>.+)/downloads/(?P<version>.+).(zip|tar.gz|tar.bz2|.tgz)"
+    )
+    matches = re.search(bitbucket_download_pattern, url)
+
+    qualifiers = {}
+    if matches:
+        qualifiers['download_url'] = url
+        return PackageURL(
+            type='bitbucket',
+            namespace=namespace,
+            name=name,
+            qualifiers=qualifiers
+        )
+
     version = None
     subpath = None
 
