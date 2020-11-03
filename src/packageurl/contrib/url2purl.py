@@ -337,9 +337,8 @@ def build_cargo_purl(url):
 
 
 github_raw_content_pattern = (
-    r"^https?://raw.githubusercontent.com/"
-    r"(?P<namespace>.+)/(?P<name>.+)/(?P<version>.+)/"
-    r"(?P<subpath>.+)$"
+    r"https?://raw.githubusercontent.com/(?P<namespace>[^/]+)/(?P<name>[^/]+)/"
+    r"(?P<version>[^/]+)/(?P<subpath>.*)$"
 )
 
 
@@ -421,10 +420,31 @@ def build_github_purl(url):
         r"/raw/v?(?P<version>[^/]+)/(?P<subpath>.*)$"
     )
 
-    for pattern in [archive_pattern, raw_pattern]:
+    blob_pattern = (
+        r"https?://github.com/"
+        r"(?P<namespace>.+)/(?P<name>.+)/blob/(?P<version>[^/]+)/(?P<subpath>.*)$"
+    )
+
+    releases_download_pattern= (
+        r"https?://github.com/(?P<namespace>.+)/(?P<name>.+)"
+        r"/releases/download/(?P<version>[^/]+)/.*$"
+    )
+
+    for pattern in [archive_pattern, raw_pattern, blob_pattern, releases_download_pattern]:
         matches = re.search(pattern, url)
+        qualifiers = {}
         if matches:
-            return purl_from_pattern(type_='github', pattern=pattern, url=url)
+            if pattern not in [releases_download_pattern]:
+                return purl_from_pattern(type_='github', pattern=pattern, url=url)
+            qualifiers['download_url'] = url
+            purl = purl_from_pattern(type_='github', pattern=pattern, url=url)
+            return PackageURL(
+                type=purl.type,
+                name=purl.name,
+                namespace=purl.namespace,
+                version=purl.version,
+                qualifiers=qualifiers
+            )
 
     segments = get_path_segments(url)
     if not segments:
@@ -463,12 +483,30 @@ def build_bitbucket_purl(url):
     https://bitbucket.org/TG1999/first_repo/src or
     https://bitbucket.org/TG1999/first_repo/src/master/new_folder 
     """
+
     segments = get_path_segments(url)
 
     if not segments:
         return
     namespace = segments[0]
     name = segments[1]
+
+    bitbucket_download_pattern = (
+        r"https?://bitbucket.org/"
+        r"(?P<namespace>.+)/(?P<name>.+)/downloads/(?P<version>.+).(zip|tar.gz|tar.bz2|.tgz)"
+    )
+    matches = re.search(bitbucket_download_pattern, url)
+
+    qualifiers = {}
+    if matches:
+        qualifiers['download_url'] = url
+        return PackageURL(
+            type='bitbucket',
+            namespace=namespace,
+            name=name,
+            qualifiers=qualifiers
+        )
+
     version = None
     subpath = None
 
