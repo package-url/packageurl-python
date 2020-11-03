@@ -423,7 +423,7 @@ def build_github_purl(url):
         subpath = '/'.join(segments[3:])
 
     # https://github.com/TG1999/fetchcode/tree/master
-    if len(segments) >= 4 and segments[2] == 'tree' :
+    if len(segments) >= 4 and segments[2] == 'tree':
         version = segments[3]
         subpath = '/'.join(segments[4:])
 
@@ -454,8 +454,8 @@ def build_bitbucket_purl(url):
     name = segments[1]
 
     bitbucket_download_pattern = (
-    r"https?://bitbucket.org/"
-    r"(?P<namespace>.+)/(?P<name>.+)/downloads/(?P<version>.+).(zip|tar.gz|tar.bz2|.tgz)"
+        r"https?://bitbucket.org/"
+        r"(?P<namespace>.+)/(?P<name>.+)/downloads/(?P<version>.+).(zip|tar.gz|tar.bz2|.tgz)"
     )
     matches = re.search(bitbucket_download_pattern, url)
 
@@ -463,10 +463,10 @@ def build_bitbucket_purl(url):
     if matches:
         qualifiers['download_url'] = url
         return PackageURL(
-        type='bitbucket',
-        namespace=namespace,
-        name=name,
-        qualifiers=qualifiers
+            type='bitbucket',
+            namespace=namespace,
+            name=name,
+            qualifiers=qualifiers
         )
 
     version = None
