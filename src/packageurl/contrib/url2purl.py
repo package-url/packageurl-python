@@ -83,9 +83,18 @@ def purl_from_pattern(type_, pattern, url):
         return PackageURL(type_, **purl_data)
 
 
+def register_pattern(type_, pattern, router=purl_router):
+    """
+    Register a pattern with its type.
+    """
+    def endpoint(url):
+        return purl_from_pattern(type_, pattern, url)
+    router.append(pattern, endpoint)
+
+
 def get_path_segments(url):
     """
-    Return a list of path segments from a `url` string. This list may be empty. 
+    Return a list of path segments from a `url` string. This list may be empty.
     """
     path = unquote_plus(urlparse(url).path)
     segments = [seg for seg in path.split("/") if seg]
@@ -94,6 +103,7 @@ def get_path_segments(url):
         segments = []
 
     return segments
+
 
 @purl_router.route('https?://registry.npmjs.*/.*',
                    'https?://registry.yarnpkg.com/.*',
@@ -150,6 +160,7 @@ def build_npm_download_purl(uri):
     version = base_filename.split('-')[-1]
 
     return PackageURL('npm', namespace, name, version)
+
 
 def build_npm_web_purl(uri):
     path = unquote_plus(urlparse(uri).path)
@@ -233,10 +244,7 @@ rubygems_pattern = (
     r"(\.gem)$"
 )
 
-
-@purl_router.route(rubygems_pattern)
-def build_rubygems_purl(uri):
-    return purl_from_pattern('rubygems', rubygems_pattern, uri)
+register_pattern('rubygems', rubygems_pattern)
 
 
 # https://pypi.python.org/packages/source/a/anyjson/anyjson-0.3.3.tar.gz
@@ -278,30 +286,24 @@ def build_pypi_purl(uri):
 
 # http://nuget.org/packages/EntityFramework/4.2.0.0
 # https://www.nuget.org/api/v2/package/Newtonsoft.Json/11.0.1
-nuget_pattern1 = (
+nuget_www_pattern = (
     r"^https?://.*nuget.org/(api/v2/)?packages?/"
     r"(?P<name>.+)/"
     r"(?P<version>.+)$"
 )
 
-
-@purl_router.route(nuget_pattern1)
-def build_nuget_purl1(uri):
-    return purl_from_pattern('nuget', nuget_pattern1, uri)
+register_pattern('nuget', nuget_www_pattern)
 
 
 # https://api.nuget.org/v3-flatcontainer/newtonsoft.json/10.0.1/newtonsoft.json.10.0.1.nupkg
-nuget_pattern2 = (
+nuget_api_pattern = (
     r"^https?://api.nuget.org/v3-flatcontainer/"
     r"(?P<name>.+)/"
     r"(?P<version>.+)/"
     r".*(nupkg)$"  # ends with "nupkg"
 )
 
-
-@purl_router.route(nuget_pattern2)
-def build_nuget_purl2(uri):
-    return purl_from_pattern('nuget', nuget_pattern2, uri)
+register_pattern('nuget', nuget_api_pattern)
 
 
 # http://master.dl.sourceforge.net/project/libpng/zlib/1.2.3/zlib-1.2.3.tar.bz2
@@ -314,42 +316,26 @@ sourceforge_pattern = (
     r"[^/]$"  # not ending with "/"
 )
 
-
-@purl_router.route(sourceforge_pattern)
-def build_sourceforge_purl(uri):
-    return purl_from_pattern('sourceforge', sourceforge_pattern, uri)
+register_pattern('sourceforge', sourceforge_pattern)
 
 
+# https://crates.io/api/v1/crates/rand/0.7.2/download
 cargo_pattern = (
     r"^https?://crates.io/api/v1/crates/"
     r"(?P<name>.+)/(?P<version>.+)"
     r"(\/download)$"
 )
 
-
-@purl_router.route(cargo_pattern)
-def build_cargo_purl(url):
-    """
-    Return a PackageURL from a crates.io URL.
-    For example: https://crates.io/api/v1/crates/rand/0.7.2/download
-    """
-    return purl_from_pattern(type_='cargo', pattern=cargo_pattern, url=url)
+register_pattern('cargo', cargo_pattern)
 
 
+# https://raw.githubusercontent.com/volatilityfoundation/dwarf2json/master/LICENSE.txt
 github_raw_content_pattern = (
     r"https?://raw.githubusercontent.com/(?P<namespace>[^/]+)/(?P<name>[^/]+)/"
     r"(?P<version>[^/]+)/(?P<subpath>.*)$"
 )
 
-
-@purl_router.route(github_raw_content_pattern)
-def build_github_raw_content_purl(url):
-    """
-    Return a PackageURL object from GitHub Raw Content `url`.
-    For example:
-    https://raw.githubusercontent.com/volatilityfoundation/dwarf2json/master/LICENSE.txt
-    """
-    return purl_from_pattern(type_='github', pattern=github_raw_content_pattern, url=url)
+register_pattern('github', github_raw_content_pattern)
 
 
 @purl_router.route("https?://api.github\\.com/repos/.*")
@@ -358,7 +344,7 @@ def build_github_api_purl(url):
     Return a PackageURL object from GitHub API `url`.
     For example:
     https://api.github.com/repos/nexB/scancode-toolkit/commits/40593af0df6c8378d2b180324b97cb439fa11d66
-    https://api.github.com/repos/nexB/scancode-toolkit/ 
+    https://api.github.com/repos/nexB/scancode-toolkit/
     and returns a `PackageURL` object
     """
     segments = get_path_segments(url)
@@ -369,11 +355,11 @@ def build_github_api_purl(url):
     name = segments[2]
     version = None
 
-    #https://api.github.com/repos/nexB/scancode-toolkit/
+    # https://api.github.com/repos/nexB/scancode-toolkit/
     if len(segments) == 4 and segments[3] != 'commits':
         version = segments[3]
 
-    #https://api.github.com/repos/nexB/scancode-toolkit/commits/40593af0df6c8378d2b180324b97cb439fa11d66
+    # https://api.github.com/repos/nexB/scancode-toolkit/commits/40593af0df6c8378d2b180324b97cb439fa11d66
     if len(segments) == 5 and segments[3] == "commits":
         version = segments[4]
 
@@ -382,20 +368,13 @@ def build_github_api_purl(url):
     )
 
 
+# https://codeload.github.com/nexB/scancode-toolkit/tar.gz/v3.1.1
 github_codeload_pattern = (
     r"https?://codeload.github.com/"
-    r"(?P<namespace>.+)/(?P<name>.+)/(zip|tar.gz|tar.bz2|.tgz)/v?(?P<version>.+)$"
+    r"(?P<namespace>.+)/(?P<name>.+)/(zip|tar.gz|tar.bz2|tgz)/v?(?P<version>.+)$"
 )
 
-
-@purl_router.route(github_codeload_pattern)
-def build_github_codeload_purl(url):
-    """
-    Return a PackageURL object from GitHub codeload `url`.
-    For example:
-    https://codeload.github.com/nexB/scancode-toolkit/tar.gz/v3.1.1
-    """
-    return purl_from_pattern(type_='github', pattern=github_codeload_pattern, url=url)
+register_pattern('github', github_codeload_pattern)
 
 
 @purl_router.route("https?://github\\.com/.*")
@@ -434,7 +413,7 @@ def build_github_purl(url):
         matches = re.search(pattern, url)
         qualifiers = {}
         if matches:
-            if pattern not in [releases_download_pattern]:
+            if pattern != releases_download_pattern:
                 return purl_from_pattern(type_='github', pattern=pattern, url=url)
             qualifiers['download_url'] = url
             purl = purl_from_pattern(type_='github', pattern=pattern, url=url)
@@ -481,7 +460,7 @@ def build_bitbucket_purl(url):
     For example:
     https://bitbucket.org/TG1999/first_repo/src/master or
     https://bitbucket.org/TG1999/first_repo/src or
-    https://bitbucket.org/TG1999/first_repo/src/master/new_folder 
+    https://bitbucket.org/TG1999/first_repo/src/master/new_folder
     """
 
     segments = get_path_segments(url)
@@ -567,19 +546,12 @@ def build_gitlab_purl(url):
     )
 
 
-hackage_pattern= (
+# https://hackage.haskell.org/package/a50-0.5/a50-0.5.tar.gz
+hackage_pattern = (
     r"^https?://hackage.haskell.org/package/"
     r"(?P<name>.+)-(?P<version>.+)/"
     r"(?P=name)-(?P=version).*"
     r"[^/]$"
 )
 
-
-@purl_router.route(hackage_pattern)
-def build_hackage_purl(url):
-    """
-    Return a PackageURL object from GitHub Raw Content `url`.
-    For example:
-    https://hackage.haskell.org/package/a50-0.5/a50-0.5.tar.gz
-    """
-    return purl_from_pattern(type_='hackage', pattern=hackage_pattern, url=url)
+register_pattern('hackage', hackage_pattern)
