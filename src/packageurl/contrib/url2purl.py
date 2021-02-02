@@ -409,7 +409,24 @@ def build_github_purl(url):
         r"/releases/download/(?P<version>[^/]+)/.*$"
     )
 
-    for pattern in [archive_pattern, raw_pattern, blob_pattern, releases_download_pattern]:
+    download_pattern = (
+        r"https?://github.com/downloads/(?P<namespace>.+)"
+        r"/(?P<name>.+)/v?(?P<version>.+).(zip|tar.gz|tar.bz2|.tgz)"
+    )
+
+    git_pattern = (
+        r"https?://github.com/(?P<namespace>.+)"
+        r"/(?P<name>.+).(git)"
+    )
+    patterns = (
+        archive_pattern,
+        raw_pattern,
+        blob_pattern,
+        releases_download_pattern,
+        download_pattern,
+        git_pattern,
+    )
+    for pattern in patterns:
         matches = re.search(pattern, url)
         qualifiers = {}
         if matches:
