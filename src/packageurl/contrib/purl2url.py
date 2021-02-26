@@ -164,3 +164,19 @@ def build_gem_download_url(purl):
     return "https://rubygems.org/downloads/{name}-{version}.gem".format(
         name=name, version=version
     )
+
+
+@router.route("pkg:maven/.*")
+def build_maven_download_url(purl):
+    """
+    Return a maven homepage URL `url` from a the `purl` string
+    """
+    purl_data = PackageURL.from_string(purl)
+
+    name = purl_data.name
+    version = purl_data.version
+
+    if not (name and version):
+        return
+
+    return "https://repo.maven.apache.org/maven2/{name}/{name}/{version}/{name}-{version}.jar".format(name=name, version=version)
