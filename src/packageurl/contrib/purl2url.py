@@ -32,6 +32,7 @@ from __future__ import unicode_literals
 from packageurl import PackageURL
 from packageurl.contrib.route import Router
 from packageurl.contrib.route import NoRouteAvailable
+import requests
 
 
 router = Router()
@@ -175,11 +176,13 @@ def build_maven_download_url(purl):
     name = purl_data.name
     version = purl_data.version
 
+    #distribution = '' # for binary jar
+    distribution = '-sources' # for source
+
     if not (name and version):
         return
 
-    return "https://repo.maven.apache.org/maven2/{name}/{name}/{version}/{name}-{version}.jar".format(name=name, version=version)
-
+    return "https://repo.maven.apache.org/maven2/{name}/{name}/{version}/{name}-{version}{distribution}.jar".format(name=name, version=version, distribution=distribution)
 
 @router.route("pkg:npm/.*")
 def build_npm_download_url(purl):
@@ -192,6 +195,8 @@ def build_npm_download_url(purl):
     name = purl_data.name
     version = purl_data.version
 
+    # javascript appears to be source-only.
+
     # Across all of the npmjs URLs we've observed, all have '/-/' before the name-version.tgz.
     # They all end in tgz. (No zip files, etc.)
     # If namespace '@something' is present, it is placed before 'name'.
@@ -200,3 +205,40 @@ def build_npm_download_url(purl):
         return "https://registry.npmjs.org/{namespace}/{name}/-/{name}-{version}.tgz".format(namespace=namespace, name=name, version=version)
     else:
         return "https://registry.npmjs.org/{name}/-/{name}-{version}.tgz".format(name=name, version=version)
+
+@router.route("pkg:pypi/.*")
+def build_pypi_download_url(purl):
+    """
+    Return an npm homepage URL `url` from a the `purl` string
+    """
+    purl_data = PackageURL.from_string(purl)
+
+    namespace = purl_data.namespace
+    name = purl_data.name
+    version = purl_data.version
+    subpath = purl_data.subpath
+
+    #distribution = 'bdist' # for binary (wheel, etc.)
+    distribution = 'sdist' # for source
+    
+    # TODO: Caching these results would allow multiple versions to be
+    # handled from the same query.
+    results = requests.get("https://pypi.org/pypi/{name}/json".format(name=name))
+
+    try:
+        if results.status_code == 200:
+            for item in results.json()['releases'][version]:
+                # packagetype can be 'sdist', 'bdist-whl', etc.
+                if distribution in item['packagetype']:
+                    # if distribution is never found, fall through and return None.
+                    return item['url']
+    except KeyError:
+        # assume that an IndexError is caused by a bad reply and return None.
+        pass
+    except KeyError:
+        # assume that a KeyError is caused by an incorrect version string, or
+        # a bad reply. Return None in either case.
+        pass
+
+    # return None unless complete success.
+    return None
