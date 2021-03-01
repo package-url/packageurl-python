@@ -165,7 +165,6 @@ def build_gem_download_url(purl):
         name=name, version=version
     )
 
-
 @router.route("pkg:maven/.*")
 def build_maven_download_url(purl):
     """
@@ -180,3 +179,24 @@ def build_maven_download_url(purl):
         return
 
     return "https://repo.maven.apache.org/maven2/{name}/{name}/{version}/{name}-{version}.jar".format(name=name, version=version)
+
+
+@router.route("pkg:npm/.*")
+def build_npm_download_url(purl):
+    """
+    Return an npm homepage URL `url` from a the `purl` string
+    """
+    purl_data = PackageURL.from_string(purl)
+
+    namespace = purl_data.namespace
+    name = purl_data.name
+    version = purl_data.version
+
+    # Across all of the npmjs URLs we've observed, all have '/-/' before the name-version.tgz.
+    # They all end in tgz. (No zip files, etc.)
+    # If namespace '@something' is present, it is placed before 'name'.
+    #  Otherwise the namespace level is collapsed.
+    if namespace:
+        return "https://registry.npmjs.org/{namespace}/{name}/-/{name}-{version}.tgz".format(namespace=namespace, name=name, version=version)
+    else:
+        return "https://registry.npmjs.org/{name}/-/{name}-{version}.tgz".format(name=name, version=version)
