@@ -1,6 +1,11 @@
 Changelog
 =========
 
+0.9.5 (2021-10-04)
+------------------
+
+- Add support for "archive/refs/tags/" github URLs in url2purl #47
+
 0.9.4 (2021-02-02)
 ------------------
 

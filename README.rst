@@ -74,7 +74,7 @@ Make a new release
 - bump version in setup.py
 - run all tests
 - install restview and validate that all .rst docs are correct
-- push this branch
+- commit and push this branch
 - tag and push that tag
 - make a PR to merge branch
 - once merged, run::
