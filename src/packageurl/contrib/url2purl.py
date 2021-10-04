@@ -390,7 +390,8 @@ def build_github_purl(url):
     # https://github.com/nexB/scancode-toolkit/archive/v3.1.1.zip
     archive_pattern = (
         r"https?://github.com/(?P<namespace>.+)/(?P<name>.+)"
-        r"/archive/v?(?P<version>.+).(zip|tar.gz|tar.bz2|.tgz)"
+        r"/archive/(refs/tags/)?"
+        r"v?(?P<version>.+).(zip|tar.gz|tar.bz2|.tgz)"
     )
 
     # https://github.com/pypa/get-virtualenv/raw/20.0.31/public/virtualenv.pyz

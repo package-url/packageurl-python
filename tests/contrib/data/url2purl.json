@@ -211,6 +211,7 @@
   "https://github.com/grnet/synnefo/archive/synnefo/v0.12.3.zip": "pkg:github/grnet/synnefo@synnefo/v0.12.3",
   "https://github.com/n8n-io/n8n/archive/n8n@0.23.0.tar.gz": "pkg:github/n8n-io/n8n@n8n%400.23.0",
   "https://github.com/nginx/nginx/archive/branches/stable-0.7.zip": "pkg:github/nginx/nginx@branches/stable-0.7",
+  "https://github.com/swagger-api/swagger-codegen/archive/refs/tags/v3.0.25.tar.gz": "pkg:github/swagger-api/swagger-codegen@3.0.25",
 
   "https://bitbucket.org/TG1999/first_repo/src/qa/": "pkg:bitbucket/tg1999/first_repo@qa",
   "https://bitbucket.org/TG1999/first_repo/src/QA/": "pkg:bitbucket/tg1999/first_repo@QA",

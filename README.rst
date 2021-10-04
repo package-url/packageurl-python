@@ -62,7 +62,7 @@ install::
 
 run tests::
 
-    bin/py.test -vvs
+    bin/py.test tests
 
 
 Make a new release
