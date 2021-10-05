@@ -358,9 +358,11 @@ def build_github_api_purl(url):
 
 
 # https://codeload.github.com/nexB/scancode-toolkit/tar.gz/v3.1.1
+# https://codeload.github.com/berngp/grails-rest/zip/release/0.7
 github_codeload_pattern = (
-    r"https?://codeload.github.com/"
-    r"(?P<namespace>.+)/(?P<name>.+)/(zip|tar.gz|tar.bz2|tgz)/v?(?P<version>.+)$"
+    r"https?://codeload.github.com/(?P<namespace>.+)/(?P<name>.+)/"
+    r"(zip|tar.gz|tar.bz2|tgz)/(.*/)*"
+    r"v?(?P<version>.+)$"
 )
 
 register_pattern('github', github_codeload_pattern)
