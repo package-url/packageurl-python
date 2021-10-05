@@ -24,39 +24,18 @@
 # Visit https://github.com/package-url/packageurl-python for support and
 # download.
 
-
-from __future__ import absolute_import
-from __future__ import print_function
-from __future__ import unicode_literals
-
 from collections import namedtuple
 from collections import OrderedDict
 import string
 
-# Python 2 and 3 support
-try:
-    # Python 2
-    from urlparse import urlsplit as _urlsplit
-    from urllib import quote as _percent_quote
-    from urllib import unquote as _percent_unquote
-except ImportError:
-    # Python 3
-    from urllib.parse import urlsplit as _urlsplit
-    from urllib.parse import quote as _percent_quote
-    from urllib.parse import unquote as _percent_unquote
+from urllib.parse import urlsplit as _urlsplit
+from urllib.parse import quote as _percent_quote
+from urllib.parse import unquote as _percent_unquote
 
-# Python 2 and 3 support
-try:
-    # Python 2
-    unicode  # NOQA
-    basestring = basestring  # NOQA
-    bytes = str  # NOQA
-    str = unicode  # NOQA
-except NameError:
-    # Python 3
-    unicode = str  # NOQA
-    basestring = (bytes, str,)  # NOQA
-    OrderedDict = dict
+# Python 3
+unicode = str  # NOQA
+basestring = (bytes, str,)  # NOQA
+OrderedDict = dict
 
 """
 A purl (aka. Package URL) implementation as specified at:

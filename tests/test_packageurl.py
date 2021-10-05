@@ -24,10 +24,6 @@
 # Visit https://github.com/package-url/packageurl-python for support and
 # download.
 
-from __future__ import absolute_import
-from __future__ import print_function
-from __future__ import unicode_literals
-
 from collections import OrderedDict
 import json
 import os
