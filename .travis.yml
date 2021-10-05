@@ -11,5 +11,5 @@ install:
   - bin/pip install -e .[test]
 
 script:
-  - isort --check-only src/ tests/
+  - bin/isort --check-only src/ tests/
   - bin/py.test -vvs
