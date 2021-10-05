@@ -211,6 +211,7 @@
   "https://github.com/grnet/synnefo/archive/synnefo/v0.12.3.zip": "pkg:github/grnet/synnefo@synnefo/v0.12.3",
   "https://github.com/n8n-io/n8n/archive/n8n@0.23.0.tar.gz": "pkg:github/n8n-io/n8n@n8n%400.23.0",
   "https://github.com/nginx/nginx/archive/branches/stable-0.7.zip": "pkg:github/nginx/nginx@branches/stable-0.7",
+  "https://github.com/swagger-api/swagger-codegen/archive/refs/tags/v3.0.25.tar.gz": "pkg:github/swagger-api/swagger-codegen@3.0.25",
   "https://github.com/downloads/mozilla/rhino/rhino1_7R4.zip" : "pkg:github/mozilla/rhino@rhino1_7R4",
   "https://github.com/pombredanne/schematics.git" : "pkg:github/pombredanne/schematics",
 

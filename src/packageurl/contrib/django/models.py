@@ -57,10 +57,11 @@ def purl_to_lookups(purl):
     Return a lookups dict built from the provided `purl` string.
     Those lookups can be used as QuerySet filters.
     """
-    normalized_purl = f'pkg:{purl}' if not purl.startswith('pkg:') else purl
+    if not purl.startswith('pkg:'):
+        purl = 'pkg:' + purl
 
     try:
-        package_url = PackageURL.from_string(normalized_purl)
+        package_url = PackageURL.from_string(purl)
     except ValueError:
         return  # Not a valid PackageURL
 
