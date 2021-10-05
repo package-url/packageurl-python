@@ -25,7 +25,6 @@
 # download.
 
 from collections import namedtuple
-from collections import OrderedDict
 import string
 
 from urllib.parse import urlsplit as _urlsplit
@@ -35,7 +34,6 @@ from urllib.parse import unquote as _percent_unquote
 # Python 3
 unicode = str  # NOQA
 basestring = (bytes, str,)  # NOQA
-OrderedDict = dict
 
 """
 A purl (aka. Package URL) implementation as specified at:
@@ -140,7 +138,7 @@ def normalize_qualifiers(qualifiers, encode=True):  # NOQA
     Raise ValueError on errors.
     """
     if not qualifiers:
-        return None if encode else OrderedDict()
+        return None if encode else dict()
 
     if isinstance(qualifiers, basestring):
         if not isinstance(qualifiers, unicode):
@@ -187,7 +185,7 @@ def normalize_qualifiers(qualifiers, encode=True):  # NOQA
                 "A qualifier key cannot start with a number: {}".format(repr(key)))
 
     qualifiers = sorted(qualifiers.items())
-    qualifiers = OrderedDict(qualifiers)
+    qualifiers = dict(qualifiers)
     if encode:
         qualifiers = ['{}={}'.format(k, v) for k, v in qualifiers.items()]
         qualifiers = '&'.join(qualifiers)
@@ -285,7 +283,7 @@ class PackageURL(namedtuple('PackageURL', _components)):
         string. Otherwise, qualifiers is a mapping.
         You can provide a value for `empty` to be used in place of default None.
         """
-        data = OrderedDict(self._asdict())
+        data = self._asdict()
         if encode:
             data['qualifiers'] = normalize_qualifiers(self.qualifiers, encode=encode)
 

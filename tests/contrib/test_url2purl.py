@@ -24,7 +24,6 @@
 # Visit https://github.com/package-url/packageurl-python for support and
 # download.
 
-from collections import OrderedDict
 import io
 import json
 import os
@@ -84,7 +83,7 @@ def build_tests(clazz, test_file='url2purl.json', regen=False):
     if regen:
         tests_data = {test_url: get_purl(test_url)
                       for test_url in tests_data.keys()}
-        dumpable = json.dumps(OrderedDict(sorted(tests_data.items())), indent=2)
+        dumpable = json.dumps(sorted(tests_data.items()), indent=2)
         with io.open(test_file, 'wb') as regened:
             regened.write(dumpable)
 
