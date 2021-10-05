@@ -381,16 +381,20 @@ register_pattern('github', github_codeload_pattern)
 def build_github_purl(url):
     """
     Return a PackageURL object from GitHub `url`.
-    For example:
-    https://github.com/package-url/packageurl-js/tree/master/test/data or
-    https://github.com/package-url/packageurl-js/tree/master or
-    https://github.com/package-url/packageurl-js or
-    https://github.com/nexB/scancode-toolkit/archive/v3.1.1.zip
     """
+
     # https://github.com/nexB/scancode-toolkit/archive/v3.1.1.zip
     archive_pattern = (
         r"https?://github.com/(?P<namespace>.+)/(?P<name>.+)"
         r"/archive/(refs/tags/)?"
+        r"((?P=name)(-|@))?"
+        r"v?(?P<version>.+).(zip|tar.gz|tar.bz2|.tgz)"
+    )
+
+    # https://github.com/downloads/mozilla/rhino/rhino1_7R4.zip
+    download_pattern = (
+        r"https?://github.com/downloads/(?P<namespace>.+)/(?P<name>.+)/"
+        r"((?P=name)(-|@)?)?"
         r"v?(?P<version>.+).(zip|tar.gz|tar.bz2|.tgz)"
     )
 
@@ -400,25 +404,20 @@ def build_github_purl(url):
         r"/raw/v?(?P<version>[^/]+)/(?P<subpath>.*)$"
     )
 
+    # https://github.com/fanf2/unifdef/blob/master/unifdef.c
     blob_pattern = (
-        r"https?://github.com/"
-        r"(?P<namespace>.+)/(?P<name>.+)/blob/(?P<version>[^/]+)/(?P<subpath>.*)$"
-    )
-
-    releases_download_pattern= (
         r"https?://github.com/(?P<namespace>.+)/(?P<name>.+)"
-        r"/releases/download/(?P<version>[^/]+)/.*$"
+        r"/blob/(?P<version>[^/]+)/(?P<subpath>.*)$"
     )
 
-    download_pattern = (
-        r"https?://github.com/downloads/(?P<namespace>.+)"
-        r"/(?P<name>.+)/v?(?P<version>.+).(zip|tar.gz|tar.bz2|.tgz)"
+    releases_download_pattern = (
+        r"https?://github.com/(?P<namespace>.+)/(?P<name>.+)"
+        r"/releases/download/v?(?P<version>[^/]+)/.*$"
     )
 
-    git_pattern = (
-        r"https?://github.com/(?P<namespace>.+)"
-        r"/(?P<name>.+).(git)"
-    )
+    # https://github.com/pombredanne/schematics.git
+    git_pattern = r"https?://github.com/(?P<namespace>.+)/(?P<name>.+).(git)"
+
     patterns = (
         archive_pattern,
         raw_pattern,
@@ -427,6 +426,7 @@ def build_github_purl(url):
         download_pattern,
         git_pattern,
     )
+
     for pattern in patterns:
         matches = re.search(pattern, url)
         qualifiers = {}
