@@ -24,39 +24,15 @@
 # Visit https://github.com/package-url/packageurl-python for support and
 # download.
 
-
-from __future__ import absolute_import
-from __future__ import print_function
-from __future__ import unicode_literals
-
-from collections import namedtuple
-from collections import OrderedDict
 import string
+from collections import namedtuple
+from urllib.parse import quote as _percent_quote
+from urllib.parse import unquote as _percent_unquote
+from urllib.parse import urlsplit as _urlsplit
 
-# Python 2 and 3 support
-try:
-    # Python 2
-    from urlparse import urlsplit as _urlsplit
-    from urllib import quote as _percent_quote
-    from urllib import unquote as _percent_unquote
-except ImportError:
-    # Python 3
-    from urllib.parse import urlsplit as _urlsplit
-    from urllib.parse import quote as _percent_quote
-    from urllib.parse import unquote as _percent_unquote
-
-# Python 2 and 3 support
-try:
-    # Python 2
-    unicode  # NOQA
-    basestring = basestring  # NOQA
-    bytes = str  # NOQA
-    str = unicode  # NOQA
-except NameError:
-    # Python 3
-    unicode = str  # NOQA
-    basestring = (bytes, str,)  # NOQA
-    OrderedDict = dict
+# Python 3
+unicode = str  # NOQA
+basestring = (bytes, str,)  # NOQA
 
 """
 A purl (aka. Package URL) implementation as specified at:
@@ -161,7 +137,7 @@ def normalize_qualifiers(qualifiers, encode=True):  # NOQA
     Raise ValueError on errors.
     """
     if not qualifiers:
-        return None if encode else OrderedDict()
+        return None if encode else dict()
 
     if isinstance(qualifiers, basestring):
         if not isinstance(qualifiers, unicode):
@@ -208,7 +184,7 @@ def normalize_qualifiers(qualifiers, encode=True):  # NOQA
                 "A qualifier key cannot start with a number: {}".format(repr(key)))
 
     qualifiers = sorted(qualifiers.items())
-    qualifiers = OrderedDict(qualifiers)
+    qualifiers = dict(qualifiers)
     if encode:
         qualifiers = ['{}={}'.format(k, v) for k, v in qualifiers.items()]
         qualifiers = '&'.join(qualifiers)
@@ -306,7 +282,7 @@ class PackageURL(namedtuple('PackageURL', _components)):
         string. Otherwise, qualifiers is a mapping.
         You can provide a value for `empty` to be used in place of default None.
         """
-        data = OrderedDict(self._asdict())
+        data = self._asdict()
         if encode:
             data['qualifiers'] = normalize_qualifiers(self.qualifiers, encode=encode)
 

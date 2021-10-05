@@ -24,15 +24,9 @@
 # Visit https://github.com/package-url/packageurl-python for support and
 # download.
 
-
-from __future__ import absolute_import
-from __future__ import print_function
-from __future__ import unicode_literals
-
 from packageurl import PackageURL
-from packageurl.contrib.route import Router
 from packageurl.contrib.route import NoRouteAvailable
-
+from packageurl.contrib.route import Router
 
 router = Router()
 

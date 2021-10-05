@@ -24,29 +24,18 @@
 # Visit https://github.com/package-url/packageurl-python for support and
 # download.
 
-from __future__ import absolute_import
-from __future__ import print_function
-from __future__ import unicode_literals
-
-from collections import OrderedDict
 import io
 import json
 import os
 import re
 from unittest import TestCase
 
-try:  # Python 2
-    unicode
-    str = unicode  # NOQA
-except NameError:  # Python 3
-    unicode = str  # NOQA
-
 from packageurl.contrib.url2purl import get_purl as purl_getter
 
 
 def get_purl(url):
     purl = purl_getter(url)
-    return purl and unicode(purl.to_string())
+    return purl and str(purl.to_string())
 
 
 class TestURL2PURL(TestCase):
@@ -94,7 +83,7 @@ def build_tests(clazz, test_file='url2purl.json', regen=False):
     if regen:
         tests_data = {test_url: get_purl(test_url)
                       for test_url in tests_data.keys()}
-        dumpable = json.dumps(OrderedDict(sorted(tests_data.items())), indent=2)
+        dumpable = json.dumps(sorted(tests_data.items()), indent=2)
         with io.open(test_file, 'wb') as regened:
             regened.write(dumpable)
 

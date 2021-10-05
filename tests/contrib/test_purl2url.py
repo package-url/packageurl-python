@@ -26,11 +26,6 @@
 
 import pytest
 
-from packageurl.contrib.purl2url import build_bitbucket_homepage_url
-from packageurl.contrib.purl2url import build_cargo_download_url
-from packageurl.contrib.purl2url import build_github_homepage_url
-from packageurl.contrib.purl2url import build_gitlab_homepage_url
-from packageurl.contrib.purl2url import build_gem_download_url
 from packageurl.contrib.purl2url import purl2url
 
 

@@ -24,32 +24,14 @@
 # Visit https://github.com/package-url/packageurl-python for support and
 # download.
 
-from __future__ import absolute_import
-from __future__ import print_function
-from __future__ import unicode_literals
-
-from collections import OrderedDict
 import json
 import os
 import re
 import unittest
 
-from packageurl import normalize_qualifiers
-from packageurl import normalize
 from packageurl import PackageURL
-
-# Python 2 and 3 support
-try:
-    # Python 2
-    unicode
-    str = unicode  # NOQA
-    basestring = basestring  # NOQA
-    py2 = True
-except NameError:
-    # Python 3
-    unicode = str  # NOQA
-    basestring = (bytes, str,)  # NOQA
-    py2 = False
+from packageurl import normalize
+from packageurl import normalize_qualifiers
 
 
 def create_test_function(description, purl, canonical_purl, is_invalid,
@@ -125,8 +107,6 @@ def python_safe_name(s):
     s = s.lower()
     s = no_punctuation(' ', s)
     s = '_'.join(s.split())
-    if py2 and isinstance(s, unicode):
-        s = s.encode('ascii', 'ignore')
     return s
 
 
@@ -265,12 +245,12 @@ class NormalizePurlTest(unittest.TestCase):
             subpath='this/is/a/path',
         )
 
-        expected = OrderedDict([
+        expected = dict([
             ('type', 'maven'),
             ('namespace', 'org.apache'),
             ('name', 'commons-logging'),
             ('version', '12.3'),
-            ('qualifiers', OrderedDict([
+            ('qualifiers', dict([
                 ('that', '13'),
                 ('this', '12'),
             ])),
@@ -278,7 +258,7 @@ class NormalizePurlTest(unittest.TestCase):
         ])
         assert expected == purl.to_dict()
 
-        expected = OrderedDict([
+        expected = dict([
             ('type', u'maven'),
             ('namespace', u'org.apache'),
             ('name', u'commons-logging'),
@@ -297,7 +277,7 @@ class NormalizePurlTest(unittest.TestCase):
             qualifiers=None,
         )
 
-        expected = OrderedDict([
+        expected = dict([
             ('type', 'maven'),
             ('namespace', None),
             ('name', 'commons-logging'),
@@ -308,7 +288,7 @@ class NormalizePurlTest(unittest.TestCase):
         assert expected == purl.to_dict()
         assert expected == purl.to_dict(empty=None)
 
-        expected = OrderedDict([
+        expected = dict([
             ('type', 'maven'),
             ('namespace', ''),
             ('name', 'commons-logging'),

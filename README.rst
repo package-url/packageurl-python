@@ -1,6 +1,6 @@
 # packageurl-python
 
-A parser and builder for purl aka. Package URLs for Python 2 and 3.
+Python library to parse and build "purl" aka. Package URLs.
 See https://github.com/package-url/purl-spec for details.
 
 Join the discussion at https://gitter.im/package-url/Lobby or enter a ticket for support.
@@ -50,20 +50,17 @@ Install
 
     pip install packageurl-python
 
-
-
 Run tests
 =========
 
 install::
 
-    python -m venv .
-    bin/pip install -r requirements_tests.txt
+    python3 thirdparty/virtualenv.pyz --never-download --no-periodic-update .
+    bin/pip install -e ."[test]"
 
 run tests::
 
     bin/py.test tests
-
 
 Make a new release
 ==================
@@ -71,7 +68,7 @@ Make a new release
 - start a new release branch
 - update the CHANGELOG.rst and AUTHORS.rst
 - update README.rst if needed
-- bump version in setup.py
+- bump version in setup.cfg
 - run all tests
 - install restview and validate that all .rst docs are correct
 - commit and push this branch
@@ -79,7 +76,7 @@ Make a new release
 - make a PR to merge branch
 - once merged, run::
 
-    pip install --upgrade pip wheel twine setuptools
+    bin/pip install --upgrade pip wheel twine setuptools
 
 - delete the "dist" and "build" directories::
 
@@ -87,8 +84,8 @@ Make a new release
 
 - create a source distribution and wheel with::
 
-    python setup.py sdist bdist_wheel
+    bin/python setup.py sdist bdist_wheel
 
 - finally, upload to PyPI::
 
-    twine upload dist/*
+    bin/twine upload dist/*

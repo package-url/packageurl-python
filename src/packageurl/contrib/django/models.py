@@ -24,11 +24,6 @@
 # Visit https://github.com/package-url/packageurl-python for support and
 # download.
 
-
-from __future__ import absolute_import
-from __future__ import print_function
-from __future__ import unicode_literals
-
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils.translation import gettext_lazy as _

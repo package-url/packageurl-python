@@ -24,16 +24,9 @@
 # Visit https://github.com/package-url/packageurl-python for support and
 # download.
 
-
-from __future__ import absolute_import
-from __future__ import print_function
-from __future__ import unicode_literals
-
-from collections import OrderedDict
-from functools import wraps
 import inspect
 import re
-
+from functools import wraps
 
 """
 Given a URI regex (or some string), this module can route execution to a
@@ -128,7 +121,7 @@ class Router(object):
         """
         'route_map' is an ordered mapping of pattern -> Rule.
         """
-        self.route_map = route_map or OrderedDict()
+        self.route_map = route_map or dict()
         # lazy cached pre-compiled regex match() for all route patterns
         self._is_routable = None
 

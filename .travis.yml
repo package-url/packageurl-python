@@ -1,14 +1,15 @@
 language: python
 
 python:
-  - "2.7"
   - "3.6"
   - "3.7"
   - "3.8"
+  - "3.9"
 
 install:
-    - virtualenv .
-    - bin/pip install -r requirements_tests.txt
+  - python thirdparty/virtualenv.pyz --never-download --no-periodic-update .
+  - bin/pip install -e .[test]
 
 script:
-    - bin/py.test -vvs
+  - bin/isort --check-only src/ tests/
+  - bin/py.test -vvs
