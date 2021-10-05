@@ -386,8 +386,8 @@ def build_github_purl(url):
     # https://github.com/nexB/scancode-toolkit/archive/v3.1.1.zip
     archive_pattern = (
         r"https?://github.com/(?P<namespace>.+)/(?P<name>.+)"
-        r"/archive/(refs/tags/)?"
-        r"((?P=name)(-|@))?"
+        r"/archive/(.*/)*"
+        r"((?P=name)(-|_|@))?"
         r"v?(?P<version>.+).(zip|tar.gz|tar.bz2|.tgz)"
     )
 
