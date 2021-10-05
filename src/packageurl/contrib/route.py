@@ -24,10 +24,9 @@
 # Visit https://github.com/package-url/packageurl-python for support and
 # download.
 
-from functools import wraps
 import inspect
 import re
-
+from functools import wraps
 
 """
 Given a URI regex (or some string), this module can route execution to a

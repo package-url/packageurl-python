@@ -24,12 +24,11 @@
 # Visit https://github.com/package-url/packageurl-python for support and
 # download.
 
-from collections import namedtuple
 import string
-
-from urllib.parse import urlsplit as _urlsplit
+from collections import namedtuple
 from urllib.parse import quote as _percent_quote
 from urllib.parse import unquote as _percent_unquote
+from urllib.parse import urlsplit as _urlsplit
 
 # Python 3
 unicode = str  # NOQA

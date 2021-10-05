@@ -25,9 +25,8 @@
 # download.
 
 from packageurl import PackageURL
-from packageurl.contrib.route import Router
 from packageurl.contrib.route import NoRouteAvailable
-
+from packageurl.contrib.route import Router
 
 router = Router()
 

@@ -7,8 +7,9 @@ python:
   - "3.9"
 
 install:
-    - python thirdparty/virtualenv.pyz --never-download --no-periodic-update .
-    - bin/pip install -e .[test]
+  - python thirdparty/virtualenv.pyz --never-download --no-periodic-update .
+  - bin/pip install -e .[test]
 
 script:
-    - bin/py.test -vvs
+  - isort --check-only src/ tests/
+  - bin/py.test -vvs

@@ -24,17 +24,14 @@
 # Visit https://github.com/package-url/packageurl-python for support and
 # download.
 
-
 import os
 import re
-
-from urllib.parse import urlparse
 from urllib.parse import unquote_plus
+from urllib.parse import urlparse
 
 from packageurl import PackageURL
-from packageurl.contrib.route import Router
 from packageurl.contrib.route import NoRouteAvailable
-
+from packageurl.contrib.route import Router
 
 """
 This module helps build a PackageURL from an arbitrary URL.

@@ -29,9 +29,9 @@ import os
 import re
 import unittest
 
-from packageurl import normalize_qualifiers
-from packageurl import normalize
 from packageurl import PackageURL
+from packageurl import normalize
+from packageurl import normalize_qualifiers
 
 
 def create_test_function(description, purl, canonical_purl, is_invalid,

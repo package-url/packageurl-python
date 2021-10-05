@@ -56,7 +56,7 @@ Run tests
 install::
 
     python3 thirdparty/virtualenv.pyz --never-download --no-periodic-update .
-    bin/pip install -e .[test]
+    bin/pip install -e ."[test]"
 
 run tests::
 
