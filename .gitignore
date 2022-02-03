@@ -14,3 +14,4 @@ pyvenv.cfg
 .Python
 /.tox/
 /.pytest_cache/
+venv

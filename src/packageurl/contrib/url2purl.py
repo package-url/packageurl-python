@@ -53,7 +53,9 @@ def url2purl(url):
         try:
             return purl_router.process(url)
         except NoRouteAvailable:
-            return
+            # If `url` does not fit in one of the existing routes,
+            # we attempt to create a generic PackageURL for `url`
+            return build_generic_purl(url)
 
 
 get_purl = url2purl
@@ -92,6 +94,31 @@ def get_path_segments(url):
         segments = []
 
     return segments
+
+
+def build_generic_purl(uri):
+    """
+    Return a PackageURL from `uri`, if `uri` is a parsable URL, or None
+
+    `uri` is assumed to be a download URL, e.g. http://example.com/example.tar.gz
+    """
+    parsed_uri = urlparse(uri)
+    if parsed_uri.scheme and parsed_uri.netloc and parsed_uri.path:
+        # Get file name from `uri`
+        uri_path_segments = get_path_segments(uri)
+        file_name = uri_path_segments[-1]
+
+        # Remove extensions from the file name to get file base name
+        split_file_name = file_name.split('.')
+        file_base_name = split_file_name[0]
+
+        return PackageURL(
+            type='generic',
+            name=file_base_name,
+            qualifiers={
+                'download_url': uri
+            }
+        )
 
 
 @purl_router.route('https?://registry.npmjs.*/.*',
