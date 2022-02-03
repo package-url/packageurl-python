@@ -252,5 +252,5 @@
   "https://hackage.haskell.org/package/AC-HalfInteger-1.2.1/AC-HalfInteger-1.2.1.tar.gz": "pkg:hackage/AC-HalfInteger@1.2.1",
   "https://hackage.haskell.org/package/3d-graphics-examples-0.0.0.2/3d-graphics-examples-0.0.0.2.tar.gz": "pkg:hackage/3d-graphics-examples@0.0.0.2",
 
-  "https://salsa.debian.org/lxc-team/lxc/-/archive/master/lxc-master.tar.gz": "pkg:generic/lxc-master?download_url=https://salsa.debian.org/lxc-team/lxc/-/archive/master/lxc-master.tar.gz"
+  "https://salsa.debian.org/lxc-team/lxc/-/archive/master/lxc-master.tar.gz": "pkg:generic/lxc-master.tar.gz?download_url=https://salsa.debian.org/lxc-team/lxc/-/archive/master/lxc-master.tar.gz"
 }

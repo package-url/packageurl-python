@@ -43,4 +43,4 @@ def test_parsing_empty_string():
 def test_parsing_with_one_segment():
     url = 'https://github.com/TG1999'
     segments = get_path_segments(url)
-    assert [] == segments
+    assert ["TG1999"] == segments
