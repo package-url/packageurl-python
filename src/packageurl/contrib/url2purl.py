@@ -114,8 +114,8 @@ def build_generic_purl(uri):
 
 @purl_router.route('https?://registry.npmjs.*/.*',
                    'https?://registry.yarnpkg.com/.*',
-                   'https?://(www\\.)?npmjs.*/package/.*',
-                   'https?://(www\\.)?yarnpkg.com/package/.*')
+                   'https?://(www\\.)?npmjs.*/package.*',
+                   'https?://(www\\.)?yarnpkg.com/package.*')
 def build_npm_purl(uri):
     # npm URLs are difficult to disambiguate with regex
     if '/package/' in uri:
@@ -249,8 +249,8 @@ def build_rubygems_purl(uri):
     # We use a more general route pattern instead of using `rubygems_pattern`
     # below by itself because we want to capture all rubygems download URLs,
     # even the ones that are not completly formed. This helps prevent url2purl
-    # from attempting to create a PackageURL from an invalid rubygems download
-    # URL.
+    # from attempting to create a generic PackageURL from an invalid rubygems
+    # download URL.
 
     # https://rubygems.org/downloads/jwt-0.1.8.gem
     rubygems_pattern = (
@@ -325,8 +325,8 @@ def build_sourceforge_purl(uri):
     # We use a more general route pattern instead of using `sourceforge_pattern`
     # below by itself because we want to capture all sourceforge download URLs,
     # even the ones that do not fit `sourceforge_pattern`. This helps prevent
-    # url2purl from attempting to create a PackageURL from a sourceforge URL
-    # that we can't handle.
+    # url2purl from attempting to create a generic PackageURL from a sourceforge
+    # URL that we can't handle.
 
     # http://master.dl.sourceforge.net/project/libpng/zlib/1.2.3/zlib-1.2.3.tar.bz2
     sourceforge_pattern = (
@@ -337,7 +337,23 @@ def build_sourceforge_purl(uri):
         r"(?P=name)-(?P=version).*"  # {name}-{version} repeated in the filename
         r"[^/]$"  # not ending with "/"
     )
-    return purl_from_pattern('sourceforge', sourceforge_pattern, uri)
+
+    sourceforge_purl = purl_from_pattern('sourceforge', sourceforge_pattern, uri)
+
+    if not sourceforge_purl:
+        # We create a more generic PackageURL from `uri` if `uri` doesn't fit
+        # `sourceforge_pattern`
+        uri_path_segments = get_path_segments(uri)
+        file_name = uri_path_segments[-1]
+        sourceforge_purl = PackageURL(
+            type='sourceforge',
+            name=file_name,
+            qualifiers={
+                'download_url': uri
+            }
+        )
+
+    return sourceforge_purl
 
 
 # https://crates.io/api/v1/crates/rand/0.7.2/download
