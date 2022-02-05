@@ -6,6 +6,11 @@ python:
   - "3.8"
   - "3.9"
 
+before_install:
+  - pip install black
+  - echo "Black formatting check"
+  - black --check *.py
+
 install:
   - python thirdparty/virtualenv.pyz --never-download --no-periodic-update .
   - bin/pip install -e .[test]

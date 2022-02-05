@@ -10,6 +10,12 @@ agree to the Developer Certificate of Origin http://developercertificate.org/
 and its license (see the mit.LICENSE file).  The same approach is used
 by the Linux Kernel developers and several other projects.
 
+Before committing, add the following line to the pre-commit.sample file in the .git/hooks directory::
+
+    black -l 100 . 
+    
+Now rename the file to pre-commit by removing the .sample extension.
+
 For commits, it is best to simply add a line like this to your commit message,
 with your name and email::
 
