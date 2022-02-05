@@ -1,6 +1,11 @@
 Changelog
 =========
 
+0.9.7 (2022-02-04)
+------------------
+
+- Create a generic PackageURL for URLs that do not fit existing routes in url2purl #68
+
 0.9.6 (2021-10-05)
 ------------------
 
@@ -31,7 +36,7 @@ Changelog
 - Document usage in README
 - Adopt SPDX license identifier
 - Add support for GitHub "raw" URLs in url2purl #43
-- Improve GitHub support for "v" prefixed version in url2purl #43 
+- Improve GitHub support for "v" prefixed version in url2purl #43
 
 
 0.9.1 (2020-08-05)

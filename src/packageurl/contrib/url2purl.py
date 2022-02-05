@@ -53,7 +53,9 @@ def url2purl(url):
         try:
             return purl_router.process(url)
         except NoRouteAvailable:
-            return
+            # If `url` does not fit in one of the existing routes,
+            # we attempt to create a generic PackageURL for `url`
+            return build_generic_purl(url)
 
 
 get_purl = url2purl
@@ -83,21 +85,37 @@ def register_pattern(type_, pattern, router=purl_router):
 
 def get_path_segments(url):
     """
-    Return a list of path segments from a `url` string. This list may be empty.
+    Return a list of path segments from a `url` string.
     """
     path = unquote_plus(urlparse(url).path)
     segments = [seg for seg in path.split("/") if seg]
-
-    if len(segments) <= 1:
-        segments = []
-
     return segments
+
+
+def build_generic_purl(uri):
+    """
+    Return a PackageURL from `uri`, if `uri` is a parsable URL, or None
+
+    `uri` is assumed to be a download URL, e.g. http://example.com/example.tar.gz
+    """
+    parsed_uri = urlparse(uri)
+    if parsed_uri.scheme and parsed_uri.netloc and parsed_uri.path:
+        # Get file name from `uri`
+        uri_path_segments = get_path_segments(uri)
+        file_name = uri_path_segments[-1]
+        return PackageURL(
+            type='generic',
+            name=file_name,
+            qualifiers={
+                'download_url': uri
+            }
+        )
 
 
 @purl_router.route('https?://registry.npmjs.*/.*',
                    'https?://registry.yarnpkg.com/.*',
-                   'https?://(www\\.)?npmjs.*/package/.*',
-                   'https?://(www\\.)?yarnpkg.com/package/.*')
+                   'https?://(www\\.)?npmjs.*/package.*',
+                   'https?://(www\\.)?yarnpkg.com/package.*')
 def build_npm_purl(uri):
     # npm URLs are difficult to disambiguate with regex
     if '/package/' in uri:
@@ -226,14 +244,21 @@ def build_maven_purl(uri):
     return PackageURL('maven', namespace, name, version, qualifiers)
 
 
-# https://rubygems.org/downloads/jwt-0.1.8.gem
-rubygems_pattern = (
-    r"^https?://rubygems.org/downloads/"
-    r"(?P<name>.+)-(?P<version>.+)"
-    r"(\.gem)$"
-)
+@purl_router.route('https?://rubygems.org/downloads/.*')
+def build_rubygems_purl(uri):
+    # We use a more general route pattern instead of using `rubygems_pattern`
+    # below by itself because we want to capture all rubygems download URLs,
+    # even the ones that are not completly formed. This helps prevent url2purl
+    # from attempting to create a generic PackageURL from an invalid rubygems
+    # download URL.
 
-register_pattern('rubygems', rubygems_pattern)
+    # https://rubygems.org/downloads/jwt-0.1.8.gem
+    rubygems_pattern = (
+        r"^https?://rubygems.org/downloads/"
+        r"(?P<name>.+)-(?P<version>.+)"
+        r"(\.gem)$"
+    )
+    return purl_from_pattern('rubygems', rubygems_pattern, uri)
 
 
 # https://pypi.python.org/packages/source/a/anyjson/anyjson-0.3.3.tar.gz
@@ -295,17 +320,40 @@ nuget_api_pattern = (
 register_pattern('nuget', nuget_api_pattern)
 
 
-# http://master.dl.sourceforge.net/project/libpng/zlib/1.2.3/zlib-1.2.3.tar.bz2
-sourceforge_pattern = (
-    r"^https?://.*sourceforge.net/project/"
-    r"(?P<namespace>([^/]+))/"  # do not allow more "/" segments
-    r"(?P<name>.+)/"
-    r"(?P<version>[0-9\.]+)/"  # version restricted to digits and dots
-    r"(?P=name)-(?P=version).*"  # {name}-{version} repeated in the filename
-    r"[^/]$"  # not ending with "/"
-)
+@purl_router.route('https?://.*sourceforge.net/project/.*')
+def build_sourceforge_purl(uri):
+    # We use a more general route pattern instead of using `sourceforge_pattern`
+    # below by itself because we want to capture all sourceforge download URLs,
+    # even the ones that do not fit `sourceforge_pattern`. This helps prevent
+    # url2purl from attempting to create a generic PackageURL from a sourceforge
+    # URL that we can't handle.
 
-register_pattern('sourceforge', sourceforge_pattern)
+    # http://master.dl.sourceforge.net/project/libpng/zlib/1.2.3/zlib-1.2.3.tar.bz2
+    sourceforge_pattern = (
+        r"^https?://.*sourceforge.net/project/"
+        r"(?P<namespace>([^/]+))/"  # do not allow more "/" segments
+        r"(?P<name>.+)/"
+        r"(?P<version>[0-9\.]+)/"  # version restricted to digits and dots
+        r"(?P=name)-(?P=version).*"  # {name}-{version} repeated in the filename
+        r"[^/]$"  # not ending with "/"
+    )
+
+    sourceforge_purl = purl_from_pattern('sourceforge', sourceforge_pattern, uri)
+
+    if not sourceforge_purl:
+        # We create a more generic PackageURL from `uri` if `uri` doesn't fit
+        # `sourceforge_pattern`
+        uri_path_segments = get_path_segments(uri)
+        file_name = uri_path_segments[-1]
+        sourceforge_purl = PackageURL(
+            type='sourceforge',
+            name=file_name,
+            qualifiers={
+                'download_url': uri
+            }
+        )
+
+    return sourceforge_purl
 
 
 # https://crates.io/api/v1/crates/rand/0.7.2/download
@@ -435,7 +483,7 @@ def build_github_purl(url):
             )
 
     segments = get_path_segments(url)
-    if not segments:
+    if not len(segments) >= 2:
         return
 
     namespace = segments[0]
@@ -474,7 +522,7 @@ def build_bitbucket_purl(url):
 
     segments = get_path_segments(url)
 
-    if not segments:
+    if not len(segments) >= 2:
         return
     namespace = segments[0]
     name = segments[1]
@@ -529,7 +577,7 @@ def build_gitlab_purl(url):
     """
     segments = get_path_segments(url)
 
-    if not segments:
+    if not len(segments) >= 2:
         return
     namespace = segments[0]
     name = segments[1]

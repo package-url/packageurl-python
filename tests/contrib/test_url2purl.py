@@ -83,9 +83,8 @@ def build_tests(clazz, test_file='url2purl.json', regen=False):
     if regen:
         tests_data = {test_url: get_purl(test_url)
                       for test_url in tests_data.keys()}
-        dumpable = json.dumps(sorted(tests_data.items()), indent=2)
-        with io.open(test_file, 'wb') as regened:
-            regened.write(dumpable)
+        with io.open(test_file, 'w') as regened:
+            json.dump(tests_data, regened, indent=2)
 
     for test_url, expected_purl in sorted(tests_data.items()):
         test_name = 'test_url2purl_{test_url}'.format(test_url=test_url)
