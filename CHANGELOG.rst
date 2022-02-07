@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.9.7 (2022-02-04)
+0.9.7 (2022-02-07)
 ------------------
 
 - Create a generic PackageURL for URLs that do not fit existing routes in url2purl #68
