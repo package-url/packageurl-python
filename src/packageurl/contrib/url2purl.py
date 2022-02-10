@@ -342,18 +342,17 @@ def build_sourceforge_purl(uri):
     sourceforge_purl = purl_from_pattern('sourceforge', sourceforge_pattern, uri)
 
     if not sourceforge_purl:
-        # We create a more generic PackageURL from `uri` if `uri` doesn't fit
-        # `sourceforge_pattern`
-        uri_path_segments = get_path_segments(uri)
-        file_name = uri_path_segments[-1]
-        sourceforge_purl = PackageURL(
-            type='sourceforge',
-            name=file_name,
-            qualifiers={
-                'download_url': uri
-            }
-        )
-
+        # Get the project name from `uri` and use that as the Package name
+        # http://master.dl.sourceforge.net/project/aloyscore/aloyscore/0.1a1%2520stable/0.1a1_stable_AloysCore.zip
+        _, remaining_uri_path = uri.split('/project/') # http://master.dl.sourceforge.net, aloyscore/aloyscore/0.1a1%2520stable/0.1a1_stable_AloysCore.zip
+        if remaining_uri_path:
+            split_remaining_uri_path = remaining_uri_path.split('/') # aloyscore, aloyscore, 0.1a1%2520stable, 0.1a1_stable_AloysCore.zip
+            project_name = split_remaining_uri_path[0] # aloyscore
+            sourceforge_purl = PackageURL(
+                type='sourceforge',
+                name=project_name,
+                qualifiers={'download_url': uri}
+            )
     return sourceforge_purl
 
 
