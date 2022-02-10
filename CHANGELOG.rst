@@ -1,6 +1,11 @@
 Changelog
 =========
 
+0.9.8 (2022-02-XX)
+------------------
+
+- Do not create a generic PackageURL for URLs without a path in url2purl #72
+
 0.9.7 (2022-02-07)
 ------------------
 
