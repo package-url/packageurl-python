@@ -108,7 +108,7 @@ class PackageURLMixin(models.Model):
     )
 
     name = models.CharField(
-        max_length=100,
+        max_length=255,
         blank=True,
         help_text=_('Name of the package.'),
     )
