@@ -263,9 +263,12 @@ def build_rubygems_purl(uri):
 
 
 # https://pypi.python.org/packages/source/a/anyjson/anyjson-0.3.3.tar.gz
+# https://pypi.python.org/packages/2.6/t/threadpool/threadpool-1.2.7-py2.6.egg
+# https://pypi.python.org/packages/any/s/setuptools/setuptools-0.6c11-1.src.rpm
+# https://files.pythonhosted.org/packages/84/d8/451842a5496844bb5c7634b231a2e4caf0d867d2e25f09b840d3b07f3d4b/multi_key_dict-2.0.win32.exe
 pypi_pattern = (
-    r"(?P<name>.+)-(?P<version>.+)"
-    r"\.(zip|tar.gz|tar.bz2|.tgz)$"
+    r"(?P<name>(\w\.?)+(-\w+)*)-(?P<version>.+)"
+    r"\.(zip|tar.gz|tar.bz2|tgz|egg|rpm|exe)$"
 )
 
 # This pattern can be found in the following locations:
