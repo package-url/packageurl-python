@@ -8,6 +8,7 @@ Changelog
 - Increase the name field size for packageurl.contrib.django.models.PackageURLMixin to 255 #73
 - Use project name as the Package name when creating generic sourceforge PackageURLs #74
 - Update PyPI route pattern in url2purl to handle different file name formats #76
+- Create generic PackageURL for code.google.com archive URLs #78
 
 0.9.7 (2022-02-07)
 ------------------

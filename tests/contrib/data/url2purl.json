@@ -249,5 +249,6 @@
   "https://hackage.haskell.org/package/3d-graphics-examples-0.0.0.2/3d-graphics-examples-0.0.0.2.tar.gz": "pkg:hackage/3d-graphics-examples@0.0.0.2",
   "https://salsa.debian.org/lxc-team/lxc/-/archive/master/lxc-master.tar.gz": "pkg:generic/lxc-master.tar.gz?download_url=https://salsa.debian.org/lxc-team/lxc/-/archive/master/lxc-master.tar.gz",
   "http://apt-rpm.org/": null,
-  "": null
+  "": null,
+  "https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/android-notifier/android-notifier-desktop-0.5.1-1.i386.rpm": "pkg:generic/code.google.com/android-notifier?download_url=https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/android-notifier/android-notifier-desktop-0.5.1-1.i386.rpm"
 }
