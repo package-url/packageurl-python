@@ -1,13 +1,14 @@
 Changelog
 =========
 
-0.9.8 (2022-02-XX)
+0.9.8 (2022-02-11)
 ------------------
 
 - Do not create a generic PackageURL for URLs without a path in url2purl #72
 - Use project name as the Package name when creating generic sourceforge PackageURLs #74
 - Update PyPI route pattern in url2purl to handle different file name formats #76
 - Create generic PackageURL for code.google.com archive URLs #78
+- Capture more download types for bitbucket URLs
 
 0.9.7 (2022-02-07)
 ------------------
