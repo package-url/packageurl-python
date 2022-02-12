@@ -102,14 +102,15 @@ def build_generic_purl(uri):
     if parsed_uri.scheme and parsed_uri.netloc and parsed_uri.path:
         # Get file name from `uri`
         uri_path_segments = get_path_segments(uri)
-        file_name = uri_path_segments[-1]
-        return PackageURL(
-            type='generic',
-            name=file_name,
-            qualifiers={
-                'download_url': uri
-            }
-        )
+        if uri_path_segments:
+            file_name = uri_path_segments[-1]
+            return PackageURL(
+                type='generic',
+                name=file_name,
+                qualifiers={
+                    'download_url': uri
+                }
+            )
 
 
 @purl_router.route('https?://registry.npmjs.*/.*',
@@ -262,9 +263,12 @@ def build_rubygems_purl(uri):
 
 
 # https://pypi.python.org/packages/source/a/anyjson/anyjson-0.3.3.tar.gz
+# https://pypi.python.org/packages/2.6/t/threadpool/threadpool-1.2.7-py2.6.egg
+# https://pypi.python.org/packages/any/s/setuptools/setuptools-0.6c11-1.src.rpm
+# https://files.pythonhosted.org/packages/84/d8/451842a5496844bb5c7634b231a2e4caf0d867d2e25f09b840d3b07f3d4b/multi_key_dict-2.0.win32.exe
 pypi_pattern = (
-    r"(?P<name>.+)-(?P<version>.+)"
-    r"\.(zip|tar.gz|tar.bz2|.tgz)$"
+    r"(?P<name>(\w\.?)+(-\w+)*)-(?P<version>.+)"
+    r"\.(zip|tar.gz|tar.bz2|tgz|egg|rpm|exe)$"
 )
 
 # This pattern can be found in the following locations:
@@ -341,18 +345,17 @@ def build_sourceforge_purl(uri):
     sourceforge_purl = purl_from_pattern('sourceforge', sourceforge_pattern, uri)
 
     if not sourceforge_purl:
-        # We create a more generic PackageURL from `uri` if `uri` doesn't fit
-        # `sourceforge_pattern`
-        uri_path_segments = get_path_segments(uri)
-        file_name = uri_path_segments[-1]
-        sourceforge_purl = PackageURL(
-            type='sourceforge',
-            name=file_name,
-            qualifiers={
-                'download_url': uri
-            }
-        )
-
+        # Get the project name from `uri` and use that as the Package name
+        # http://master.dl.sourceforge.net/project/aloyscore/aloyscore/0.1a1%2520stable/0.1a1_stable_AloysCore.zip
+        _, remaining_uri_path = uri.split('/project/') # http://master.dl.sourceforge.net, aloyscore/aloyscore/0.1a1%2520stable/0.1a1_stable_AloysCore.zip
+        if remaining_uri_path:
+            split_remaining_uri_path = remaining_uri_path.split('/') # aloyscore, aloyscore, 0.1a1%2520stable, 0.1a1_stable_AloysCore.zip
+            project_name = split_remaining_uri_path[0] # aloyscore
+            sourceforge_purl = PackageURL(
+                type='sourceforge',
+                name=project_name,
+                qualifiers={'download_url': uri}
+            )
     return sourceforge_purl
 
 
@@ -529,7 +532,7 @@ def build_bitbucket_purl(url):
 
     bitbucket_download_pattern = (
         r"https?://bitbucket.org/"
-        r"(?P<namespace>.+)/(?P<name>.+)/downloads/(?P<version>.+).(zip|tar.gz|tar.bz2|.tgz)"
+        r"(?P<namespace>.+)/(?P<name>.+)/downloads/(?P<version>.+).(zip|tar.gz|tar.bz2|.tgz|exe|msi)"
     )
     matches = re.search(bitbucket_download_pattern, url)
 
@@ -612,3 +615,19 @@ hackage_pattern = (
 )
 
 register_pattern('hackage', hackage_pattern)
+
+
+@purl_router.route('https?://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/.*')
+def build_generic_google_code_archive_purl(uri):
+    # https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/android-notifier/android-notifier-desktop-0.5.1-1.i386.rpm
+    _, remaining_uri = uri.split('https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/') # android-notifier/android-notifier-desktop-0.5.1-1.i386.rpm
+    if remaining_uri:
+        split_remaining_uri = remaining_uri.split("/") # android-notifier, android-notifier-desktop-0.5.1-1.i386.rpm
+        if split_remaining_uri:
+            name = split_remaining_uri[0] # android-notifier
+            return PackageURL(
+                type='generic',
+                namespace='code.google.com',
+                name=name,
+                qualifiers={'download_url': uri}
+            )
