@@ -533,7 +533,7 @@ def build_bitbucket_purl(url):
 
     bitbucket_download_pattern = (
         r"https?://bitbucket.org/"
-        r"(?P<namespace>.+)/(?P<name>.+)/downloads/(?P<version>.+).(zip|tar.gz|tar.bz2|.tgz)"
+        r"(?P<namespace>.+)/(?P<name>.+)/downloads/(?P<version>.+).(zip|tar.gz|tar.bz2|.tgz|exe|msi)"
     )
     matches = re.search(bitbucket_download_pattern, url)
 
