@@ -26,7 +26,6 @@
 
 import os
 import re
-import tarfile
 from urllib.parse import unquote_plus
 from urllib.parse import urlparse
 
