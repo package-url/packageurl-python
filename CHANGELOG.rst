@@ -1,8 +1,13 @@
 Changelog
 =========
 
-0.9.8.1 (2022-02-11)
+0.9.9 (2022-02-15)
 ------------------
+
+- Update version to be semver compliant. No changes to the code have been made.
+
+0.9.8.1 (2022-02-11)
+--------------------
 
 - Fix generic sourceforge PackageURL generation #79
 
