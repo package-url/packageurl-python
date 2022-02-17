@@ -9,7 +9,7 @@ python:
 before_install:
   - pip install black
   - echo "Black formatting check"
-  - black --check *.py
+  - black --check -l 100 *.py
 
 install:
   - python thirdparty/virtualenv.pyz --never-download --no-periodic-update .
