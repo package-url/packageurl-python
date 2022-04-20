@@ -34,11 +34,11 @@ jobs:
           architecture: 'x64'
       - name: Install Build & Test Dependencies
         run: pip install -r requirements.test.txt
+      - name: Code Style Checks
+        run: isort --check-only src/ tests/
       - name: Build
         run: >
-          rm -fR dist/ build/
+          rm -fR dist/ build/ &&
           python setup.py sdist bdist_wheel
       - name: Test & Check
-        run: >
-          isort --check-only src/ tests/
-          py.test -vvs
+        run: py.test -vvs
