@@ -33,7 +33,7 @@ jobs:
           python-version: ${{ env.PYTHON_VERSION_DEFAULT }}
           architecture: 'x64'
       - name: Install Build & Test Dependencies
-        run: pip install -r requirements.test.txt
+        run: pip install -r requirements.build.txt -r requirements.test.txt
       - name: Code Style Checks
         run: isort --check-only src/ tests/
       - name: Build
