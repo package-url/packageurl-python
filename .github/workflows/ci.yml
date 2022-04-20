@@ -1,0 +1,44 @@
+# For details of what checks are run for PRs please refer below
+# docs: https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions
+name: Python CI
+
+on:
+  push:
+    branches: ["master", "main"]
+  pull_request:
+    branches-ignore: ['dependabot/**']
+  workflow_dispatch:
+  schedule:
+    # schedule weekly tests, since some dependencies are not intended to be pinned
+    # this means: at 23:42 on Fridays
+    - cron: '42 23 * * 5'
+
+env:
+  REPORTS_DIR: CI_reports
+  PYTHON_VERSION_DEFAULT: "3.10"
+
+jobs:
+  build-and-test:
+    name: Build & Test
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        # see https://github.com/actions/checkout
+        uses: actions/checkout@v3
+      - name: Setup Python Environment
+        # see https://github.com/actions/setup-python
+        uses: actions/setup-python@v3
+        with:
+          python-version: ${{ env.PYTHON_VERSION_DEFAULT }}
+          architecture: 'x64'
+      - name: Install Build & Test Dependencies
+        run: pip install -r requirements.test.txt
+      - name: Build
+        run: >
+          rm -fR dist/ build/
+          python setup.py sdist bdist_wheel
+      - name: Test & Check
+        run: >
+          isort --check-only src/ tests/
+          py.test -vvs
