@@ -25,4 +25,4 @@
 # download.
 
 isort>=5.10.1
-pytest>=7.1.1
+pytest>=7.0.1
