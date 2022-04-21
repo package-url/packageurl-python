@@ -15,13 +15,24 @@ on:
 
 env:
   REPORTS_DIR: CI_reports
-  PYTHON_VERSION_DEFAULT: "3.10"
 
 jobs:
   build-and-test:
-    name: Build & Test
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
+    name: Build & Test (py${{ matrix.python-version }} on ${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 10
+    env:
+      REPORTS_ARTIFACT: tests-reports
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ 'ubuntu-latest', 'windows-latest', 'macos-latest' ]
+        python-version:
+          - "3.10" # highest supported
+          - "3.9"
+          - "3.8"
+          - "3.7"
+          - "3.6" # lowest supported
     steps:
       - name: Checkout
         # see https://github.com/actions/checkout
@@ -30,7 +41,7 @@ jobs:
         # see https://github.com/actions/setup-python
         uses: actions/setup-python@v3
         with:
-          python-version: ${{ env.PYTHON_VERSION_DEFAULT }}
+          python-version: ${{ matrix.python-version }}
           architecture: 'x64'
       - name: Install Build & Test Dependencies
         run: pip install -r requirements.build.txt -r requirements.test.txt
