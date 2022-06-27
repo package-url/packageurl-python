@@ -10,16 +10,14 @@ Join the discussion at https://gitter.im/package-url/Lobby or enter a ticket for
 License: MIT
 
 
-Build and tests status
+Tests and build status
 ======================
 
-+------------------------------------------------------------------------------------+
-|                         **Linux (Travis) on Python 3**                             |
-+====================================================================================+
-|.. image:: https://api.travis-ci.com/package-url/packageurl-python.png?branch=main  |
-|   :target: https://travis-ci.com/package-url/packageurl-python                     |
-|   :alt: Linux main branch tests status                                             |
-+------------------------------------------------------------------------------------+
++----------------------+
+| **Tests and build**  |
++======================+
+| |ci-tests|           |
++----------------------+
 
 
 Usage
@@ -91,3 +89,9 @@ Make a new release
 - finally, upload to PyPI::
 
     bin/twine upload dist/*
+
+
+
+.. image:: https://github.com/package-url/packageurl-python/actions/workflows/ci.yml/badge.svg?branch=main
+    :target: https://github.com/package-url/packageurl-python/actions/workflows/ci.yml
+    :alt: CI Tests and build status

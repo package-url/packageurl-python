@@ -8,3 +8,4 @@ packageurl-python:
 - Sebastian Schuberth @sschuberth
 - Tushar Goel @TG1999
 - Haiko Schol @haikoschol
+- Paul Horton @madpah
