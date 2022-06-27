@@ -149,7 +149,7 @@ def normalize_qualifiers(qualifiers, encode=True):  # NOQA
         qualifiers = qualifiers.split("&")
         if not all("=" in kv for kv in qualifiers):
             raise ValueError(
-                f"Invalid qualifier. " f"Must be a string of key=value pairs:{repr(qualifiers)}"
+                f"Invalid qualifier. Must be a string of key=value pairs:{repr(qualifiers)}"
             )
         qualifiers = [kv.partition("=") for kv in qualifiers]
         qualifiers = [(k, v) for k, _, v in qualifiers]

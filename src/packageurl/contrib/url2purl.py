@@ -99,7 +99,7 @@ def build_generic_purl(uri):
     """
     Return a PackageURL from `uri`, if `uri` is a parsable URL, or None
 
-    `uri` is assumed to be a download URL, e.g. http://example.com/example.tar.gz
+    `uri` is assumed to be a download URL, e.g. https://example.com/example.tar.gz
     """
     parsed_uri = urlparse(uri)
     if parsed_uri.scheme and parsed_uri.netloc and parsed_uri.path:
@@ -247,17 +247,19 @@ def build_maven_purl(uri):
     return PackageURL("maven", namespace, name, version, qualifiers)
 
 
-@purl_router.route("https?://rubygems.org/downloads/.*")
+# https://rubygems.org/gems/i18n-js-3.0.11.gem
+@purl_router.route("https?://rubygems.org/(downloads|gems)/.*")
 def build_rubygems_purl(uri):
     # We use a more general route pattern instead of using `rubygems_pattern`
     # below by itself because we want to capture all rubygems download URLs,
-    # even the ones that are not completly formed. This helps prevent url2purl
+    # even the ones that are not completely formed. This helps prevent url2purl
     # from attempting to create a generic PackageURL from an invalid rubygems
     # download URL.
 
     # https://rubygems.org/downloads/jwt-0.1.8.gem
+    # https://rubygems.org/gems/i18n-js-3.0.11.gem
     rubygems_pattern = (
-        r"^https?://rubygems.org/downloads/" r"(?P<name>.+)-(?P<version>.+)" r"(\.gem)$"
+        r"^https?://rubygems.org/(downloads|gems)/(?P<name>.+)-(?P<version>.+)(\.gem)$"
     )
     return purl_from_pattern("rubygems", rubygems_pattern, uri)
 
@@ -266,9 +268,7 @@ def build_rubygems_purl(uri):
 # https://pypi.python.org/packages/2.6/t/threadpool/threadpool-1.2.7-py2.6.egg
 # https://pypi.python.org/packages/any/s/setuptools/setuptools-0.6c11-1.src.rpm
 # https://files.pythonhosted.org/packages/84/d8/451842a5496844bb5c7634b231a2e4caf0d867d2e25f09b840d3b07f3d4b/multi_key_dict-2.0.win32.exe
-pypi_pattern = (
-    r"(?P<name>(\w\.?)+(-\w+)*)-(?P<version>.+)" r"\.(zip|tar.gz|tar.bz2|tgz|egg|rpm|exe)$"
-)
+pypi_pattern = r"(?P<name>(\w\.?)+(-\w+)*)-(?P<version>.+)\.(zip|tar.gz|tar.bz2|tgz|egg|rpm|exe)$"
 
 # This pattern can be found in the following locations:
 # - wheel.wheelfile.WHEEL_INFO_RE
@@ -303,9 +303,7 @@ def build_pypi_purl(uri):
 
 # http://nuget.org/packages/EntityFramework/4.2.0.0
 # https://www.nuget.org/api/v2/package/Newtonsoft.Json/11.0.1
-nuget_www_pattern = (
-    r"^https?://.*nuget.org/(api/v2/)?packages?/" r"(?P<name>.+)/" r"(?P<version>.+)$"
-)
+nuget_www_pattern = r"^https?://.*nuget.org/(api/v2/)?packages?/(?P<name>.+)/" r"(?P<version>.+)$"
 
 register_pattern("nuget", nuget_www_pattern)
 
@@ -363,9 +361,7 @@ def build_sourceforge_purl(uri):
 
 
 # https://crates.io/api/v1/crates/rand/0.7.2/download
-cargo_pattern = (
-    r"^https?://crates.io/api/v1/crates/" r"(?P<name>.+)/(?P<version>.+)" r"(\/download)$"
-)
+cargo_pattern = r"^https?://crates.io/api/v1/crates/(?P<name>.+)/(?P<version>.+)" r"(\/download)$"
 
 register_pattern("cargo", cargo_pattern)
 
@@ -618,11 +614,10 @@ def build_generic_google_code_archive_purl(uri):
     # https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/android-notifier/android-notifier-desktop-0.5.1-1.i386.rpm
     _, remaining_uri = uri.split(
         "https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/"
-    )  # android-notifier/android-notifier-desktop-0.5.1-1.i386.rpm
-    if remaining_uri:
-        split_remaining_uri = remaining_uri.split(
-            "/"
-        )  # android-notifier, android-notifier-desktop-0.5.1-1.i386.rpm
+    )
+    if remaining_uri:  # android-notifier/android-notifier-desktop-0.5.1-1.i386.rpm
+        split_remaining_uri = remaining_uri.split("/")
+        # android-notifier, android-notifier-desktop-0.5.1-1.i386.rpm
         if split_remaining_uri:
             name = split_remaining_uri[0]  # android-notifier
             return PackageURL(
