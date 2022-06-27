@@ -84,7 +84,7 @@ def build_tests(clazz, test_file="url2purl.json", regen=False):
             json.dump(tests_data, regened, indent=2)
 
     for test_url, expected_purl in sorted(tests_data.items()):
-        test_name = "test_url2purl_{test_url}".format(test_url=test_url)
+        test_name = f"test_url2purl_{test_url}"
         test_name = python_safe(test_name)
         test_method = get_url2purl_test_method(test_url, expected_purl)
         test_method.funcname = test_name

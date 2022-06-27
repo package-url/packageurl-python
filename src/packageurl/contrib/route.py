@@ -77,9 +77,7 @@ class Rule(object):
         self.endpoint = endpoint
 
     def __repr__(self):
-        return 'Rule(r"""{}""", {}.{})'.format(
-            self.pattern, self.endpoint.__module__, self.endpoint.__name__
-        )
+        return f'Rule(r"""{self.pattern}""", {self.endpoint.__module__}.{self.endpoint.__name__})'
 
     def match(self, string):
         """

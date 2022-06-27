@@ -230,7 +230,7 @@ def build_maven_purl(uri):
     qualifiers = {}
 
     if filename:
-        name_version = "{}-{}".format(name, version)
+        name_version = f"{name}-{version}"
         _, _, classifier_ext = filename.rpartition(name_version)
         classifier, _, extension = classifier_ext.partition(".")
         if not extension:

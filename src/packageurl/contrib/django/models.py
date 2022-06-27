@@ -166,7 +166,7 @@ class PackageURLMixin(models.Model):
             model_field = self._meta.get_field(field_name)
 
             if value and len(value) > model_field.max_length:
-                message = _('Value too long for field "{}".'.format(field_name))
+                message = _(f'Value too long for field "{field_name}".')
                 raise ValidationError(message)
 
             setattr(self, field_name, value)

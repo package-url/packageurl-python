@@ -149,17 +149,14 @@ def normalize_qualifiers(qualifiers, encode=True):  # NOQA
         qualifiers = qualifiers.split("&")
         if not all("=" in kv for kv in qualifiers):
             raise ValueError(
-                "Invalid qualifier. "
-                "Must be a string of key=value pairs:{}".format(repr(qualifiers))
+                f"Invalid qualifier. " f"Must be a string of key=value pairs:{repr(qualifiers)}"
             )
         qualifiers = [kv.partition("=") for kv in qualifiers]
         qualifiers = [(k, v) for k, _, v in qualifiers]
     elif isinstance(qualifiers, dict):
         qualifiers = qualifiers.items()
     else:
-        raise ValueError(
-            "Invalid qualifier. " "Must be a string or dict:{}".format(repr(qualifiers))
-        )
+        raise ValueError(f"Invalid qualifier. Must be a string or dict:{repr(qualifiers)}")
 
     quoter = get_quoter(encode)
     qualifiers = {
@@ -172,24 +169,24 @@ def normalize_qualifiers(qualifiers, encode=True):  # NOQA
             raise ValueError("A qualifier key cannot be empty")
 
         if "%" in key:
-            raise ValueError("A qualifier key cannot be percent encoded: {}".format(repr(key)))
+            raise ValueError(f"A qualifier key cannot be percent encoded: {repr(key)}")
 
         if " " in key:
-            raise ValueError("A qualifier key cannot contain spaces: {}".format(repr(key)))
+            raise ValueError(f"A qualifier key cannot contain spaces: {repr(key)}")
 
         if not all(c in valid_chars for c in key):
             raise ValueError(
-                "A qualifier key must be composed only of ASCII letters and numbers"
-                "period, dash and underscore: {}".format(repr(key))
+                f"A qualifier key must be composed only of ASCII letters and numbers"
+                f"period, dash and underscore: {repr(key)}"
             )
 
         if key[0] in string.digits:
-            raise ValueError("A qualifier key cannot start with a number: {}".format(repr(key)))
+            raise ValueError(f"A qualifier key cannot start with a number: {repr(key)}")
 
     qualifiers = sorted(qualifiers.items())
     qualifiers = dict(qualifiers)
     if encode:
-        qualifiers = ["{}={}".format(k, v) for k, v in qualifiers.items()]
+        qualifiers = [f"{key}={value}" for key, value in qualifiers.items()]
         qualifiers = "&".join(qualifiers)
         return qualifiers or None
     else:
@@ -245,7 +242,7 @@ class PackageURL(namedtuple("PackageURL", _components)):
         for key, value in required.items():
             if value:
                 continue
-            raise ValueError("Invalid purl: {} is a required argument.".format(key))
+            raise ValueError(f"Invalid purl: {key} is a required argument.")
 
         strings = dict(
             type=type,
@@ -258,9 +255,7 @@ class PackageURL(namedtuple("PackageURL", _components)):
         for key, value in strings.items():
             if value and isinstance(value, basestring) or not value:
                 continue
-            raise ValueError(
-                "Invalid purl: {} argument must be a string: {}.".format(key, repr(value))
-            )
+            raise ValueError(f"Invalid purl: {key} argument must be a string: {repr(value)}.")
 
         if qualifiers and not isinstance(
             qualifiers,
@@ -270,9 +265,7 @@ class PackageURL(namedtuple("PackageURL", _components)):
             ),
         ):
             raise ValueError(
-                "Invalid purl: {} argument must be a dict or a string: {}.".format(
-                    "qualifiers", repr(qualifiers)
-                )
+                f"Invalid purl: qualifiers argument must be a dict or a string: {repr(qualifiers)}."
             )
 
         type, namespace, name, version, qualifiers, subpath = normalize(  # NOQA
@@ -359,7 +352,7 @@ class PackageURL(namedtuple("PackageURL", _components)):
         scheme, sep, remainder = purl.partition(":")
         if not sep or scheme != "pkg":
             raise ValueError(
-                "purl is missing the required " '"pkg" scheme component: {}.'.format(repr(purl))
+                f"purl is missing the required " '"pkg" scheme component: {repr(purl)}.'
             )
 
         # this strip '/, // and /// as possible in :// or :///
@@ -367,9 +360,7 @@ class PackageURL(namedtuple("PackageURL", _components)):
 
         type, sep, remainder = remainder.partition("/")  # NOQA
         if not type or not sep:
-            raise ValueError(
-                "purl is missing the required " "type component: {}.".format(repr(purl))
-            )
+            raise ValueError(f"purl is missing the required type component: {repr(purl)}.")
 
         scheme, authority, path, qualifiers, subpath = _urlsplit(
             url=remainder, scheme="", allow_fragments=True
@@ -377,10 +368,10 @@ class PackageURL(namedtuple("PackageURL", _components)):
 
         if scheme or authority:
             msg = (
-                'Invalid purl {} cannot contain a "user:pass@host:port" '
-                "URL Authority component: {}."
+                f'Invalid purl {repr(purl)} cannot contain a "user:pass@host:port" '
+                f"URL Authority component: {repr(authority)}."
             )
-            raise ValueError(msg.format(repr(purl), repr(authority)))
+            raise ValueError(msg)
 
         path = path.lstrip("/")
         remainder, sep, version = path.rpartition("@")
@@ -401,9 +392,7 @@ class PackageURL(namedtuple("PackageURL", _components)):
             name = ns_name[0]
 
         if not name:
-            raise ValueError(
-                "purl is missing the required " "name component: {}".format(repr(purl))
-            )
+            raise ValueError(f"purl is missing the required name component: {repr(purl)}")
 
         type, namespace, name, version, qualifiers, subpath = normalize(  # NOQA
             type,
