@@ -164,7 +164,9 @@ def build_npm_download_purl(uri):
         return
 
     base_filename, ext = os.path.splitext(filename)
-    version = base_filename.split("-")[-1]
+    version = base_filename.replace(name, "")
+    if version.startswith("-"):
+        version = version[1:]  # Removes the "-" prefix
 
     return PackageURL("npm", namespace, name, version)
 
