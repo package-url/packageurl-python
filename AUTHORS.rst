@@ -9,3 +9,4 @@ packageurl-python:
 - Tushar Goel @TG1999
 - Haiko Schol @haikoschol
 - Paul Horton @madpah
+- Aditi Rao @aditirao7
