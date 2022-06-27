@@ -92,6 +92,6 @@ Make a new release
 
 
 
-.. image:: https://github.com/package-url/packageurl-python/actions/workflows/ci.yml/badge.svg?branch=main
+.. |ci-tests| image:: https://github.com/package-url/packageurl-python/actions/workflows/ci.yml/badge.svg?branch=main
     :target: https://github.com/package-url/packageurl-python/actions/workflows/ci.yml
     :alt: CI Tests and build status
