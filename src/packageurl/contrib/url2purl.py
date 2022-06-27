@@ -68,7 +68,8 @@ def purl_from_pattern(type_, pattern, url):
 
     if match:
         purl_data = {
-            field: value for field, value in match.groupdict().items()
+            field: value
+            for field, value in match.groupdict().items()
             if field in PackageURL._fields
         }
         return PackageURL(type_, **purl_data)
@@ -78,8 +79,10 @@ def register_pattern(type_, pattern, router=purl_router):
     """
     Register a pattern with its type.
     """
+
     def endpoint(url):
         return purl_from_pattern(type_, pattern, url)
+
     router.append(pattern, endpoint)
 
 
@@ -104,24 +107,20 @@ def build_generic_purl(uri):
         uri_path_segments = get_path_segments(uri)
         if uri_path_segments:
             file_name = uri_path_segments[-1]
-            return PackageURL(
-                type='generic',
-                name=file_name,
-                qualifiers={
-                    'download_url': uri
-                }
-            )
+            return PackageURL(type="generic", name=file_name, qualifiers={"download_url": uri})
 
 
-@purl_router.route('https?://registry.npmjs.*/.*',
-                   'https?://registry.yarnpkg.com/.*',
-                   'https?://(www\\.)?npmjs.*/package.*',
-                   'https?://(www\\.)?yarnpkg.com/package.*')
+@purl_router.route(
+    "https?://registry.npmjs.*/.*",
+    "https?://registry.yarnpkg.com/.*",
+    "https?://(www\\.)?npmjs.*/package.*",
+    "https?://(www\\.)?yarnpkg.com/package.*",
+)
 def build_npm_purl(uri):
     # npm URLs are difficult to disambiguate with regex
-    if '/package/' in uri:
+    if "/package/" in uri:
         return build_npm_web_purl(uri)
-    elif '/-/' in uri:
+    elif "/-/" in uri:
         return build_npm_download_purl(uri)
     else:
         return build_npm_api_purl(uri)
@@ -129,27 +128,27 @@ def build_npm_purl(uri):
 
 def build_npm_api_purl(uri):
     path = unquote_plus(urlparse(uri).path)
-    segments = [seg for seg in path.split('/') if seg]
+    segments = [seg for seg in path.split("/") if seg]
 
     if len(segments) != 2:
         return
 
     # /@invisionag/eslint-config-ivx
-    if segments[0].startswith('@'):
+    if segments[0].startswith("@"):
         namespace = segments[0]
         name = segments[1]
-        return PackageURL('npm', namespace, name)
+        return PackageURL("npm", namespace, name)
 
     # /angular/1.6.6
     else:
         name = segments[0]
         version = segments[1]
-        return PackageURL('npm', name=name, version=version)
+        return PackageURL("npm", name=name, version=version)
 
 
 def build_npm_download_purl(uri):
     path = unquote_plus(urlparse(uri).path)
-    segments = [seg for seg in path.split('/') if seg and seg != '-']
+    segments = [seg for seg in path.split("/") if seg and seg != "-"]
     len_segments = len(segments)
 
     # /@invisionag/eslint-config-ivx/-/eslint-config-ivx-0.0.2.tgz
@@ -165,17 +164,17 @@ def build_npm_download_purl(uri):
         return
 
     base_filename, ext = os.path.splitext(filename)
-    version = base_filename.split('-')[-1]
+    version = base_filename.split("-")[-1]
 
-    return PackageURL('npm', namespace, name, version)
+    return PackageURL("npm", namespace, name, version)
 
 
 def build_npm_web_purl(uri):
     path = unquote_plus(urlparse(uri).path)
-    if path.startswith('/package/'):
+    if path.startswith("/package/"):
         path = path[9:]
 
-    segments = [seg for seg in path.split('/') if seg]
+    segments = [seg for seg in path.split("/") if seg]
     len_segments = len(segments)
     namespace = version = None
 
@@ -197,21 +196,23 @@ def build_npm_web_purl(uri):
         name = segments[1]
 
     # express
-    elif len_segments == 1 and len(segments) > 0 and segments[0][0] != '@':
+    elif len_segments == 1 and len(segments) > 0 and segments[0][0] != "@":
         name = segments[0]
 
     else:
         return
 
-    return PackageURL('npm', namespace, name, version)
+    return PackageURL("npm", namespace, name, version)
 
 
-@purl_router.route('https?://repo1.maven.org/maven2/.*',
-                   'https?://central.maven.org/maven2/.*',
-                   'maven-index://repo1.maven.org/.*')
+@purl_router.route(
+    "https?://repo1.maven.org/maven2/.*",
+    "https?://central.maven.org/maven2/.*",
+    "maven-index://repo1.maven.org/.*",
+)
 def build_maven_purl(uri):
     path = unquote_plus(urlparse(uri).path)
-    segments = [seg for seg in path.split('/') if seg and seg != 'maven2']
+    segments = [seg for seg in path.split("/") if seg and seg != "maven2"]
 
     if len(segments) < 3:
         return
@@ -225,27 +226,26 @@ def build_maven_purl(uri):
 
     version = segments[-1]
     name = segments[-2]
-    namespace = '.'.join(segments[:-2])
+    namespace = ".".join(segments[:-2])
     qualifiers = {}
 
     if filename:
-        name_version = '{}-{}'.format(name, version)
+        name_version = "{}-{}".format(name, version)
         _, _, classifier_ext = filename.rpartition(name_version)
-        classifier, _, extension = classifier_ext.partition('.')
+        classifier, _, extension = classifier_ext.partition(".")
         if not extension:
             return
 
-        qualifiers['classifier'] = classifier.strip('-')
+        qualifiers["classifier"] = classifier.strip("-")
 
-        valid_types = ('aar', 'ear', 'mar', 'pom', 'rar', 'rpm',
-                       'sar', 'tar.gz', 'war', 'zip')
+        valid_types = ("aar", "ear", "mar", "pom", "rar", "rpm", "sar", "tar.gz", "war", "zip")
         if extension in valid_types:
-            qualifiers['type'] = extension
+            qualifiers["type"] = extension
 
-    return PackageURL('maven', namespace, name, version, qualifiers)
+    return PackageURL("maven", namespace, name, version, qualifiers)
 
 
-@purl_router.route('https?://rubygems.org/downloads/.*')
+@purl_router.route("https?://rubygems.org/downloads/.*")
 def build_rubygems_purl(uri):
     # We use a more general route pattern instead of using `rubygems_pattern`
     # below by itself because we want to capture all rubygems download URLs,
@@ -255,11 +255,9 @@ def build_rubygems_purl(uri):
 
     # https://rubygems.org/downloads/jwt-0.1.8.gem
     rubygems_pattern = (
-        r"^https?://rubygems.org/downloads/"
-        r"(?P<name>.+)-(?P<version>.+)"
-        r"(\.gem)$"
+        r"^https?://rubygems.org/downloads/" r"(?P<name>.+)-(?P<version>.+)" r"(\.gem)$"
     )
-    return purl_from_pattern('rubygems', rubygems_pattern, uri)
+    return purl_from_pattern("rubygems", rubygems_pattern, uri)
 
 
 # https://pypi.python.org/packages/source/a/anyjson/anyjson-0.3.3.tar.gz
@@ -267,8 +265,7 @@ def build_rubygems_purl(uri):
 # https://pypi.python.org/packages/any/s/setuptools/setuptools-0.6c11-1.src.rpm
 # https://files.pythonhosted.org/packages/84/d8/451842a5496844bb5c7634b231a2e4caf0d867d2e25f09b840d3b07f3d4b/multi_key_dict-2.0.win32.exe
 pypi_pattern = (
-    r"(?P<name>(\w\.?)+(-\w+)*)-(?P<version>.+)"
-    r"\.(zip|tar.gz|tar.bz2|tgz|egg|rpm|exe)$"
+    r"(?P<name>(\w\.?)+(-\w+)*)-(?P<version>.+)" r"\.(zip|tar.gz|tar.bz2|tgz|egg|rpm|exe)$"
 )
 
 # This pattern can be found in the following locations:
@@ -280,37 +277,35 @@ wheel_file_re = re.compile(
     r"^(?P<namever>(?P<name>.+?)-(?P<version>.*?))"
     r"((-(?P<build>\d[^-]*?))?-(?P<pyver>.+?)-(?P<abi>.+?)-(?P<plat>.+?)"
     r"\.whl)$",
-    re.VERBOSE
+    re.VERBOSE,
 )
 
 
-@purl_router.route('https?://.+python.+org/packages/.*')
+@purl_router.route("https?://.+python.+org/packages/.*")
 def build_pypi_purl(uri):
     path = unquote_plus(urlparse(uri).path)
-    last_segment = path.split('/')[-1]
+    last_segment = path.split("/")[-1]
 
     # /wheel-0.29.0-py2.py3-none-any.whl
-    if last_segment.endswith('.whl'):
+    if last_segment.endswith(".whl"):
         match = wheel_file_re.match(last_segment)
         if match:
             return PackageURL(
-                'pypi',
-                name=match.group('name'),
-                version=match.group('version'),
+                "pypi",
+                name=match.group("name"),
+                version=match.group("version"),
             )
 
-    return purl_from_pattern('pypi', pypi_pattern, last_segment)
+    return purl_from_pattern("pypi", pypi_pattern, last_segment)
 
 
 # http://nuget.org/packages/EntityFramework/4.2.0.0
 # https://www.nuget.org/api/v2/package/Newtonsoft.Json/11.0.1
 nuget_www_pattern = (
-    r"^https?://.*nuget.org/(api/v2/)?packages?/"
-    r"(?P<name>.+)/"
-    r"(?P<version>.+)$"
+    r"^https?://.*nuget.org/(api/v2/)?packages?/" r"(?P<name>.+)/" r"(?P<version>.+)$"
 )
 
-register_pattern('nuget', nuget_www_pattern)
+register_pattern("nuget", nuget_www_pattern)
 
 
 # https://api.nuget.org/v3-flatcontainer/newtonsoft.json/10.0.1/newtonsoft.json.10.0.1.nupkg
@@ -321,10 +316,10 @@ nuget_api_pattern = (
     r".*(nupkg)$"  # ends with "nupkg"
 )
 
-register_pattern('nuget', nuget_api_pattern)
+register_pattern("nuget", nuget_api_pattern)
 
 
-@purl_router.route('https?://.*sourceforge.net/project/.*')
+@purl_router.route("https?://.*sourceforge.net/project/.*")
 def build_sourceforge_purl(uri):
     # We use a more general route pattern instead of using `sourceforge_pattern`
     # below by itself because we want to capture all sourceforge download URLs,
@@ -342,33 +337,35 @@ def build_sourceforge_purl(uri):
         r"[^/]$"  # not ending with "/"
     )
 
-    sourceforge_purl = purl_from_pattern('sourceforge', sourceforge_pattern, uri)
+    sourceforge_purl = purl_from_pattern("sourceforge", sourceforge_pattern, uri)
 
     if not sourceforge_purl:
         # Get the project name from `uri` and use that as the Package name
         # http://master.dl.sourceforge.net/project/aloyscore/aloyscore/0.1a1%2520stable/0.1a1_stable_AloysCore.zip
-        split_uri = uri.split('/project/') # http://master.dl.sourceforge.net, aloyscore/aloyscore/0.1a1%2520stable/0.1a1_stable_AloysCore.zip
+        split_uri = uri.split(
+            "/project/"
+        )  # http://master.dl.sourceforge.net, aloyscore/aloyscore/0.1a1%2520stable/0.1a1_stable_AloysCore.zip
         if len(split_uri) >= 2:
-            remaining_uri_path = split_uri[1] # aloyscore/aloyscore/0.1a1%2520stable/0.1a1_stable_AloysCore.zip
-            remaining_uri_path_segments = remaining_uri_path.split('/') # aloyscore, aloyscore, 0.1a1%2520stable, 0.1a1_stable_AloysCore.zip
+            remaining_uri_path = split_uri[
+                1
+            ]  # aloyscore/aloyscore/0.1a1%2520stable/0.1a1_stable_AloysCore.zip
+            remaining_uri_path_segments = remaining_uri_path.split(
+                "/"
+            )  # aloyscore, aloyscore, 0.1a1%2520stable, 0.1a1_stable_AloysCore.zip
             if remaining_uri_path_segments:
-                project_name = remaining_uri_path_segments[0] # aloyscore
+                project_name = remaining_uri_path_segments[0]  # aloyscore
                 sourceforge_purl = PackageURL(
-                    type='sourceforge',
-                    name=project_name,
-                    qualifiers={'download_url': uri}
+                    type="sourceforge", name=project_name, qualifiers={"download_url": uri}
                 )
     return sourceforge_purl
 
 
 # https://crates.io/api/v1/crates/rand/0.7.2/download
 cargo_pattern = (
-    r"^https?://crates.io/api/v1/crates/"
-    r"(?P<name>.+)/(?P<version>.+)"
-    r"(\/download)$"
+    r"^https?://crates.io/api/v1/crates/" r"(?P<name>.+)/(?P<version>.+)" r"(\/download)$"
 )
 
-register_pattern('cargo', cargo_pattern)
+register_pattern("cargo", cargo_pattern)
 
 
 # https://raw.githubusercontent.com/volatilityfoundation/dwarf2json/master/LICENSE.txt
@@ -377,7 +374,7 @@ github_raw_content_pattern = (
     r"(?P<version>[^/]+)/(?P<subpath>.*)$"
 )
 
-register_pattern('github', github_raw_content_pattern)
+register_pattern("github", github_raw_content_pattern)
 
 
 @purl_router.route("https?://api.github\\.com/repos/.*")
@@ -391,23 +388,21 @@ def build_github_api_purl(url):
     """
     segments = get_path_segments(url)
 
-    if not(len(segments) >= 3):
+    if not (len(segments) >= 3):
         return
     namespace = segments[1]
     name = segments[2]
     version = None
 
     # https://api.github.com/repos/nexB/scancode-toolkit/
-    if len(segments) == 4 and segments[3] != 'commits':
+    if len(segments) == 4 and segments[3] != "commits":
         version = segments[3]
 
     # https://api.github.com/repos/nexB/scancode-toolkit/commits/40593af0df6c8378d2b180324b97cb439fa11d66
     if len(segments) == 5 and segments[3] == "commits":
         version = segments[4]
 
-    return PackageURL(
-        type='github', namespace=namespace, name=name, version=version
-    )
+    return PackageURL(type="github", namespace=namespace, name=name, version=version)
 
 
 # https://codeload.github.com/nexB/scancode-toolkit/tar.gz/v3.1.1
@@ -418,7 +413,7 @@ github_codeload_pattern = (
     r"v?(?P<version>.+)$"
 )
 
-register_pattern('github', github_codeload_pattern)
+register_pattern("github", github_codeload_pattern)
 
 
 @purl_router.route("https?://github\\.com/.*")
@@ -476,15 +471,15 @@ def build_github_purl(url):
         qualifiers = {}
         if matches:
             if pattern != releases_download_pattern:
-                return purl_from_pattern(type_='github', pattern=pattern, url=url)
-            qualifiers['download_url'] = url
-            purl = purl_from_pattern(type_='github', pattern=pattern, url=url)
+                return purl_from_pattern(type_="github", pattern=pattern, url=url)
+            qualifiers["download_url"] = url
+            purl = purl_from_pattern(type_="github", pattern=pattern, url=url)
             return PackageURL(
                 type=purl.type,
                 name=purl.name,
                 namespace=purl.namespace,
                 version=purl.version,
-                qualifiers=qualifiers
+                qualifiers=qualifiers,
             )
 
     segments = get_path_segments(url)
@@ -497,17 +492,17 @@ def build_github_purl(url):
     subpath = None
 
     # https://github.com/TG1999/fetchcode/master
-    if len(segments) >= 3 and segments[2] != 'tree':
+    if len(segments) >= 3 and segments[2] != "tree":
         version = segments[2]
-        subpath = '/'.join(segments[3:])
+        subpath = "/".join(segments[3:])
 
     # https://github.com/TG1999/fetchcode/tree/master
-    if len(segments) >= 4 and segments[2] == 'tree':
+    if len(segments) >= 4 and segments[2] == "tree":
         version = segments[3]
-        subpath = '/'.join(segments[4:])
+        subpath = "/".join(segments[4:])
 
     return PackageURL(
-        type='github',
+        type="github",
         namespace=namespace,
         name=name,
         version=version,
@@ -540,29 +535,24 @@ def build_bitbucket_purl(url):
 
     qualifiers = {}
     if matches:
-        qualifiers['download_url'] = url
-        return PackageURL(
-            type='bitbucket',
-            namespace=namespace,
-            name=name,
-            qualifiers=qualifiers
-        )
+        qualifiers["download_url"] = url
+        return PackageURL(type="bitbucket", namespace=namespace, name=name, qualifiers=qualifiers)
 
     version = None
     subpath = None
 
     # https://bitbucket.org/TG1999/first_repo/new_folder/
-    if len(segments) >= 3 and segments[2] != 'src':
+    if len(segments) >= 3 and segments[2] != "src":
         version = segments[2]
-        subpath = '/'.join(segments[3:])
+        subpath = "/".join(segments[3:])
 
     # https://bitbucket.org/TG1999/first_repo/src/master/new_folder/
-    if len(segments) >= 4 and segments[2] == 'src':
+    if len(segments) >= 4 and segments[2] == "src":
         version = segments[3]
-        subpath = '/'.join(segments[4:])
+        subpath = "/".join(segments[4:])
 
     return PackageURL(
-        type='bitbucket',
+        type="bitbucket",
         namespace=namespace,
         name=name,
         version=version,
@@ -590,17 +580,17 @@ def build_gitlab_purl(url):
     subpath = None
 
     # https://gitlab.com/TG1999/firebase/master
-    if (len(segments) >= 3) and segments[2] != '-' and segments[2] != 'tree':
+    if (len(segments) >= 3) and segments[2] != "-" and segments[2] != "tree":
         version = segments[2]
-        subpath = '/'.join(segments[3:])
+        subpath = "/".join(segments[3:])
 
     # https://gitlab.com/TG1999/firebase/-/tree/master
-    if len(segments) >= 5 and (segments[2] == '-' and segments[3] == 'tree'):
+    if len(segments) >= 5 and (segments[2] == "-" and segments[3] == "tree"):
         version = segments[4]
-        subpath = '/'.join(segments[5:])
+        subpath = "/".join(segments[5:])
 
     return PackageURL(
-        type='gitlab',
+        type="gitlab",
         namespace=namespace,
         name=name,
         version=version,
@@ -616,20 +606,26 @@ hackage_pattern = (
     r"[^/]$"
 )
 
-register_pattern('hackage', hackage_pattern)
+register_pattern("hackage", hackage_pattern)
 
 
-@purl_router.route('https?://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/.*')
+@purl_router.route(
+    "https?://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/.*"
+)
 def build_generic_google_code_archive_purl(uri):
     # https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/android-notifier/android-notifier-desktop-0.5.1-1.i386.rpm
-    _, remaining_uri = uri.split('https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/') # android-notifier/android-notifier-desktop-0.5.1-1.i386.rpm
+    _, remaining_uri = uri.split(
+        "https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/"
+    )  # android-notifier/android-notifier-desktop-0.5.1-1.i386.rpm
     if remaining_uri:
-        split_remaining_uri = remaining_uri.split("/") # android-notifier, android-notifier-desktop-0.5.1-1.i386.rpm
+        split_remaining_uri = remaining_uri.split(
+            "/"
+        )  # android-notifier, android-notifier-desktop-0.5.1-1.i386.rpm
         if split_remaining_uri:
-            name = split_remaining_uri[0] # android-notifier
+            name = split_remaining_uri[0]  # android-notifier
             return PackageURL(
-                type='generic',
-                namespace='code.google.com',
+                type="generic",
+                namespace="code.google.com",
                 name=name,
-                qualifiers={'download_url': uri}
+                qualifiers={"download_url": uri},
             )

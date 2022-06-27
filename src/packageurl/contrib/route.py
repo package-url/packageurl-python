@@ -60,11 +60,12 @@ class Rule(object):
     (typically a URI) for the rule to be considered, i.e. for the endpoint to
     be resolved and eventually invoked for a given string (typically a URI).
     """
+
     def __init__(self, pattern, endpoint):
         # To ensure the pattern will match entirely, we wrap the pattern
         # with start of line ^ and  end of line $.
-        self.pattern = pattern.lstrip('^').rstrip('$')
-        self.pattern_match = re.compile('^' + self.pattern + '$').match
+        self.pattern = pattern.lstrip("^").rstrip("$")
+        self.pattern_match = re.compile("^" + self.pattern + "$").match
 
         # ensure the endpoint is callable
         assert callable(endpoint)
@@ -77,7 +78,8 @@ class Rule(object):
 
     def __repr__(self):
         return 'Rule(r"""{}""", {}.{})'.format(
-            self.pattern, self.endpoint.__module__, self.endpoint.__name__)
+            self.pattern, self.endpoint.__module__, self.endpoint.__name__
+        )
 
     def match(self, string):
         """
@@ -117,6 +119,7 @@ class Router(object):
     Multiple routers can co-exist as needed, such as a router to collect,
     another to fetch, etc.
     """
+
     def __init__(self, route_map=None):
         """
         'route_map' is an ordered mapping of pattern -> Rule.
@@ -153,6 +156,7 @@ class Router(object):
         ... def somefunc(uri):
         ...    pass
         """
+
         def decorator(endpoint):
             assert patterns
             for pat in patterns:
@@ -161,6 +165,7 @@ class Router(object):
             @wraps(endpoint)
             def decorated(*args, **kwargs):
                 return self.process(*args, **kwargs)
+
             return decorated
 
         return decorator
@@ -200,7 +205,7 @@ class Router(object):
             # this can happen when multiple patterns match the same string
             # we raise an exception with enough debugging information
             pats = repr([r.pattern for r in candidates])
-            msg = '%(string)r matches multiple patterns %(pats)r' % locals()
+            msg = "%(string)r matches multiple patterns %(pats)r" % locals()
             raise MultipleRoutesDefined(msg)
 
         return candidates[0].endpoint
@@ -215,7 +220,7 @@ class Router(object):
 
         if not self._is_routable:
             # build an alternation regex
-            routables = '^(' + '|'.join(pat for pat in self.route_map) + ')$'
+            routables = "^(" + "|".join(pat for pat in self.route_map) + ")$"
             self._is_routable = re.compile(routables, re.UNICODE).match
 
         return bool(self._is_routable(string))

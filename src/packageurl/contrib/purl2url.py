@@ -78,9 +78,7 @@ def build_bitbucket_homepage_url(purl):
     if not (name and namespace):
         return
 
-    url = "https://bitbucket.org/{namespace}/{name}".format(
-        namespace=namespace, name=name
-    )
+    url = "https://bitbucket.org/{namespace}/{name}".format(namespace=namespace, name=name)
     if version:
         url = "{url}/src/{version}".format(url=url, version=version)
 
@@ -155,6 +153,4 @@ def build_gem_download_url(purl):
     if not (name and version):
         return
 
-    return "https://rubygems.org/downloads/{name}-{version}.gem".format(
-        name=name, version=version
-    )
+    return "https://rubygems.org/downloads/{name}-{version}.gem".format(name=name, version=version)
