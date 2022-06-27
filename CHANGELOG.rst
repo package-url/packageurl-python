@@ -1,6 +1,15 @@
 Changelog
 =========
 
+0.10.0 (2022-06-27)
+-------------------
+
+- Upgrade virtualenv.pyz to latest version #85
+- Replace Travis CI by GitHub Actions #84
+- Add black to the CI and apply formatting on whole codebase #91
+- Improve url2purl support for nom URLs
+- Improve url2purl support for rubygems.org URLs #89
+
 0.9.9 (2022-02-15)
 ------------------
 
