@@ -1,4 +1,6 @@
-# packageurl-python
+=================
+packageurl-python
+=================
 
 Python library to parse and build "purl" aka. Package URLs.
 See https://github.com/package-url/purl-spec for details.
@@ -12,11 +14,11 @@ Build and tests status
 ======================
 
 +------------------------------------------------------------------------------------+
-|                         **Linux (Travis) on Python 2 and 3**                       |
+|                         **Linux (Travis) on Python 3**                             |
 +====================================================================================+
-|.. image:: https://api.travis-ci.com/package-url/packageurl-python.png?branch=master|
+|.. image:: https://api.travis-ci.com/package-url/packageurl-python.png?branch=main  |
 |   :target: https://travis-ci.com/package-url/packageurl-python                     |
-|   :alt: Linux Master branch tests status                                           |
+|   :alt: Linux main branch tests status                                             |
 +------------------------------------------------------------------------------------+
 
 
