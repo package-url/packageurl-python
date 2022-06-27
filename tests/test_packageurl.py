@@ -34,9 +34,20 @@ from packageurl import normalize
 from packageurl import normalize_qualifiers
 
 
-def create_test_function(description, purl, canonical_purl, is_invalid,
-                         type, name, namespace, version, qualifiers, subpath,  # NOQA
-                         test_func_prefix='test_purl_pkg_', **kwargs):
+def create_test_function(
+    description,
+    purl,
+    canonical_purl,
+    is_invalid,
+    type,
+    name,
+    namespace,
+    version,
+    qualifiers,
+    subpath,  # NOQA
+    test_func_prefix="test_purl_pkg_",
+    **kwargs
+):
     """
     Return a new (test function, test_name) where the test_function closed on
     test arguments. If is_error is True the tests are expected to raise an
@@ -47,13 +58,13 @@ def create_test_function(description, purl, canonical_purl, is_invalid,
         def test_purl(self):
             try:
                 PackageURL.from_string(purl)
-                self.fail('Should raise a ValueError')
+                self.fail("Should raise a ValueError")
             except ValueError:
                 pass
 
             try:
                 PackageURL.from_string(canonical_purl)
-                self.fail('Should raise a ValueError')
+                self.fail("Should raise a ValueError")
             except ValueError:
                 pass
 
@@ -88,7 +99,7 @@ def create_test_function(description, purl, canonical_purl, is_invalid,
     if not description:
         description = purl
     if is_invalid:
-        test_func_prefix += 'is_invalid_'
+        test_func_prefix += "is_invalid_"
     test_name = python_safe_name(test_func_prefix + description)
     test_purl.__name__ = test_name
     test_purl.funcname = test_name
@@ -103,10 +114,10 @@ def python_safe_name(s):
     >>> s = "not `\\a /`good` -safe name ??"
     >>> assert python_safe_name(s) == 'not_good_safe_name'
     """
-    no_punctuation = re.compile(r'[\W_]', re.MULTILINE).sub
+    no_punctuation = re.compile(r"[\W_]", re.MULTILINE).sub
     s = s.lower()
-    s = no_punctuation(' ', s)
-    s = '_'.join(s.split())
+    s = no_punctuation(" ", s)
+    s = "_".join(s.split())
     return s
 
 
@@ -114,12 +125,12 @@ class PurlTest(unittest.TestCase):
     pass
 
 
-def build_tests(clazz=PurlTest, test_file='test-suite-data.json'):
+def build_tests(clazz=PurlTest, test_file="test-suite-data.json"):
     """
     Dynamically build test methods for each purl test found in the `test_file`
     JSON file and attach a test method to the `clazz` class.
     """
-    test_data_dir = os.path.join(os.path.dirname(__file__), 'data')
+    test_data_dir = os.path.join(os.path.dirname(__file__), "data")
     test_file = os.path.join(test_data_dir, test_file)
 
     with open(test_file) as tf:
@@ -134,172 +145,188 @@ build_tests()
 
 
 class NormalizePurlTest(unittest.TestCase):
-
     def test_normalize_qualifiers_as_string(self):
-        qualifiers_as_dict = {
-            'classifier': 'sources',
-            'repository_url': 'repo.spring.io/release'
-        }
-        qualifiers_as_string = 'classifier=sources&repository_url=repo.spring.io/release'
-        assert qualifiers_as_string == normalize_qualifiers(
-            qualifiers_as_dict, encode=True)
+        qualifiers_as_dict = {"classifier": "sources", "repository_url": "repo.spring.io/release"}
+        qualifiers_as_string = "classifier=sources&repository_url=repo.spring.io/release"
+        assert qualifiers_as_string == normalize_qualifiers(qualifiers_as_dict, encode=True)
 
     def test_normalize_qualifiers_as_dict(self):
-        qualifiers_as_dict = {
-            'classifier': 'sources',
-            'repository_url': 'repo.spring.io/release'
-        }
-        qualifiers_as_string = 'classifier=sources&repository_url=repo.spring.io/release'
-        assert qualifiers_as_dict == normalize_qualifiers(
-            qualifiers_as_string, encode=False)
+        qualifiers_as_dict = {"classifier": "sources", "repository_url": "repo.spring.io/release"}
+        qualifiers_as_string = "classifier=sources&repository_url=repo.spring.io/release"
+        assert qualifiers_as_dict == normalize_qualifiers(qualifiers_as_string, encode=False)
 
     def test_create_PackageURL_from_qualifiers_string(self):
-        canonical_purl = 'pkg:maven/org.apache.xmlgraphics/batik-anim@1.9.1?classifier=sources&repository_url=repo.spring.io/release'
-        type = 'maven'  # NOQA
-        namespace = 'org.apache.xmlgraphics'
-        name = 'batik-anim'
-        version = '1.9.1'
-        qualifiers_as_string = 'classifier=sources&repository_url=repo.spring.io/release'
+        canonical_purl = "pkg:maven/org.apache.xmlgraphics/batik-anim@1.9.1?classifier=sources&repository_url=repo.spring.io/release"
+        type = "maven"  # NOQA
+        namespace = "org.apache.xmlgraphics"
+        name = "batik-anim"
+        version = "1.9.1"
+        qualifiers_as_string = "classifier=sources&repository_url=repo.spring.io/release"
         subpath = None
 
-        purl = PackageURL(type, namespace, name, version, qualifiers_as_string,
-                          subpath)
+        purl = PackageURL(type, namespace, name, version, qualifiers_as_string, subpath)
         assert canonical_purl == purl.to_string()
 
     def test_create_PackageURL_from_qualifiers_dict(self):
-        canonical_purl = 'pkg:maven/org.apache.xmlgraphics/batik-anim@1.9.1?classifier=sources&repository_url=repo.spring.io/release'
-        type = 'maven'  # NOQA
-        namespace = 'org.apache.xmlgraphics'
-        name = 'batik-anim'
-        version = '1.9.1'
-        qualifiers_as_dict = {
-            'classifier': 'sources',
-            'repository_url': 'repo.spring.io/release'
-        }
+        canonical_purl = "pkg:maven/org.apache.xmlgraphics/batik-anim@1.9.1?classifier=sources&repository_url=repo.spring.io/release"
+        type = "maven"  # NOQA
+        namespace = "org.apache.xmlgraphics"
+        name = "batik-anim"
+        version = "1.9.1"
+        qualifiers_as_dict = {"classifier": "sources", "repository_url": "repo.spring.io/release"}
         subpath = None
 
-        purl = PackageURL(type, namespace, name, version,
-                          qualifiers_as_dict, subpath)
+        purl = PackageURL(type, namespace, name, version, qualifiers_as_dict, subpath)
         assert canonical_purl == purl.to_string()
 
     def test_normalize_encode_can_take_unicode_with_non_ascii_with_slash(self):
-        uncd = u'núcleo/núcleo'
+        uncd = "núcleo/núcleo"
         normal = normalize(
-            type=uncd, namespace=uncd, name=uncd, version=uncd,
-            qualifiers='a=' + uncd, subpath=uncd, encode=True)
+            type=uncd,
+            namespace=uncd,
+            name=uncd,
+            version=uncd,
+            qualifiers="a=" + uncd,
+            subpath=uncd,
+            encode=True,
+        )
         expected = (
-            'n%c3%bacleo/n%c3%bacleo',
-            'n%C3%BAcleo/n%C3%BAcleo',
-            'n%C3%BAcleo/n%C3%BAcleo',
-            'n%C3%BAcleo/n%C3%BAcleo',
-            'a=n%C3%BAcleo/n%C3%BAcleo',
-            'n%C3%BAcleo/n%C3%BAcleo'
+            "n%c3%bacleo/n%c3%bacleo",
+            "n%C3%BAcleo/n%C3%BAcleo",
+            "n%C3%BAcleo/n%C3%BAcleo",
+            "n%C3%BAcleo/n%C3%BAcleo",
+            "a=n%C3%BAcleo/n%C3%BAcleo",
+            "n%C3%BAcleo/n%C3%BAcleo",
         )
         assert expected == normal
 
     def test_normalize_decode_can_take_unicode_with_non_ascii_with_slash(self):
-        uncd = u'núcleo/núcleo'
+        uncd = "núcleo/núcleo"
         normal = normalize(
-            type=uncd, namespace=uncd, name=uncd, version=uncd,
-            qualifiers='a=' + uncd, subpath=uncd, encode=False)
+            type=uncd,
+            namespace=uncd,
+            name=uncd,
+            version=uncd,
+            qualifiers="a=" + uncd,
+            subpath=uncd,
+            encode=False,
+        )
         expected = (
-            'núcleo/núcleo',
-            'núcleo/núcleo',
-            'núcleo/núcleo',
-            'núcleo/núcleo',
-            {'a': 'núcleo/núcleo'},
-            'núcleo/núcleo',
+            "núcleo/núcleo",
+            "núcleo/núcleo",
+            "núcleo/núcleo",
+            "núcleo/núcleo",
+            {"a": "núcleo/núcleo"},
+            "núcleo/núcleo",
         )
         assert expected == normal
 
     def test_normalize_encode_always_reencodes(self):
-        uncd = u'n%c3%bacleo/n%c3%bacleo'
+        uncd = "n%c3%bacleo/n%c3%bacleo"
         normal = normalize(
-            type=uncd, namespace=uncd, name=uncd, version=uncd,
-            qualifiers='a=' + uncd, subpath=uncd, encode=True)
+            type=uncd,
+            namespace=uncd,
+            name=uncd,
+            version=uncd,
+            qualifiers="a=" + uncd,
+            subpath=uncd,
+            encode=True,
+        )
         expected = (
-            u'n%25c3%25bacleo/n%25c3%25bacleo',
-            u'n%25c3%25bacleo/n%25c3%25bacleo',
-            u'n%25c3%25bacleo/n%25c3%25bacleo',
-            u'n%25c3%25bacleo/n%25c3%25bacleo',
-            u'a=n%25c3%25bacleo/n%25c3%25bacleo',
-            u'n%25c3%25bacleo/n%25c3%25bacleo'
+            "n%25c3%25bacleo/n%25c3%25bacleo",
+            "n%25c3%25bacleo/n%25c3%25bacleo",
+            "n%25c3%25bacleo/n%25c3%25bacleo",
+            "n%25c3%25bacleo/n%25c3%25bacleo",
+            "a=n%25c3%25bacleo/n%25c3%25bacleo",
+            "n%25c3%25bacleo/n%25c3%25bacleo",
         )
         assert expected == normal
 
     def test_qualifiers_must_be_key_value_pairs(self):
-        purl = 'pkg:maven/org.apache.xmlgraphics/batik-anim@1.9.1?this+is+not+a+key_value'
+        purl = "pkg:maven/org.apache.xmlgraphics/batik-anim@1.9.1?this+is+not+a+key_value"
         try:
             PackageURL.from_string(purl)
-            self.fail('Failed to raise exception for invalid qualifiers')
+            self.fail("Failed to raise exception for invalid qualifiers")
         except ValueError as ve:
-            assert 'Invalid qualifier. Must be a string of key=value pairs' in str(ve)
+            assert "Invalid qualifier. Must be a string of key=value pairs" in str(ve)
 
     def test_to_dict_optionally_returns_qualifiers_as_string(self):
         purl = PackageURL(
-            type='maven',
-            namespace='org.apache',
-            name='commons-logging',
-            version='12.3',
-            qualifiers='this=12&that=13',
-            subpath='this/is/a/path',
+            type="maven",
+            namespace="org.apache",
+            name="commons-logging",
+            version="12.3",
+            qualifiers="this=12&that=13",
+            subpath="this/is/a/path",
         )
 
-        expected = dict([
-            ('type', 'maven'),
-            ('namespace', 'org.apache'),
-            ('name', 'commons-logging'),
-            ('version', '12.3'),
-            ('qualifiers', dict([
-                ('that', '13'),
-                ('this', '12'),
-            ])),
-            ('subpath', 'this/is/a/path')
-        ])
+        expected = dict(
+            [
+                ("type", "maven"),
+                ("namespace", "org.apache"),
+                ("name", "commons-logging"),
+                ("version", "12.3"),
+                (
+                    "qualifiers",
+                    dict(
+                        [
+                            ("that", "13"),
+                            ("this", "12"),
+                        ]
+                    ),
+                ),
+                ("subpath", "this/is/a/path"),
+            ]
+        )
         assert expected == purl.to_dict()
 
-        expected = dict([
-            ('type', u'maven'),
-            ('namespace', u'org.apache'),
-            ('name', u'commons-logging'),
-            ('version', u'12.3'),
-            ('qualifiers', u'that=13&this=12'),
-            ('subpath', u'this/is/a/path')
-        ])
+        expected = dict(
+            [
+                ("type", "maven"),
+                ("namespace", "org.apache"),
+                ("name", "commons-logging"),
+                ("version", "12.3"),
+                ("qualifiers", "that=13&this=12"),
+                ("subpath", "this/is/a/path"),
+            ]
+        )
         assert expected == purl.to_dict(encode=True)
 
     def test_to_dict_custom_empty_value(self):
         purl = PackageURL(
-            type='maven',
-            namespace='',
-            name='commons-logging',
-            version='12.3',
+            type="maven",
+            namespace="",
+            name="commons-logging",
+            version="12.3",
             qualifiers=None,
         )
 
-        expected = dict([
-            ('type', 'maven'),
-            ('namespace', None),
-            ('name', 'commons-logging'),
-            ('version', '12.3'),
-            ('qualifiers', None),
-            ('subpath', None)
-        ])
+        expected = dict(
+            [
+                ("type", "maven"),
+                ("namespace", None),
+                ("name", "commons-logging"),
+                ("version", "12.3"),
+                ("qualifiers", None),
+                ("subpath", None),
+            ]
+        )
         assert expected == purl.to_dict()
         assert expected == purl.to_dict(empty=None)
 
-        expected = dict([
-            ('type', 'maven'),
-            ('namespace', ''),
-            ('name', 'commons-logging'),
-            ('version', '12.3'),
-            ('qualifiers', ''),
-            ('subpath', '')
-        ])
-        assert expected == purl.to_dict(empty='')
+        expected = dict(
+            [
+                ("type", "maven"),
+                ("namespace", ""),
+                ("name", "commons-logging"),
+                ("version", "12.3"),
+                ("qualifiers", ""),
+                ("subpath", ""),
+            ]
+        )
+        assert expected == purl.to_dict(empty="")
 
 
 def test_purl_is_hashable():
-    s = {PackageURL(name='hashable', type='pypi')}
+    s = {PackageURL(name="hashable", type="pypi")}
     assert len(s) == 1
-

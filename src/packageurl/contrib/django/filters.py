@@ -35,8 +35,9 @@ class PackageURLFilter(django_filters.CharFilter):
     This filter depends on a `for_package_url` method available on the Model
     Manager, see for example `PackageURLQuerySetMixin`.
     """
+
     def filter(self, qs, value):
-        empty_values = ([], (), {}, '', None)
+        empty_values = ([], (), {}, "", None)
         if value in empty_values:
             return qs
 

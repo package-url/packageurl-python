@@ -10,6 +10,15 @@ agree to the Developer Certificate of Origin http://developercertificate.org/
 and its license (see the mit.LICENSE file).  The same approach is used
 by the Linux Kernel developers and several other projects.
 
+To ensure formatting validation on commit, you can setup a pre-commit hook that will
+automatically run "black" before the code is commited.
+Copy the "pre-commit.sample" file from the .git/hooks directory to a new file named
+"pre-commit" and add the following line to this file::
+
+    black --line-length 100 .
+
+Now rename the file to pre-commit by removing the .sample extension.
+
 For commits, it is best to simply add a line like this to your commit message,
 with your name and email::
 

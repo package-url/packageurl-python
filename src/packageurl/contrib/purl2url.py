@@ -58,9 +58,7 @@ def build_cargo_download_url(purl):
     if not (name and version):
         return
 
-    return "https://crates.io/api/v1/crates/{name}/{version}/download".format(
-        name=name, version=version
-    )
+    return f"https://crates.io/api/v1/crates/{name}/{version}/download"
 
 
 @router.route("pkg:bitbucket/.*")
@@ -78,14 +76,12 @@ def build_bitbucket_homepage_url(purl):
     if not (name and namespace):
         return
 
-    url = "https://bitbucket.org/{namespace}/{name}".format(
-        namespace=namespace, name=name
-    )
+    url = f"https://bitbucket.org/{namespace}/{name}"
     if version:
-        url = "{url}/src/{version}".format(url=url, version=version)
+        url = f"{url}/src/{version}"
 
     if subpath:
-        url = "{url}/{subpath}".format(url=url, subpath=subpath)
+        url = f"{url}/{subpath}"
 
     return url
 
@@ -105,13 +101,13 @@ def build_github_homepage_url(purl):
     if not (name and namespace):
         return
 
-    url = "https://github.com/{namespace}/{name}".format(namespace=namespace, name=name)
+    url = f"https://github.com/{namespace}/{name}"
 
     if version:
-        url = "{url}/tree/{version}".format(url=url, version=version)
+        url = f"{url}/tree/{version}"
 
     if subpath:
-        url = "{url}/{subpath}".format(url=url, subpath=subpath)
+        url = f"{url}/{subpath}"
 
     return url
 
@@ -131,13 +127,13 @@ def build_gitlab_homepage_url(purl):
     if not (name and namespace):
         return
 
-    url = "https://gitlab.com/{namespace}/{name}".format(namespace=namespace, name=name)
+    url = f"https://gitlab.com/{namespace}/{name}"
 
     if version:
-        url = "{url}/-/tree/{version}".format(url=url, version=version)
+        url = f"{url}/-/tree/{version}"
 
     if subpath:
-        url = "{url}/{subpath}".format(url=url, subpath=subpath)
+        url = f"{url}/{subpath}"
 
     return url
 
@@ -155,6 +151,4 @@ def build_gem_download_url(purl):
     if not (name and version):
         return
 
-    return "https://rubygems.org/downloads/{name}-{version}.gem".format(
-        name=name, version=version
-    )
+    return f"https://rubygems.org/downloads/{name}-{version}.gem"

@@ -39,55 +39,52 @@ def get_purl(url):
 
 
 class TestURL2PURL(TestCase):
-
     def test_get_purl_empty_string(self):
-        self.assertEqual(None, get_purl(''))
+        self.assertEqual(None, get_purl(""))
 
     def test_get_purl_none(self):
         self.assertEqual(None, get_purl(None))
 
     def test_get_purl_unroutable_uri(self):
-        self.assertEqual(None, get_purl('dsf.example'))
+        self.assertEqual(None, get_purl("dsf.example"))
 
 
 def python_safe(s):
     """
     Return a name safe to use as a python function name.
     """
-    safe_chars = re.compile(r'[\W_]', re.MULTILINE)
+    safe_chars = re.compile(r"[\W_]", re.MULTILINE)
     s = s.strip().lower()
     s = [x for x in safe_chars.split(s) if x]
-    return '_'.join(s)
+    return "_".join(s)
 
 
 def get_url2purl_test_method(test_url, expected_purl):
-
     def test_method(self):
         self.assertEqual(expected_purl, get_purl(test_url))
 
     return test_method
 
 
-def build_tests(clazz, test_file='url2purl.json', regen=False):
+def build_tests(clazz, test_file="url2purl.json", regen=False):
     """
     Dynamically build test methods for Package URL inference from a JSON test
     file.
     The JSON test file is a key-sorted mapping of {test url: expected purl}.
     """
-    test_data_dir = os.path.join(os.path.dirname(__file__), 'data')
+    test_data_dir = os.path.join(os.path.dirname(__file__), "data")
     test_file = os.path.join(test_data_dir, test_file)
 
-    with io.open(test_file, encoding='utf-8') as tests:
+    with io.open(test_file, encoding="utf-8") as tests:
         tests_data = json.load(tests)
 
     if regen:
-        tests_data = {test_url: get_purl(test_url)
-                      for test_url in tests_data.keys()}
-        with io.open(test_file, 'w') as regened:
+        tests_data = {test_url: get_purl(test_url) for test_url in tests_data.keys()}
+        with io.open(test_file, "w") as regened:
             json.dump(tests_data, regened, indent=2)
 
     for test_url, expected_purl in sorted(tests_data.items()):
-        test_name = 'test_url2purl_{test_url}'.format(test_url=test_url)
+        test_name = f"test_url2purl_{test_url}"
         test_name = python_safe(test_name)
         test_method = get_url2purl_test_method(test_url, expected_purl)
         test_method.funcname = test_name

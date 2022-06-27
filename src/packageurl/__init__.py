@@ -32,7 +32,10 @@ from urllib.parse import urlsplit as _urlsplit
 
 # Python 3
 unicode = str  # NOQA
-basestring = (bytes, str,)  # NOQA
+basestring = (
+    bytes,
+    str,
+)  # NOQA
 
 """
 A purl (aka. Package URL) implementation as specified at:
@@ -46,11 +49,11 @@ def quote(s):
     byte or unicode string.
     """
     if isinstance(s, unicode):
-        s = s.encode('utf-8')
+        s = s.encode("utf-8")
     quoted = _percent_quote(s)
     if not isinstance(quoted, unicode):
-        quoted = quoted.decode('utf-8')
-    quoted = quoted.replace('%3A', ':')
+        quoted = quoted.decode("utf-8")
+    quoted = quoted.replace("%3A", ":")
     return quoted
 
 
@@ -61,7 +64,7 @@ def unquote(s):
     """
     unquoted = _percent_unquote(s)
     if not isinstance(unquoted, unicode):
-        unquoted = unquoted .decode('utf-8')
+        unquoted = unquoted.decode("utf-8")
     return unquoted
 
 
@@ -81,7 +84,7 @@ def normalize_type(type, encode=True):  # NOQA
     if not type:
         return
     if not isinstance(type, unicode):
-        type = type.decode('utf-8')  # NOQA
+        type = type.decode("utf-8")  # NOQA
 
     quoter = get_quoter(encode)
     type = quoter(type)  # NOQA
@@ -92,29 +95,29 @@ def normalize_namespace(namespace, ptype, encode=True):  # NOQA
     if not namespace:
         return
     if not isinstance(namespace, unicode):
-        namespace = namespace.decode('utf-8')
+        namespace = namespace.decode("utf-8")
 
-    namespace = namespace.strip().strip('/')
-    if ptype in ('bitbucket', 'github', 'pypi', 'gitlab'):
+    namespace = namespace.strip().strip("/")
+    if ptype in ("bitbucket", "github", "pypi", "gitlab"):
         namespace = namespace.lower()
-    segments = [seg for seg in namespace.split('/') if seg.strip()]
+    segments = [seg for seg in namespace.split("/") if seg.strip()]
     segments = map(get_quoter(encode), segments)
-    return '/'.join(segments) or None
+    return "/".join(segments) or None
 
 
 def normalize_name(name, ptype, encode=True):  # NOQA
     if not name:
         return
     if not isinstance(name, unicode):
-        name = name.decode('utf-8')
+        name = name.decode("utf-8")
 
     quoter = get_quoter(encode)
     name = quoter(name)
-    name = name.strip().strip('/')
-    if ptype in ('bitbucket', 'github', 'pypi', 'gitlab'):
+    name = name.strip().strip("/")
+    if ptype in ("bitbucket", "github", "pypi", "gitlab"):
         name = name.lower()
-    if ptype in ('pypi',):
-        name = name.replace('_', '-')
+    if ptype in ("pypi",):
+        name = name.replace("_", "-")
     return name or None
 
 
@@ -122,7 +125,7 @@ def normalize_version(version, encode=True):  # NOQA
     if not version:
         return
     if not isinstance(version, unicode):
-        version = version.decode('utf-8')
+        version = version.decode("utf-8")
 
     quoter = get_quoter(encode)
     version = quoter(version.strip())
@@ -141,53 +144,50 @@ def normalize_qualifiers(qualifiers, encode=True):  # NOQA
 
     if isinstance(qualifiers, basestring):
         if not isinstance(qualifiers, unicode):
-            qualifiers = qualifiers.decode('utf-8')
+            qualifiers = qualifiers.decode("utf-8")
         # decode string to list of tuples
-        qualifiers = qualifiers.split('&')
-        if not all('=' in kv for kv in qualifiers):
+        qualifiers = qualifiers.split("&")
+        if not all("=" in kv for kv in qualifiers):
             raise ValueError(
-                'Invalid qualifier. '
-                'Must be a string of key=value pairs:{}'.format(repr(qualifiers)))
-        qualifiers = [kv.partition('=') for kv in qualifiers]
+                f"Invalid qualifier. " f"Must be a string of key=value pairs:{repr(qualifiers)}"
+            )
+        qualifiers = [kv.partition("=") for kv in qualifiers]
         qualifiers = [(k, v) for k, _, v in qualifiers]
     elif isinstance(qualifiers, dict):
         qualifiers = qualifiers.items()
     else:
-        raise ValueError(
-            'Invalid qualifier. '
-            'Must be a string or dict:{}'.format(repr(qualifiers)))
+        raise ValueError(f"Invalid qualifier. Must be a string or dict:{repr(qualifiers)}")
 
     quoter = get_quoter(encode)
-    qualifiers = {k.strip().lower(): quoter(v)
-        for k, v in qualifiers if k and k.strip() and v and v.strip()}
+    qualifiers = {
+        k.strip().lower(): quoter(v) for k, v in qualifiers if k and k.strip() and v and v.strip()
+    }
 
-    valid_chars = string.ascii_letters + string.digits + '.-_'
+    valid_chars = string.ascii_letters + string.digits + ".-_"
     for key in qualifiers:
         if not key:
-            raise ValueError('A qualifier key cannot be empty')
+            raise ValueError("A qualifier key cannot be empty")
 
-        if '%' in key:
-            raise ValueError(
-                "A qualifier key cannot be percent encoded: {}".format(repr(key)))
+        if "%" in key:
+            raise ValueError(f"A qualifier key cannot be percent encoded: {repr(key)}")
 
-        if ' ' in key:
-            raise ValueError(
-                "A qualifier key cannot contain spaces: {}".format(repr(key)))
+        if " " in key:
+            raise ValueError(f"A qualifier key cannot contain spaces: {repr(key)}")
 
         if not all(c in valid_chars for c in key):
             raise ValueError(
-                "A qualifier key must be composed only of ASCII letters and numbers"
-                "period, dash and underscore: {}".format(repr(key)))
+                f"A qualifier key must be composed only of ASCII letters and numbers"
+                f"period, dash and underscore: {repr(key)}"
+            )
 
         if key[0] in string.digits:
-            raise ValueError(
-                "A qualifier key cannot start with a number: {}".format(repr(key)))
+            raise ValueError(f"A qualifier key cannot start with a number: {repr(key)}")
 
     qualifiers = sorted(qualifiers.items())
     qualifiers = dict(qualifiers)
     if encode:
-        qualifiers = ['{}={}'.format(k, v) for k, v in qualifiers.items()]
-        qualifiers = '&'.join(qualifiers)
+        qualifiers = [f"{key}={value}" for key, value in qualifiers.items()]
+        qualifiers = "&".join(qualifiers)
         return qualifiers or None
     else:
         return qualifiers or {}
@@ -197,12 +197,12 @@ def normalize_subpath(subpath, encode=True):  # NOQA
     if not subpath:
         return None
     if not isinstance(subpath, unicode):
-        subpath = subpath.decode('utf-8')
+        subpath = subpath.decode("utf-8")
 
     quoter = get_quoter(encode)
-    segments = subpath.split('/')
-    segments = [quoter(s) for s in segments if s.strip() and s not in ('.', '..')]
-    subpath = '/'.join(segments)
+    segments = subpath.split("/")
+    segments = [quoter(s) for s in segments if s.strip() and s not in (".", "..")]
+    subpath = "/".join(segments)
     return subpath or None
 
 
@@ -219,24 +219,30 @@ def normalize(type, namespace, name, version, qualifiers, subpath, encode=True):
     return type, namespace, name, version, qualifiers, subpath
 
 
-_components = ['type', 'namespace', 'name', 'version', 'qualifiers', 'subpath']
+_components = ["type", "namespace", "name", "version", "qualifiers", "subpath"]
 
 
-class PackageURL(namedtuple('PackageURL', _components)):
+class PackageURL(namedtuple("PackageURL", _components)):
     """
     A purl is a package URL as defined at
     https://github.com/package-url/purl-spec
     """
 
-    def __new__(self, type=None, namespace=None, name=None,  # NOQA
-                version=None, qualifiers=None, subpath=None):
+    def __new__(
+        self,
+        type=None,
+        namespace=None,
+        name=None,  # NOQA
+        version=None,
+        qualifiers=None,
+        subpath=None,
+    ):
 
         required = dict(type=type, name=name)
         for key, value in required.items():
             if value:
                 continue
-            raise ValueError('Invalid purl: {} is a required argument.'
-                             .format(key))
+            raise ValueError(f"Invalid purl: {key} is a required argument.")
 
         strings = dict(
             type=type,
@@ -249,15 +255,22 @@ class PackageURL(namedtuple('PackageURL', _components)):
         for key, value in strings.items():
             if value and isinstance(value, basestring) or not value:
                 continue
-            raise ValueError('Invalid purl: {} argument must be a string: {}.'
-                             .format(key, repr(value)))
+            raise ValueError(f"Invalid purl: {key} argument must be a string: {repr(value)}.")
 
-        if qualifiers and not isinstance(qualifiers, (basestring, dict,)):
-            raise ValueError('Invalid purl: {} argument must be a dict or a string: {}.'
-                             .format('qualifiers', repr(qualifiers)))
+        if qualifiers and not isinstance(
+            qualifiers,
+            (
+                basestring,
+                dict,
+            ),
+        ):
+            raise ValueError(
+                f"Invalid purl: qualifiers argument must be a dict or a string: {repr(qualifiers)}."
+            )
 
-        type, namespace, name, version, qualifiers, subpath = normalize(# NOQA
-            type, namespace, name, version, qualifiers, subpath, encode=None)
+        type, namespace, name, version, qualifiers, subpath = normalize(  # NOQA
+            type, namespace, name, version, qualifiers, subpath, encode=None
+        )
 
         return super(PackageURL, self).__new__(
             PackageURL,
@@ -284,7 +297,7 @@ class PackageURL(namedtuple('PackageURL', _components)):
         """
         data = self._asdict()
         if encode:
-            data['qualifiers'] = normalize_qualifiers(self.qualifiers, encode=encode)
+            data["qualifiers"] = normalize_qualifiers(self.qualifiers, encode=encode)
 
         for field, value in data.items():
             data[field] = value or empty
@@ -295,7 +308,7 @@ class PackageURL(namedtuple('PackageURL', _components)):
         """
         Return a purl string built from components.
         """
-        type, namespace, name, version, qualifiers, subpath = normalize(# NOQA
+        type, namespace, name, version, qualifiers, subpath = normalize(  # NOQA
             self.type,
             self.namespace,
             self.name,
@@ -305,27 +318,27 @@ class PackageURL(namedtuple('PackageURL', _components)):
             encode=True,
         )
 
-        purl = ['pkg:', type, '/']
+        purl = ["pkg:", type, "/"]
 
         if namespace:
             purl.append(namespace)
-            purl.append('/')
+            purl.append("/")
 
         purl.append(name)
 
         if version:
-            purl.append('@')
+            purl.append("@")
             purl.append(version)
 
         if qualifiers:
-            purl.append('?')
+            purl.append("?")
             purl.append(qualifiers)
 
         if subpath:
-            purl.append('#')
+            purl.append("#")
             purl.append(subpath)
 
-        return ''.join(purl)
+        return "".join(purl)
 
     @classmethod
     def from_string(cls, purl):
@@ -333,57 +346,55 @@ class PackageURL(namedtuple('PackageURL', _components)):
         Return a PackageURL object parsed from a string.
         Raise ValueError on errors.
         """
-        if (not purl or not isinstance(purl, basestring)
-            or not purl.strip()):
-            raise ValueError('A purl string argument is required.')
+        if not purl or not isinstance(purl, basestring) or not purl.strip():
+            raise ValueError("A purl string argument is required.")
 
-        scheme, sep, remainder = purl.partition(':')
-        if not sep or scheme != 'pkg':
+        scheme, sep, remainder = purl.partition(":")
+        if not sep or scheme != "pkg":
             raise ValueError(
-                'purl is missing the required '
-                '"pkg" scheme component: {}.'.format(repr(purl)))
+                f"purl is missing the required " '"pkg" scheme component: {repr(purl)}.'
+            )
 
         # this strip '/, // and /// as possible in :// or :///
-        remainder = remainder.strip().lstrip('/')
+        remainder = remainder.strip().lstrip("/")
 
-        type, sep, remainder = remainder.partition('/')  # NOQA
+        type, sep, remainder = remainder.partition("/")  # NOQA
         if not type or not sep:
-            raise ValueError(
-                'purl is missing the required '
-                'type component: {}.'.format(repr(purl)))
+            raise ValueError(f"purl is missing the required type component: {repr(purl)}.")
 
         scheme, authority, path, qualifiers, subpath = _urlsplit(
-            url=remainder, scheme='', allow_fragments=True)
+            url=remainder, scheme="", allow_fragments=True
+        )
 
         if scheme or authority:
-            msg = ('Invalid purl {} cannot contain a "user:pass@host:port" '
-                   'URL Authority component: {}.')
-            raise ValueError(msg.format(repr(purl), repr(authority)))
+            msg = (
+                f'Invalid purl {repr(purl)} cannot contain a "user:pass@host:port" '
+                f"URL Authority component: {repr(authority)}."
+            )
+            raise ValueError(msg)
 
-        path = path.lstrip('/')
-        remainder, sep, version = path.rpartition('@')
+        path = path.lstrip("/")
+        remainder, sep, version = path.rpartition("@")
         if not sep:
             remainder = version
             version = None
 
-        ns_name = remainder.strip().strip('/')
-        ns_name = ns_name.split('/')
+        ns_name = remainder.strip().strip("/")
+        ns_name = ns_name.split("/")
         ns_name = [seg for seg in ns_name if seg and seg.strip()]
-        namespace = ''
-        name = ''
+        namespace = ""
+        name = ""
         if len(ns_name) > 1:
             name = ns_name[-1]
             ns = ns_name[0:-1]
-            namespace = '/'.join(ns)
+            namespace = "/".join(ns)
         elif len(ns_name) == 1:
             name = ns_name[0]
 
         if not name:
-            raise ValueError(
-                'purl is missing the required '
-                'name component: {}'.format(repr(purl)))
+            raise ValueError(f"purl is missing the required name component: {repr(purl)}")
 
-        type, namespace, name, version, qualifiers, subpath = normalize(# NOQA
+        type, namespace, name, version, qualifiers, subpath = normalize(  # NOQA
             type,
             namespace,
             name,

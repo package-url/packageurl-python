@@ -28,19 +28,19 @@ from packageurl.contrib.url2purl import get_path_segments
 
 
 def test_parsing_with_quoted_uri():
-    url = 'https://github.com/Hello+world%21/Hello%2Bworld%2521/master'
+    url = "https://github.com/Hello+world%21/Hello%2Bworld%2521/master"
     segments = get_path_segments(url)
     assert "Hello world!" == segments[0]
     assert "Hello+world%21" == segments[1]
 
 
 def test_parsing_empty_string():
-    url = ''
+    url = ""
     segments = get_path_segments(url)
     assert [] == segments
 
 
 def test_parsing_with_one_segment():
-    url = 'https://github.com/TG1999'
+    url = "https://github.com/TG1999"
     segments = get_path_segments(url)
     assert ["TG1999"] == segments

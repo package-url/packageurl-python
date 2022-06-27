@@ -38,13 +38,9 @@ def without_empty_values(input_dict):
     `None`, empty string, empty list, and empty dict/set are cleaned.
     `0` and `False` values are kept.
     """
-    empty_values = ([], (), {}, '', None)
+    empty_values = ([], (), {}, "", None)
 
-    return {
-        key: value
-        for key, value in input_dict.items()
-        if value not in empty_values
-    }
+    return {key: value for key, value in input_dict.items() if value not in empty_values}
 
 
 def purl_to_lookups(purl):
@@ -52,8 +48,8 @@ def purl_to_lookups(purl):
     Return a lookups dict built from the provided `purl` string.
     Those lookups can be used as QuerySet filters.
     """
-    if not purl.startswith('pkg:'):
-        purl = 'pkg:' + purl
+    if not purl.startswith("pkg:"):
+        purl = "pkg:" + purl
 
     try:
         package_url = PackageURL.from_string(purl)
@@ -68,6 +64,7 @@ class PackageURLQuerySetMixin:
     """
     Add Package URL filtering method to a django.db.models.QuerySet.
     """
+
     def for_package_url(self, purl_str):
         """
         Filter the QuerySet with the provided Package URL string.
@@ -87,53 +84,52 @@ class PackageURLMixin(models.Model):
     """
     Abstract Model for Package URL "purl" fields support.
     """
+
     type = models.CharField(
         max_length=16,
         blank=True,
         help_text=_(
-            'A short code to identify the type of this package. '
-            'For example: gem for a Rubygem, docker for a container, '
-            'pypi for a Python Wheel or Egg, maven for a Maven Jar, '
-            'deb for a Debian package, etc.'
-        )
+            "A short code to identify the type of this package. "
+            "For example: gem for a Rubygem, docker for a container, "
+            "pypi for a Python Wheel or Egg, maven for a Maven Jar, "
+            "deb for a Debian package, etc."
+        ),
     )
 
     namespace = models.CharField(
         max_length=255,
         blank=True,
         help_text=_(
-            'Package name prefix, such as Maven groupid, Docker image owner, '
-            'GitHub user or organization, etc.'
+            "Package name prefix, such as Maven groupid, Docker image owner, "
+            "GitHub user or organization, etc."
         ),
     )
 
     name = models.CharField(
         max_length=100,
         blank=True,
-        help_text=_('Name of the package.'),
+        help_text=_("Name of the package."),
     )
 
     version = models.CharField(
         max_length=100,
         blank=True,
-        help_text=_('Version of the package.'),
+        help_text=_("Version of the package."),
     )
 
     qualifiers = models.CharField(
         max_length=1024,
         blank=True,
         help_text=_(
-            'Extra qualifying data for a package such as the name of an OS, '
-            'architecture, distro, etc.'
+            "Extra qualifying data for a package such as the name of an OS, "
+            "architecture, distro, etc."
         ),
     )
 
     subpath = models.CharField(
         max_length=200,
         blank=True,
-        help_text=_(
-            'Extra subpath within a package, relative to the package root.'
-        ),
+        help_text=_("Extra subpath within a package, relative to the package root."),
     )
 
     objects = PackageURLQuerySet.as_manager()
@@ -148,11 +144,10 @@ class PackageURLMixin(models.Model):
         """
         try:
             purl = PackageURL(
-                self.type, self.namespace, self.name,
-                self.version, self.qualifiers, self.subpath
+                self.type, self.namespace, self.name, self.version, self.qualifiers, self.subpath
             )
         except ValueError:
-            return ''
+            return ""
         return str(purl)
 
     def set_package_url(self, package_url):
@@ -166,12 +161,12 @@ class PackageURLMixin(models.Model):
         if not isinstance(package_url, PackageURL):
             package_url = PackageURL.from_string(package_url)
 
-        package_url_dict = package_url.to_dict(encode=True, empty='')
+        package_url_dict = package_url.to_dict(encode=True, empty="")
         for field_name, value in package_url_dict.items():
             model_field = self._meta.get_field(field_name)
 
             if value and len(value) > model_field.max_length:
-                message = _('Value too long for field "{}".'.format(field_name))
+                message = _(f'Value too long for field "{field_name}".')
                 raise ValidationError(message)
 
             setattr(self, field_name, value)

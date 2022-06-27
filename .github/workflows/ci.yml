@@ -33,7 +33,9 @@ jobs:
           pip install -e .[build]
 
       - name: Validate
-        run: isort --check-only src/ tests/
+        run: |
+          isort --check-only src/ tests/
+          black --check --line-length 100 .
 
       - name: Test
         run: py.test -vvs
