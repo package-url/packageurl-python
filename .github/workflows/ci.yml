@@ -1,53 +1,43 @@
-# For details of what checks are run for PRs please refer below
-# docs: https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions
 name: Python CI
 
-on:
-  push:
-    branches: ["master", "main"]
-  pull_request:
-    branches-ignore: ['dependabot/**']
-  workflow_dispatch:
-  schedule:
-    # schedule weekly tests, since some dependencies are not intended to be pinned
-    # this means: at 23:42 on Fridays
-    - cron: '42 23 * * 5'
-
-env:
-  REPORTS_DIR: CI_reports
+on: [push, pull_request]
 
 jobs:
   build-and-test:
-    name: Build & Test (py${{ matrix.python-version }} on ${{ matrix.os }})
+    name: Test & build (py${{ matrix.python-version }} on ${{ matrix.os }})
     runs-on: ${{ matrix.os }}
     timeout-minutes: 10
-    env:
-      REPORTS_ARTIFACT: tests-reports
     strategy:
-      fail-fast: false
       matrix:
-        os: [ 'ubuntu-latest', 'windows-latest', 'macos-latest' ]
+        os: [ubuntu-latest, windows-latest, macos-latest]
         python-version:
-          - "3.10" # highest supported
+          - "3.10"
           - "3.9"
           - "3.8"
           - "3.7"
-          - "3.6" # lowest supported
+          - "3.6"
+
     steps:
       - name: Checkout
-        # see https://github.com/actions/checkout
         uses: actions/checkout@v3
-      - name: Setup Python Environment
-        # see https://github.com/actions/setup-python
+
+      - name: Setup Python environment
         uses: actions/setup-python@v3
         with:
           python-version: ${{ matrix.python-version }}
-          architecture: 'x64'
-      - name: Install Build & Test Dependencies
-        run: pip install -r requirements.build.txt -r requirements.test.txt
-      - name: Code Style Checks
-        run: isort --check-only src/ tests/
+          architecture: "x64"
+
+      - name: Setup the Virtualenv
+        run: python thirdparty/virtualenv.pyz --never-download --no-periodic-update .
+
+      - name: Install dependencies
+        run: bin/pip install -e .[test]
+
+      - name: Validate code format
+        run: bin/isort --check-only src/ tests/
+
+      - name: Run the tests
+        run: bin/py.test -vvs
+
       - name: Build
-        run: python setup.py build sdist bdist_wheel
-      - name: Test & Check
-        run: py.test -vvs
+        run: bin/python setup.py build sdist bdist_wheel
