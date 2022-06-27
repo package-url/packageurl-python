@@ -27,17 +27,25 @@ jobs:
           python-version: ${{ matrix.python-version }}
           architecture: "x64"
 
-      - name: Setup the Virtualenv
+      - name: Setup the virtualenv
         run: python thirdparty/virtualenv.pyz --never-download --no-periodic-update .
 
+      - name: Active the virtualenv
+        if: runner.os != "windows"
+        run: source bin/activate
+
+      - name: Active the virtualenv on Windows
+        if: runner.os == "windows"
+        run: Scripts\activate.bat
+
       - name: Install dependencies
-        run: bin/pip install -e .[test]
+        run: pip install -e .[test]
 
       - name: Validate code format
-        run: bin/isort --check-only src/ tests/
+        run: isort --check-only src/ tests/
 
       - name: Run the tests
-        run: bin/py.test -vvs
+        run: py.test -vvs
 
       - name: Build
         run: bin/python setup.py build sdist bdist_wheel
