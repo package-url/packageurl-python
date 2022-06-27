@@ -31,11 +31,11 @@ jobs:
         run: python thirdparty/virtualenv.pyz --never-download --no-periodic-update .
 
       - name: Active the virtualenv
-        if: runner.os != "windows"
+        if: ${{ runner.os != 'Windows' }}
         run: source bin/activate
 
       - name: Active the virtualenv on Windows
-        if: runner.os == "windows"
+        if: ${{ runner.os == 'Windows' }}
         run: Scripts\activate.bat
 
       - name: Install dependencies
