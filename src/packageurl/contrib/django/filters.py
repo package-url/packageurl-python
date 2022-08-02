@@ -40,8 +40,7 @@ class PackageURLFilter(django_filters.CharFilter):
 
     is_empty = "EMPTY"
     help_text = (
-        "Match Package URL. "
-        'Use "EMPTY" as value to retrieve objects with empty Package URL.'
+        'Match Package URL. Use "EMPTY" as value to retrieve objects with empty Package URL.'
     )
 
     def __init__(self, *args, **kwargs):

@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.10.1 (unreleased)
+0.10.1 (2022-08-02)
 -------------------
 
 - Add ability to filter objects with EMPTY purls in PackageURLFilter #92
