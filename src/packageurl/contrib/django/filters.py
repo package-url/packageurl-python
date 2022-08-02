@@ -29,18 +29,34 @@ import django_filters
 
 class PackageURLFilter(django_filters.CharFilter):
     """
-    Filter by a Package URL string.
-    Empty values are not applied to the QuerySet.
+    Filter by an exact Package URL string.
+    The special "EMPTY" value allows to retrieve objects with empty
+    Package URL.
 
-    This filter depends on a `for_package_url` method available on the Model
-    Manager, see for example `PackageURLQuerySetMixin`.
+    This filter depends on a `for_package_url` and `empty_package_url`
+    methods to be available on the Model Manager,
+    see for example `PackageURLQuerySetMixin`.
     """
 
+    is_empty = "EMPTY"
+    help_text = (
+        "Match Package URL. "
+        'Use "EMPTY" as value to retrieve objects with empty Package URL.'
+    )
+
+    def __init__(self, *args, **kwargs):
+        kwargs.setdefault("help_text", self.help_text)
+        super().__init__(*args, **kwargs)
+
     def filter(self, qs, value):
-        empty_values = ([], (), {}, "", None)
-        if value in empty_values:
+        none_values = ([], (), {}, "", None)
+        if value in none_values:
             return qs
 
         if self.distinct:
             qs = qs.distinct()
+
+        if value == self.is_empty:
+            return qs.empty_package_url()
+
         return qs.for_package_url(value)

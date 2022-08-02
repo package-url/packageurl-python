@@ -75,6 +75,12 @@ class PackageURLQuerySetMixin:
             return self.filter(**lookups)
         return self.none()
 
+    def empty_package_url(self):
+        """
+        Return objects with empty Package URL.
+        """
+        return self.filter(models.Q(type="") | models.Q(name=""))
+
 
 class PackageURLQuerySet(PackageURLQuerySetMixin, models.QuerySet):
     pass
