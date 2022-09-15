@@ -41,7 +41,7 @@ def purl_to_lookups(purl, encode=True):
         "Use packageurl.contrib.django.utils.purl_to_lookups instead.",
         DeprecationWarning,
     )
-    return _purl_to_lookups(purl, encode)
+    return _purl_to_lookups(purl_str=purl, encode=encode)
 
 
 def without_empty_values(input_dict):
@@ -63,7 +63,7 @@ class PackageURLQuerySetMixin:
         Filter the QuerySet with the provided Package URL string.
         The purl string is validated and transformed into filtering lookups.
         """
-        lookups = purl_to_lookups(purl_str=purl_str, encode=encode)
+        lookups = purl_to_lookups(purl=purl_str, encode=encode)
         if lookups:
             return self.filter(**lookups)
         return self.none()
