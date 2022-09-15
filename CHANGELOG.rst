@@ -1,6 +1,13 @@
 Changelog
 =========
 
+0.10.2 (2022-09-12)
+-------------------
+
+- Add encode option in purl_lookups #94 
+  (`purl_to_lookups`, `without_empty_values` is moved from packageurl.contrib.django.models
+  to packageurl.contrib.django.utils)
+
 0.10.1 (2022-08-02)
 -------------------
 
