@@ -1,17 +1,19 @@
 Changelog
 =========
 
-0.10.2 (2022-09-12)
+0.10.2 (2022-09-15)
 -------------------
 
 - Add encode option in purl_lookups #94 
   (`purl_to_lookups`, `without_empty_values` is moved from packageurl.contrib.django.models
   to packageurl.contrib.django.utils)
 
+
 0.10.1 (2022-08-02)
 -------------------
 
 - Add ability to filter objects with EMPTY purls in PackageURLFilter #92
+
 
 0.10.0 (2022-06-27)
 -------------------
@@ -22,15 +24,18 @@ Changelog
 - Improve url2purl support for nom URLs
 - Improve url2purl support for rubygems.org URLs #89
 
+
 0.9.9 (2022-02-15)
 ------------------
 
 - Update version to be semver compliant. No changes to the code have been made.
 
+
 0.9.8.1 (2022-02-11)
 --------------------
 
 - Fix generic sourceforge PackageURL generation #79
+
 
 0.9.8 (2022-02-11)
 ------------------
@@ -41,10 +46,12 @@ Changelog
 - Create generic PackageURL for code.google.com archive URLs #78
 - Capture more download types for bitbucket URLs
 
+
 0.9.7 (2022-02-07)
 ------------------
 
 - Create a generic PackageURL for URLs that do not fit existing routes in url2purl #68
+
 
 0.9.6 (2021-10-05)
 ------------------
@@ -52,15 +59,18 @@ Changelog
 - Drop support for Python 2 #61
 - Add support for new github URLs in url2purl #47
 
+
 0.9.5 (2021-10-04)
 ------------------
 
 - Add support for "archive/refs/tags/" github URLs in url2purl #47
 
+
 0.9.4 (2021-02-02)
 ------------------
 
 - Fix Python 2 compatibility issue #57
+
 
 0.9.3 (2020-10-06)
 ------------------
@@ -69,6 +79,7 @@ Changelog
 - Add a PackageURLFilter class for Django FilterSet implementations #48
 - Move the django_models module to django.models #48
   Replace `packageurl.contrib.django_models` imports with `packageurl.contrib.django.models`.
+
 
 0.9.2 (2020-09-15)
 ------------------
