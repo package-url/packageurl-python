@@ -24,40 +24,33 @@
 # Visit https://github.com/package-url/packageurl-python for support and
 # download.
 
+import warnings
+
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
 from packageurl import PackageURL
+from packageurl.contrib.django.utils import purl_to_lookups as _purl_to_lookups
+from packageurl.contrib.django.utils import without_empty_values as _without_empty_values
+
+
+def purl_to_lookups(purl, encode=True):
+    warnings.warn(
+        "purl_to_lookups is deprecated and will be removed in a future version. "
+        "Use packageurl.contrib.django.utils.purl_to_lookups instead.",
+        DeprecationWarning,
+    )
+    return _purl_to_lookups(purl, encode)
 
 
 def without_empty_values(input_dict):
-    """
-    Return a new dict not including empty value entries from `input_dict`.
-
-    `None`, empty string, empty list, and empty dict/set are cleaned.
-    `0` and `False` values are kept.
-    """
-    empty_values = ([], (), {}, "", None)
-
-    return {key: value for key, value in input_dict.items() if value not in empty_values}
-
-
-def purl_to_lookups(purl):
-    """
-    Return a lookups dict built from the provided `purl` string.
-    Those lookups can be used as QuerySet filters.
-    """
-    if not purl.startswith("pkg:"):
-        purl = "pkg:" + purl
-
-    try:
-        package_url = PackageURL.from_string(purl)
-    except ValueError:
-        return  # Not a valid PackageURL
-
-    package_url_dict = package_url.to_dict(encode=True)
-    return without_empty_values(package_url_dict)
+    warnings.warn(
+        "without_empty_values is deprecated and will be removed in a future version. "
+        "Use packageurl.contrib.django.utils.without_empty_values instead.",
+        DeprecationWarning,
+    )
+    return _without_empty_values(input_dict)
 
 
 class PackageURLQuerySetMixin:
@@ -65,12 +58,12 @@ class PackageURLQuerySetMixin:
     Add Package URL filtering method to a django.db.models.QuerySet.
     """
 
-    def for_package_url(self, purl_str):
+    def for_package_url(self, purl_str, encode=True):
         """
         Filter the QuerySet with the provided Package URL string.
         The purl string is validated and transformed into filtering lookups.
         """
-        lookups = purl_to_lookups(purl_str)
+        lookups = purl_to_lookups(purl_str=purl_str, encode=encode)
         if lookups:
             return self.filter(**lookups)
         return self.none()
@@ -150,7 +143,12 @@ class PackageURLMixin(models.Model):
         """
         try:
             purl = PackageURL(
-                self.type, self.namespace, self.name, self.version, self.qualifiers, self.subpath
+                self.type,
+                self.namespace,
+                self.name,
+                self.version,
+                self.qualifiers,
+                self.subpath,
             )
         except ValueError:
             return ""
