@@ -28,16 +28,16 @@
 from packageurl import PackageURL
 
 
-def purl_to_lookups(purl, encode=True):
+def purl_to_lookups(purl_str, encode=True):
     """
     Return a lookups dict built from the provided `purl` string.
     Those lookups can be used as QuerySet filters.
     """
-    if not purl.startswith("pkg:"):
-        purl = "pkg:" + purl
+    if not purl_str.startswith("pkg:"):
+        purl_str = "pkg:" + purl_str
 
     try:
-        package_url = PackageURL.from_string(purl)
+        package_url = PackageURL.from_string(purl_str)
     except ValueError:
         return  # Not a valid PackageURL
 

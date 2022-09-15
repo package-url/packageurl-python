@@ -29,7 +29,7 @@ from packageurl.contrib.django.utils import purl_to_lookups
 
 def test_purl_to_lookups_without_encode():
     assert purl_to_lookups(
-        "pkg:alpine/openssl@0?arch=aarch64&distroversion=edge&reponame=main",
+        purl_str="pkg:alpine/openssl@0?arch=aarch64&distroversion=edge&reponame=main",
         encode=False,
     ) == {
         "type": "alpine",
@@ -45,7 +45,7 @@ def test_purl_to_lookups_without_encode():
 
 def test_purl_to_lookups_with_encode():
     assert purl_to_lookups(
-        "pkg:alpine/openssl@0?arch=aarch64&distroversion=edge&reponame=main",
+        purl_str="pkg:alpine/openssl@0?arch=aarch64&distroversion=edge&reponame=main",
         encode=True,
     ) == {
         "type": "alpine",
