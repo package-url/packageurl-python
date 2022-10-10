@@ -26,8 +26,6 @@
 
 import string
 from collections import namedtuple
-from collections.abc import Callable
-from collections.abc import Iterable
 from typing import TYPE_CHECKING
 from typing import Any
 from typing import AnyStr
@@ -41,6 +39,9 @@ from urllib.parse import unquote as _percent_unquote
 from urllib.parse import urlsplit as _urlsplit
 
 if TYPE_CHECKING:
+    from collections.abc import Callable
+    from collections.abc import Iterable
+
     from typing_extensions import Literal
 
 # Python 3
@@ -83,18 +84,18 @@ def unquote(s: AnyStr) -> str:
 
 
 @overload
-def get_quoter(encode: bool = True) -> Callable[[AnyStr], str]:
+def get_quoter(encode: bool = True) -> "Callable[[AnyStr], str]":
     ...
 
 
 @overload
-def get_quoter(encode: None) -> Callable[[str], str]:
+def get_quoter(encode: None) -> "Callable[[str], str]":
     ...
 
 
 def get_quoter(
     encode: Optional[bool] = True,
-) -> Union[Callable[[AnyStr], str], Callable[[str], str]]:
+) -> "Union[Callable[[AnyStr], str], Callable[[str], str]]":
     """
     Return quoting callable given an `encode` tri-boolean (True, False or None)
     """
