@@ -303,7 +303,9 @@ def build_pypi_purl(uri):
 
 # http://nuget.org/packages/EntityFramework/4.2.0.0
 # https://www.nuget.org/api/v2/package/Newtonsoft.Json/11.0.1
-nuget_www_pattern = r"^https?://.*nuget.org/(api/v2/)?packages?/(?P<name>.+)/" r"(?P<version>.+)$"
+nuget_www_pattern = (
+    r"^https?://.*nuget.org/(api/v2/)?packages?/(?P<name>.+)/(?P<version>.+)$"
+)
 
 register_pattern("nuget", nuget_www_pattern)
 
@@ -361,7 +363,9 @@ def build_sourceforge_purl(uri):
 
 
 # https://crates.io/api/v1/crates/rand/0.7.2/download
-cargo_pattern = r"^https?://crates.io/api/v1/crates/(?P<name>.+)/(?P<version>.+)" r"(\/download)$"
+cargo_pattern = (
+    r"^https?://crates.io/api/v1/crates/(?P<name>.+)/(?P<version>.+)(\/download)$"
+)
 
 register_pattern("cargo", cargo_pattern)
 
@@ -596,15 +600,23 @@ def build_gitlab_purl(url):
     )
 
 
-# https://hackage.haskell.org/package/a50-0.5/a50-0.5.tar.gz
-hackage_pattern = (
+# https://hackage.haskell.org/package/cli-extras-0.2.0.0/cli-extras-0.2.0.0.tar.gz
+hackage_download_pattern = (
     r"^https?://hackage.haskell.org/package/"
     r"(?P<name>.+)-(?P<version>.+)/"
     r"(?P=name)-(?P=version).*"
     r"[^/]$"
 )
 
-register_pattern("hackage", hackage_pattern)
+register_pattern("hackage", hackage_download_pattern)
+
+
+# https://hackage.haskell.org/package/cli-extras-0.2.0.0/
+hackage_project_pattern = (
+    r"^https?://hackage.haskell.org/package/(?P<name>.+)-(?P<version>[^/]+)/"
+)
+
+register_pattern("hackage", hackage_project_pattern)
 
 
 @purl_router.route(
