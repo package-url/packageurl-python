@@ -76,6 +76,7 @@ def test_purl2url_get_download_url_with_valid_purls():
         "pkg:rubygems/bundler@2.3.23": "https://rubygems.org/downloads/bundler-2.3.23.gem",
         "pkg:npm/is-npm@1.0.0": "http://registry.npmjs.org/is-npm/-/is-npm-1.0.0.tgz",
         "pkg:hackage/cli-extras@0.2.0.0": "https://hackage.haskell.org/package/cli-extras-0.2.0.0/cli-extras-0.2.0.0.tar.gz",
+        "pkg:nuget/System.Text.Json@6.0.6": "https://www.nuget.org/api/v2/package/System.Text.Json/6.0.6",
 
         "pkg:cargo/abc": None,
         "pkg:github/tg1999/fetchcode": None,
@@ -83,7 +84,6 @@ def test_purl2url_get_download_url_with_valid_purls():
         "pkg:bitbucket/birkenfeld": None,
         "pkg:gitlab/tg1999/firebase@1a122122": None,
         "pkg:pypi/sortedcontainers@2.4.0": None,
-        "pkg:nuget/System.Text.Json@6.0.6": None,
     }
 
     for purl, url in purls_url.items():
