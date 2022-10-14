@@ -108,9 +108,7 @@ def test_purl2url_get_inferred_urls():
         "pkg:cargo/abc": ["https://crates.io/crates/abc"],
         "pkg:github/tg1999/fetchcode": ["https://github.com/tg1999/fetchcode"],
         "pkg:gitlab/tg1999/firebase@1a122122": ["https://gitlab.com/tg1999/firebase"],
-        "pkg:pypi/sortedcontainers@2.4.0": [
-            "https://pypi.org/project/sortedcontainers/2.4.0/"
-        ],
+        "pkg:pypi/sortedcontainers@2.4.0": ["https://pypi.org/project/sortedcontainers/2.4.0/"],
         "pkg:gem/package-name": [],
         "pkg:bitbucket/birkenfeld": [],
     }

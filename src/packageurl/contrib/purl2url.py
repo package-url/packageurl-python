@@ -234,6 +234,7 @@ def build_hackage_repo_url(purl):
 
 # Download URLs:
 
+
 @download_router.route("pkg:cargo/.*")
 def build_cargo_download_url(purl):
     """

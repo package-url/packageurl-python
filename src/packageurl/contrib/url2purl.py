@@ -70,9 +70,7 @@ def purl_from_pattern(type_, pattern, url):
         return
 
     purl_data = {
-        field: value
-        for field, value in match.groupdict().items()
-        if field in PackageURL._fields
+        field: value for field, value in match.groupdict().items() if field in PackageURL._fields
     }
 
     # Include the `version_prefix` as a qualifier to infer valid URLs in purl2url
@@ -311,9 +309,7 @@ def build_pypi_purl(uri):
 
 # http://nuget.org/packages/EntityFramework/4.2.0.0
 # https://www.nuget.org/api/v2/package/Newtonsoft.Json/11.0.1
-nuget_www_pattern = (
-    r"^https?://.*nuget.org/(api/v2/)?packages?/(?P<name>.+)/(?P<version>.+)$"
-)
+nuget_www_pattern = r"^https?://.*nuget.org/(api/v2/)?packages?/(?P<name>.+)/(?P<version>.+)$"
 
 register_pattern("nuget", nuget_www_pattern)
 
@@ -371,9 +367,7 @@ def build_sourceforge_purl(uri):
 
 
 # https://crates.io/api/v1/crates/rand/0.7.2/download
-cargo_pattern = (
-    r"^https?://crates.io/api/v1/crates/(?P<name>.+)/(?P<version>.+)(\/download)$"
-)
+cargo_pattern = r"^https?://crates.io/api/v1/crates/(?P<name>.+)/(?P<version>.+)(\/download)$"
 
 register_pattern("cargo", cargo_pattern)
 
@@ -539,7 +533,8 @@ def build_bitbucket_purl(url):
 
     bitbucket_download_pattern = (
         r"https?://bitbucket.org/"
-        r"(?P<namespace>.+)/(?P<name>.+)/downloads/(?P<version>.+).(zip|tar.gz|tar.bz2|.tgz|exe|msi)"
+        r"(?P<namespace>.+)/(?P<name>.+)/downloads/"
+        r"(?P<version>.+).(zip|tar.gz|tar.bz2|.tgz|exe|msi)"
     )
     matches = re.search(bitbucket_download_pattern, url)
 
@@ -620,9 +615,7 @@ register_pattern("hackage", hackage_download_pattern)
 
 
 # https://hackage.haskell.org/package/cli-extras-0.2.0.0/
-hackage_project_pattern = (
-    r"^https?://hackage.haskell.org/package/(?P<name>.+)-(?P<version>[^/]+)/"
-)
+hackage_project_pattern = r"^https?://hackage.haskell.org/package/(?P<name>.+)-(?P<version>[^/]+)/"
 
 register_pattern("hackage", hackage_project_pattern)
 
@@ -631,7 +624,8 @@ register_pattern("hackage", hackage_project_pattern)
     "https?://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/.*"
 )
 def build_generic_google_code_archive_purl(uri):
-    # https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/android-notifier/android-notifier-desktop-0.5.1-1.i386.rpm
+    # https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com
+    # /android-notifier/android-notifier-desktop-0.5.1-1.i386.rpm
     _, remaining_uri = uri.split(
         "https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/"
     )
