@@ -32,8 +32,9 @@ from packageurl.contrib import purl2url
 def test_purl2url_get_repo_url():
     purls_url = {
         "pkg:github/tg1999/fetchcode": "https://github.com/tg1999/fetchcode",
-        "pkg:github/tg1999/fetchcode@master": "https://github.com/tg1999/fetchcode",
-        "pkg:github/tg1999/fetchcode@master#tests": "https://github.com/tg1999/fetchcode",
+        "pkg:github/tg1999/fetchcode@master": "https://github.com/tg1999/fetchcode/tree/master",
+        "pkg:github/tg1999/fetchcode@master#tests": "https://github.com/tg1999/fetchcode/tree/master",
+        "pkg:github/nexb/scancode-toolkit@3.1.1?version_prefix=v": "https://github.com/nexb/scancode-toolkit/tree/v3.1.1",
         "pkg:github/tg1999": None,
         "pkg:cargo/rand@0.7.2": "https://crates.io/crates/rand/0.7.2",
         "pkg:cargo/abc": "https://crates.io/crates/abc",
@@ -69,8 +70,9 @@ def test_purl2url_get_download_url():
         "pkg:npm/is-npm@1.0.0": "http://registry.npmjs.org/is-npm/-/is-npm-1.0.0.tgz",
         "pkg:hackage/cli-extras@0.2.0.0": "https://hackage.haskell.org/package/cli-extras-0.2.0.0/cli-extras-0.2.0.0.tar.gz",
         "pkg:nuget/System.Text.Json@6.0.6": "https://www.nuget.org/api/v2/package/System.Text.Json/6.0.6",
-        "pkg:cargo/abc": None,
+        "pkg:github/nexb/scancode-toolkit@3.1.1?version_prefix=v": "https://github.com/nexb/scancode-toolkit/archive/refs/tags/v3.1.1.zip",
         "pkg:github/tg1999/fetchcode": None,
+        "pkg:cargo/abc": None,
         "pkg:gem/package-name": None,
         "pkg:bitbucket/birkenfeld": None,
         "pkg:gitlab/tg1999/firebase@1a122122": None,

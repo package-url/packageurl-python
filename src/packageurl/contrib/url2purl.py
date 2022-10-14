@@ -66,13 +66,21 @@ def purl_from_pattern(type_, pattern, url):
     compiled_pattern = re.compile(pattern, re.VERBOSE)
     match = compiled_pattern.match(url)
 
-    if match:
-        purl_data = {
-            field: value
-            for field, value in match.groupdict().items()
-            if field in PackageURL._fields
-        }
-        return PackageURL(type_, **purl_data)
+    if not match:
+        return
+
+    purl_data = {
+        field: value
+        for field, value in match.groupdict().items()
+        if field in PackageURL._fields
+    }
+
+    # Include the `version_prefix` as a qualifier to infer valid URLs in purl2url
+    version_prefix = match.groupdict().get("version_prefix")
+    if version_prefix:
+        purl_data["qualifiers"] = {"version_prefix": version_prefix}
+
+    return PackageURL(type_, **purl_data)
 
 
 def register_pattern(type_, pattern, router=purl_router):
@@ -412,7 +420,7 @@ def build_github_api_purl(url):
 github_codeload_pattern = (
     r"https?://codeload.github.com/(?P<namespace>.+)/(?P<name>.+)/"
     r"(zip|tar.gz|tar.bz2|tgz)/(.*/)*"
-    r"v?(?P<version>.+)$"
+    r"(?P<version_prefix>v|V?)(?P<version>.+)$"
 )
 
 register_pattern("github", github_codeload_pattern)
@@ -429,20 +437,20 @@ def build_github_purl(url):
         r"https?://github.com/(?P<namespace>.+)/(?P<name>.+)"
         r"/archive/(.*/)*"
         r"((?P=name)(-|_|@))?"
-        r"v?(?P<version>.+).(zip|tar.gz|tar.bz2|.tgz)"
+        r"(?P<version_prefix>v|V?)(?P<version>.+).(zip|tar.gz|tar.bz2|.tgz)"
     )
 
     # https://github.com/downloads/mozilla/rhino/rhino1_7R4.zip
     download_pattern = (
         r"https?://github.com/downloads/(?P<namespace>.+)/(?P<name>.+)/"
         r"((?P=name)(-|@)?)?"
-        r"v?(?P<version>.+).(zip|tar.gz|tar.bz2|.tgz)"
+        r"(?P<version_prefix>v|V?)(?P<version>.+).(zip|tar.gz|tar.bz2|.tgz)"
     )
 
     # https://github.com/pypa/get-virtualenv/raw/20.0.31/public/virtualenv.pyz
     raw_pattern = (
         r"https?://github.com/(?P<namespace>.+)/(?P<name>.+)"
-        r"/raw/v?(?P<version>[^/]+)/(?P<subpath>.*)$"
+        r"/raw/(?P<version_prefix>v|V?)(?P<version>[^/]+)/(?P<subpath>.*)$"
     )
 
     # https://github.com/fanf2/unifdef/blob/master/unifdef.c
@@ -453,7 +461,7 @@ def build_github_purl(url):
 
     releases_download_pattern = (
         r"https?://github.com/(?P<namespace>.+)/(?P<name>.+)"
-        r"/releases/download/v?(?P<version>[^/]+)/.*$"
+        r"/releases/download/(?P<version_prefix>v|V?)(?P<version>[^/]+)/.*$"
     )
 
     # https://github.com/pombredanne/schematics.git

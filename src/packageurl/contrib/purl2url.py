@@ -116,10 +116,19 @@ def build_github_repo_url(purl):
 
     namespace = purl_data.namespace
     name = purl_data.name
+    version = purl_data.version
+    qualifiers = purl_data.qualifiers
 
-    # We do not include `version` as it results in 50% of 404 URLs.
-    if name and namespace:
-        return f"https://github.com/{namespace}/{name}"
+    if not (name and namespace):
+        return
+
+    repo_url = f"https://github.com/{namespace}/{name}"
+
+    if version:
+        version_prefix = qualifiers.get("version_prefix", "")
+        repo_url = f"{repo_url}/tree/{version_prefix}{version}"
+
+    return repo_url
 
 
 @repo_router.route("pkg:gitlab/.*")
@@ -293,3 +302,24 @@ def build_nuget_download_url(purl):
 
     if name and version:
         return f"https://www.nuget.org/api/v2/package/{name}/{version}"
+
+
+@download_router.route("pkg:github/.*")
+def build_github_download_url(purl):
+    """
+    Return a github download URL from the `purl` string.
+    """
+    purl_data = PackageURL.from_string(purl)
+
+    namespace = purl_data.namespace
+    name = purl_data.name
+    version = purl_data.version
+    qualifiers = purl_data.qualifiers
+
+    if not (namespace and name and version):
+        return
+
+    version_prefix = qualifiers.get("version_prefix", "")
+    version = f"{version_prefix}{version}"
+
+    return f"https://github.com/{namespace}/{name}/archive/refs/tags/{version}.zip"
