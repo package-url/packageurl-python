@@ -61,18 +61,31 @@ def url2purl(url):
 get_purl = url2purl
 
 
-def purl_from_pattern(type_, pattern, url):
+def purl_from_pattern(type_, pattern, url, qualifiers=None):
     url = unquote_plus(url)
     compiled_pattern = re.compile(pattern, re.VERBOSE)
     match = compiled_pattern.match(url)
 
-    if match:
-        purl_data = {
-            field: value
-            for field, value in match.groupdict().items()
-            if field in PackageURL._fields
-        }
-        return PackageURL(type_, **purl_data)
+    if not match:
+        return
+
+    purl_data = {
+        field: value for field, value in match.groupdict().items() if field in PackageURL._fields
+    }
+
+    qualifiers = qualifiers or {}
+    # Include the `version_prefix` as a qualifier to infer valid URLs in purl2url
+    version_prefix = match.groupdict().get("version_prefix")
+    if version_prefix:
+        qualifiers.update({"version_prefix": version_prefix})
+
+    if qualifiers:
+        if "qualifiers" in purl_data:
+            purl_data["qualifiers"].update(qualifiers)
+        else:
+            purl_data["qualifiers"] = qualifiers
+
+    return PackageURL(type_, **purl_data)
 
 
 def register_pattern(type_, pattern, router=purl_router):
@@ -303,7 +316,7 @@ def build_pypi_purl(uri):
 
 # http://nuget.org/packages/EntityFramework/4.2.0.0
 # https://www.nuget.org/api/v2/package/Newtonsoft.Json/11.0.1
-nuget_www_pattern = r"^https?://.*nuget.org/(api/v2/)?packages?/(?P<name>.+)/" r"(?P<version>.+)$"
+nuget_www_pattern = r"^https?://.*nuget.org/(api/v2/)?packages?/(?P<name>.+)/(?P<version>.+)$"
 
 register_pattern("nuget", nuget_www_pattern)
 
@@ -342,16 +355,14 @@ def build_sourceforge_purl(uri):
     if not sourceforge_purl:
         # Get the project name from `uri` and use that as the Package name
         # http://master.dl.sourceforge.net/project/aloyscore/aloyscore/0.1a1%2520stable/0.1a1_stable_AloysCore.zip
-        split_uri = uri.split(
-            "/project/"
-        )  # http://master.dl.sourceforge.net, aloyscore/aloyscore/0.1a1%2520stable/0.1a1_stable_AloysCore.zip
+        split_uri = uri.split("/project/")
+
+        # http://master.dl.sourceforge.net, aloyscore/aloyscore/0.1a1%2520stable/0.1a1_stable_AloysCore.zip
         if len(split_uri) >= 2:
-            remaining_uri_path = split_uri[
-                1
-            ]  # aloyscore/aloyscore/0.1a1%2520stable/0.1a1_stable_AloysCore.zip
-            remaining_uri_path_segments = remaining_uri_path.split(
-                "/"
-            )  # aloyscore, aloyscore, 0.1a1%2520stable, 0.1a1_stable_AloysCore.zip
+            # aloyscore/aloyscore/0.1a1%2520stable/0.1a1_stable_AloysCore.zip
+            remaining_uri_path = split_uri[1]
+            # aloyscore, aloyscore, 0.1a1%2520stable, 0.1a1_stable_AloysCore.zip
+            remaining_uri_path_segments = remaining_uri_path.split("/")
             if remaining_uri_path_segments:
                 project_name = remaining_uri_path_segments[0]  # aloyscore
                 sourceforge_purl = PackageURL(
@@ -361,7 +372,7 @@ def build_sourceforge_purl(uri):
 
 
 # https://crates.io/api/v1/crates/rand/0.7.2/download
-cargo_pattern = r"^https?://crates.io/api/v1/crates/(?P<name>.+)/(?P<version>.+)" r"(\/download)$"
+cargo_pattern = r"^https?://crates.io/api/v1/crates/(?P<name>.+)/(?P<version>.+)(\/download)$"
 
 register_pattern("cargo", cargo_pattern)
 
@@ -408,7 +419,7 @@ def build_github_api_purl(url):
 github_codeload_pattern = (
     r"https?://codeload.github.com/(?P<namespace>.+)/(?P<name>.+)/"
     r"(zip|tar.gz|tar.bz2|tgz)/(.*/)*"
-    r"v?(?P<version>.+)$"
+    r"(?P<version_prefix>v|V?)(?P<version>.+)$"
 )
 
 register_pattern("github", github_codeload_pattern)
@@ -425,20 +436,20 @@ def build_github_purl(url):
         r"https?://github.com/(?P<namespace>.+)/(?P<name>.+)"
         r"/archive/(.*/)*"
         r"((?P=name)(-|_|@))?"
-        r"v?(?P<version>.+).(zip|tar.gz|tar.bz2|.tgz)"
+        r"(?P<version_prefix>v|V?)(?P<version>.+).(zip|tar.gz|tar.bz2|.tgz)"
     )
 
     # https://github.com/downloads/mozilla/rhino/rhino1_7R4.zip
     download_pattern = (
         r"https?://github.com/downloads/(?P<namespace>.+)/(?P<name>.+)/"
         r"((?P=name)(-|@)?)?"
-        r"v?(?P<version>.+).(zip|tar.gz|tar.bz2|.tgz)"
+        r"(?P<version_prefix>v|V?)(?P<version>.+).(zip|tar.gz|tar.bz2|.tgz)"
     )
 
     # https://github.com/pypa/get-virtualenv/raw/20.0.31/public/virtualenv.pyz
     raw_pattern = (
         r"https?://github.com/(?P<namespace>.+)/(?P<name>.+)"
-        r"/raw/v?(?P<version>[^/]+)/(?P<subpath>.*)$"
+        r"/raw/(?P<version_prefix>v|V?)(?P<version>[^/]+)/(?P<subpath>.*)$"
     )
 
     # https://github.com/fanf2/unifdef/blob/master/unifdef.c
@@ -449,7 +460,7 @@ def build_github_purl(url):
 
     releases_download_pattern = (
         r"https?://github.com/(?P<namespace>.+)/(?P<name>.+)"
-        r"/releases/download/v?(?P<version>[^/]+)/.*$"
+        r"/releases/download/(?P<version_prefix>v|V?)(?P<version>[^/]+)/.*$"
     )
 
     # https://github.com/pombredanne/schematics.git
@@ -468,16 +479,10 @@ def build_github_purl(url):
         matches = re.search(pattern, url)
         qualifiers = {}
         if matches:
-            if pattern != releases_download_pattern:
-                return purl_from_pattern(type_="github", pattern=pattern, url=url)
-            qualifiers["download_url"] = url
-            purl = purl_from_pattern(type_="github", pattern=pattern, url=url)
-            return PackageURL(
-                type=purl.type,
-                name=purl.name,
-                namespace=purl.namespace,
-                version=purl.version,
-                qualifiers=qualifiers,
+            if pattern == releases_download_pattern:
+                qualifiers["download_url"] = url
+            return purl_from_pattern(
+                type_="github", pattern=pattern, url=url, qualifiers=qualifiers
             )
 
     segments = get_path_segments(url)
@@ -527,7 +532,8 @@ def build_bitbucket_purl(url):
 
     bitbucket_download_pattern = (
         r"https?://bitbucket.org/"
-        r"(?P<namespace>.+)/(?P<name>.+)/downloads/(?P<version>.+).(zip|tar.gz|tar.bz2|.tgz|exe|msi)"
+        r"(?P<namespace>.+)/(?P<name>.+)/downloads/"
+        r"(?P<version>.+).(zip|tar.gz|tar.bz2|.tgz|exe|msi)"
     )
     matches = re.search(bitbucket_download_pattern, url)
 
@@ -596,22 +602,29 @@ def build_gitlab_purl(url):
     )
 
 
-# https://hackage.haskell.org/package/a50-0.5/a50-0.5.tar.gz
-hackage_pattern = (
+# https://hackage.haskell.org/package/cli-extras-0.2.0.0/cli-extras-0.2.0.0.tar.gz
+hackage_download_pattern = (
     r"^https?://hackage.haskell.org/package/"
     r"(?P<name>.+)-(?P<version>.+)/"
     r"(?P=name)-(?P=version).*"
     r"[^/]$"
 )
 
-register_pattern("hackage", hackage_pattern)
+register_pattern("hackage", hackage_download_pattern)
+
+
+# https://hackage.haskell.org/package/cli-extras-0.2.0.0/
+hackage_project_pattern = r"^https?://hackage.haskell.org/package/(?P<name>.+)-(?P<version>[^/]+)/"
+
+register_pattern("hackage", hackage_project_pattern)
 
 
 @purl_router.route(
     "https?://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/.*"
 )
 def build_generic_google_code_archive_purl(uri):
-    # https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/android-notifier/android-notifier-desktop-0.5.1-1.i386.rpm
+    # https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com
+    # /android-notifier/android-notifier-desktop-0.5.1-1.i386.rpm
     _, remaining_uri = uri.split(
         "https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/"
     )

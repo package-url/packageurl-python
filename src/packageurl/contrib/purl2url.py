@@ -28,13 +28,11 @@ from packageurl import PackageURL
 from packageurl.contrib.route import NoRouteAvailable
 from packageurl.contrib.route import Router
 
-router = Router()
+repo_router = Router()
+download_router = Router()
 
 
-def purl2url(purl):
-    """
-    Return a URL inferred from the `purl` string
-    """
+def _get_url_from_router(router, purl):
     if purl:
         try:
             return router.process(purl)
@@ -42,113 +40,297 @@ def purl2url(purl):
             return
 
 
-get_url = purl2url
+def get_repo_url(purl):
+    """
+    Return a repository URL inferred from the `purl` string.
+    """
+    return _get_url_from_router(repo_router, purl)
 
 
-@router.route("pkg:cargo/.*")
+def get_download_url(purl):
+    """
+    Return a download URL inferred from the `purl` string.
+    """
+    download_url = _get_url_from_router(download_router, purl)
+    if download_url:
+        return download_url
+
+    # Fallback on the `download_url` qualifier when available.
+    purl_data = PackageURL.from_string(purl)
+    return purl_data.qualifiers.get("download_url", None)
+
+
+def get_inferred_urls(purl):
+    """
+    Return all inferred URLs (repo, download) from the `purl` string.
+    """
+    url_functions = (
+        get_repo_url,
+        get_download_url,
+    )
+
+    inferred_urls = []
+    for url_func in url_functions:
+        url = url_func(purl)
+        if url:
+            inferred_urls.append(url)
+
+    return inferred_urls
+
+
+# Backward compatibility
+purl2url = get_repo_url
+get_url = get_repo_url
+
+
+@repo_router.route("pkg:cargo/.*")
+def build_cargo_repo_url(purl):
+    """
+    Return a cargo repo URL from the `purl` string.
+    """
+    purl_data = PackageURL.from_string(purl)
+
+    name = purl_data.name
+    version = purl_data.version
+
+    if name and version:
+        return f"https://crates.io/crates/{name}/{version}"
+    elif name:
+        return f"https://crates.io/crates/{name}"
+
+
+@repo_router.route("pkg:bitbucket/.*")
+def build_bitbucket_repo_url(purl):
+    """
+    Return a bitbucket repo URL from the `purl` string.
+    """
+    purl_data = PackageURL.from_string(purl)
+
+    namespace = purl_data.namespace
+    name = purl_data.name
+
+    if name and namespace:
+        return f"https://bitbucket.org/{namespace}/{name}"
+
+
+@repo_router.route("pkg:github/.*")
+def build_github_repo_url(purl):
+    """
+    Return a github repo URL from the `purl` string.
+    """
+    purl_data = PackageURL.from_string(purl)
+
+    namespace = purl_data.namespace
+    name = purl_data.name
+    version = purl_data.version
+    qualifiers = purl_data.qualifiers
+
+    if not (name and namespace):
+        return
+
+    repo_url = f"https://github.com/{namespace}/{name}"
+
+    if version:
+        version_prefix = qualifiers.get("version_prefix", "")
+        repo_url = f"{repo_url}/tree/{version_prefix}{version}"
+
+    return repo_url
+
+
+@repo_router.route("pkg:gitlab/.*")
+def build_gitlab_repo_url(purl):
+    """
+    Return a gitlab repo URL from the `purl` string.
+    """
+    purl_data = PackageURL.from_string(purl)
+
+    namespace = purl_data.namespace
+    name = purl_data.name
+
+    if name and namespace:
+        return f"https://gitlab.com/{namespace}/{name}"
+
+
+@repo_router.route("pkg:rubygems/.*")
+def build_rubygems_repo_url(purl):
+    """
+    Return a rubygems repo URL from the `purl` string.
+    """
+    purl_data = PackageURL.from_string(purl)
+
+    name = purl_data.name
+    version = purl_data.version
+
+    if name and version:
+        return f"https://rubygems.org/gems/{name}/versions/{version}"
+    elif name:
+        return f"https://rubygems.org/gems/{name}"
+
+
+@repo_router.route("pkg:npm/.*")
+def build_npm_repo_url(purl):
+    """
+    Return a npm repo URL from the `purl` string.
+    """
+    purl_data = PackageURL.from_string(purl)
+
+    namespace = purl_data.namespace
+    name = purl_data.name
+    version = purl_data.version
+
+    repo_url = "https://www.npmjs.com/package/"
+    if namespace:
+        repo_url += f"{namespace}/"
+
+    repo_url += f"{name}"
+
+    if version:
+        repo_url += f"/v/{version}"
+
+    return repo_url
+
+
+@repo_router.route("pkg:pypi/.*")
+def build_pypi_repo_url(purl):
+    """
+    Return a pypi repo URL from the `purl` string.
+    """
+    purl_data = PackageURL.from_string(purl)
+
+    name = (purl_data.name or "").replace("_", "-")
+    version = purl_data.version
+
+    if name and version:
+        return f"https://pypi.org/project/{name}/{version}/"
+    elif name:
+        return f"https://pypi.org/project/{name}/"
+
+
+@repo_router.route("pkg:nuget/.*")
+def build_nuget_repo_url(purl):
+    """
+    Return a nuget repo URL from the `purl` string.
+    """
+    purl_data = PackageURL.from_string(purl)
+
+    name = purl_data.name
+    version = purl_data.version
+
+    if name and version:
+        return f"https://www.nuget.org/packages/{name}/{version}"
+    elif name:
+        return f"https://www.nuget.org/packages/{name}"
+
+
+@repo_router.route("pkg:hackage/.*")
+def build_hackage_repo_url(purl):
+    """
+    Return a hackage repo URL from the `purl` string.
+    """
+    purl_data = PackageURL.from_string(purl)
+
+    name = purl_data.name
+    version = purl_data.version
+
+    if name and version:
+        return f"https://hackage.haskell.org/package/{name}-{version}"
+    elif name:
+        return f"https://hackage.haskell.org/package/{name}"
+
+
+# Download URLs:
+
+
+@download_router.route("pkg:cargo/.*")
 def build_cargo_download_url(purl):
     """
-    Return a cargo download URL `url` from a the `purl` string
+    Return a cargo download URL from the `purl` string.
     """
     purl_data = PackageURL.from_string(purl)
 
     name = purl_data.name
     version = purl_data.version
 
-    if not (name and version):
-        return
-
-    return f"https://crates.io/api/v1/crates/{name}/{version}/download"
+    if name and version:
+        return f"https://crates.io/api/v1/crates/{name}/{version}/download"
 
 
-@router.route("pkg:bitbucket/.*")
-def build_bitbucket_homepage_url(purl):
+@download_router.route("pkg:rubygems/.*")
+def build_rubygems_download_url(purl):
     """
-    Return a bitbucket homepage URL `url` from a the `purl` string
+    Return a rubygems download URL from the `purl` string.
+    """
+    purl_data = PackageURL.from_string(purl)
+
+    name = purl_data.name
+    version = purl_data.version
+
+    if name and version:
+        return f"https://rubygems.org/downloads/{name}-{version}.gem"
+
+
+@download_router.route("pkg:npm/.*")
+def build_npm_download_url(purl):
+    """
+    Return a npm download URL from the `purl` string.
+    """
+    purl_data = PackageURL.from_string(purl)
+
+    name = purl_data.name
+    version = purl_data.version
+
+    if name and version:
+        return f"http://registry.npmjs.org/{name}/-/{name}-{version}.tgz"
+
+
+@download_router.route("pkg:hackage/.*")
+def build_hackage_download_url(purl):
+    """
+    Return a hackage download URL from the `purl` string.
+    """
+    purl_data = PackageURL.from_string(purl)
+
+    name = purl_data.name
+    version = purl_data.version
+
+    if name and version:
+        return f"https://hackage.haskell.org/package/{name}-{version}/{name}-{version}.tar.gz"
+
+
+@download_router.route("pkg:nuget/.*")
+def build_nuget_download_url(purl):
+    """
+    Return a nuget download URL from the `purl` string.
+    """
+    purl_data = PackageURL.from_string(purl)
+
+    name = purl_data.name
+    version = purl_data.version
+
+    if name and version:
+        return f"https://www.nuget.org/api/v2/package/{name}/{version}"
+
+
+@download_router.route("pkg:github/.*")
+def build_github_download_url(purl):
+    """
+    Return a github download URL from the `purl` string.
     """
     purl_data = PackageURL.from_string(purl)
 
     namespace = purl_data.namespace
     name = purl_data.name
     version = purl_data.version
-    subpath = purl_data.subpath
+    qualifiers = purl_data.qualifiers
 
-    if not (name and namespace):
+    download_url = qualifiers.get("download_url")
+    if download_url:
+        return download_url
+
+    if not (namespace and name and version):
         return
 
-    url = f"https://bitbucket.org/{namespace}/{name}"
-    if version:
-        url = f"{url}/src/{version}"
+    version_prefix = qualifiers.get("version_prefix", "")
+    version = f"{version_prefix}{version}"
 
-    if subpath:
-        url = f"{url}/{subpath}"
-
-    return url
-
-
-@router.route("pkg:github/.*")
-def build_github_homepage_url(purl):
-    """
-    Return a github homepage URL `url` from a the `purl` string
-    """
-    purl_data = PackageURL.from_string(purl)
-
-    namespace = purl_data.namespace
-    name = purl_data.name
-    version = purl_data.version
-    subpath = purl_data.subpath
-
-    if not (name and namespace):
-        return
-
-    url = f"https://github.com/{namespace}/{name}"
-
-    if version:
-        url = f"{url}/tree/{version}"
-
-    if subpath:
-        url = f"{url}/{subpath}"
-
-    return url
-
-
-@router.route("pkg:gitlab/.*")
-def build_gitlab_homepage_url(purl):
-    """
-    Return a gitlab homepage URL `url` from a the `purl` string
-    """
-    purl_data = PackageURL.from_string(purl)
-
-    namespace = purl_data.namespace
-    name = purl_data.name
-    version = purl_data.version
-    subpath = purl_data.subpath
-
-    if not (name and namespace):
-        return
-
-    url = f"https://gitlab.com/{namespace}/{name}"
-
-    if version:
-        url = f"{url}/-/tree/{version}"
-
-    if subpath:
-        url = f"{url}/{subpath}"
-
-    return url
-
-
-@router.route("pkg:rubygems/.*")
-def build_gem_download_url(purl):
-    """
-    Return a rubygems homepage URL `url` from a the `purl` string
-    """
-    purl_data = PackageURL.from_string(purl)
-
-    name = purl_data.name
-    version = purl_data.version
-
-    if not (name and version):
-        return
-
-    return f"https://rubygems.org/downloads/{name}-{version}.gem"
+    return f"https://github.com/{namespace}/{name}/archive/refs/tags/{version}.zip"
