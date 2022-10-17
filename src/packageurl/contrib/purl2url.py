@@ -42,16 +42,22 @@ def _get_url_from_router(router, purl):
 
 def get_repo_url(purl):
     """
-    Return a repo URL inferred from the `purl` string
+    Return a repository URL inferred from the `purl` string.
     """
     return _get_url_from_router(repo_router, purl)
 
 
 def get_download_url(purl):
     """
-    Return a download URL inferred from the `purl` string
+    Return a download URL inferred from the `purl` string.
     """
-    return _get_url_from_router(download_router, purl)
+    download_url = _get_url_from_router(download_router, purl)
+    if download_url:
+        return download_url
+
+    # Fallback on the `download_url` qualifier when available.
+    purl_data = PackageURL.from_string(purl)
+    return purl_data.qualifiers.get("download_url", None)
 
 
 def get_inferred_urls(purl):

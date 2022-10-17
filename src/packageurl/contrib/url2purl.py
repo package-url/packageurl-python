@@ -355,16 +355,14 @@ def build_sourceforge_purl(uri):
     if not sourceforge_purl:
         # Get the project name from `uri` and use that as the Package name
         # http://master.dl.sourceforge.net/project/aloyscore/aloyscore/0.1a1%2520stable/0.1a1_stable_AloysCore.zip
-        split_uri = uri.split(
-            "/project/"
-        )  # http://master.dl.sourceforge.net, aloyscore/aloyscore/0.1a1%2520stable/0.1a1_stable_AloysCore.zip
+        split_uri = uri.split("/project/")
+
+        # http://master.dl.sourceforge.net, aloyscore/aloyscore/0.1a1%2520stable/0.1a1_stable_AloysCore.zip
         if len(split_uri) >= 2:
-            remaining_uri_path = split_uri[
-                1
-            ]  # aloyscore/aloyscore/0.1a1%2520stable/0.1a1_stable_AloysCore.zip
-            remaining_uri_path_segments = remaining_uri_path.split(
-                "/"
-            )  # aloyscore, aloyscore, 0.1a1%2520stable, 0.1a1_stable_AloysCore.zip
+            # aloyscore/aloyscore/0.1a1%2520stable/0.1a1_stable_AloysCore.zip
+            remaining_uri_path = split_uri[1]
+            # aloyscore, aloyscore, 0.1a1%2520stable, 0.1a1_stable_AloysCore.zip
+            remaining_uri_path_segments = remaining_uri_path.split("/")
             if remaining_uri_path_segments:
                 project_name = remaining_uri_path_segments[0]  # aloyscore
                 sourceforge_purl = PackageURL(
