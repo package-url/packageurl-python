@@ -1,8 +1,8 @@
 Changelog
 =========
 
-next ()
--------
+0.10.4 (2022-10-17)
+-------------------
 
 - Refactor the purl2url functions and utilities #42
 
