@@ -317,6 +317,10 @@ def build_github_download_url(purl):
     version = purl_data.version
     qualifiers = purl_data.qualifiers
 
+    download_url = qualifiers.get("download_url")
+    if download_url:
+        return download_url
+
     if not (namespace and name and version):
         return
 

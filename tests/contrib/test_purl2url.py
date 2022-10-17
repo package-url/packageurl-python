@@ -71,6 +71,7 @@ def test_purl2url_get_download_url():
         "pkg:hackage/cli-extras@0.2.0.0": "https://hackage.haskell.org/package/cli-extras-0.2.0.0/cli-extras-0.2.0.0.tar.gz",
         "pkg:nuget/System.Text.Json@6.0.6": "https://www.nuget.org/api/v2/package/System.Text.Json/6.0.6",
         "pkg:github/nexb/scancode-toolkit@3.1.1?version_prefix=v": "https://github.com/nexb/scancode-toolkit/archive/refs/tags/v3.1.1.zip",
+        "pkg:github/yarnpkg/yarn@1.3.2?download_url=https://github.com/yarnpkg/yarn/releases/download/v1.3.2/yarn-v1.3.2.tar.gz&version_prefix=v": "https://github.com/yarnpkg/yarn/releases/download/v1.3.2/yarn-v1.3.2.tar.gz",
         "pkg:github/tg1999/fetchcode": None,
         "pkg:cargo/abc": None,
         "pkg:gem/package-name": None,
