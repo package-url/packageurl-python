@@ -54,7 +54,7 @@ Django models
 URL to PURL
 ^^^^^^^^^^^
 
-`packageurl.contrib.url2purl.get_purl(url)` returns a Package URL inferred from URL.
+`packageurl.contrib.url2purl.get_purl(url)` returns a Package URL inferred from an URL.
 
 ::
 
@@ -65,18 +65,22 @@ URL to PURL
 PURL to URL
 ^^^^^^^^^^^
 
-- `packageurl.contrib.purl2url.get_repo_url(purl)` returns a repo URL inferred from a Package URL.
+- `packageurl.contrib.purl2url.get_repo_url(purl)` returns a repository URL inferred from a Package URL.
 - `packageurl.contrib.purl2url.get_download_url(purl)` returns a download URL inferred from a Package URL.
+- `packageurl.contrib.purl2url.get_inferred_urls(purl)` return all inferred URLs (repository, download) from a Package URL.
 
 ::
 
     >>> from packageurl.contrib import purl2url
 
     >>> purl2url.get_repo_url("pkg:rubygems/bundler@2.3.23")
-    https://rubygems.org/gems/bundler/versions/2.3.23
+    "https://rubygems.org/gems/bundler/versions/2.3.23"
 
     >>> purl2url.get_download_url("pkg:rubygems/bundler@2.3.23")
-    https://rubygems.org/downloads/bundler-2.3.23.gem
+    "https://rubygems.org/downloads/bundler-2.3.23.gem"
+
+    >>> purl2url.get_inferred_urls("pkg:rubygems/bundler@2.3.23")
+    ["https://rubygems.org/gems/bundler/versions/2.3.23", "https://rubygems.org/downloads/bundler-2.3.23.gem",]
 
 Run tests
 =========

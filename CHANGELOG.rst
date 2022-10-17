@@ -1,6 +1,25 @@
 Changelog
 =========
 
+next ()
+-------
+
+- Refactor the purl2url functions and utilities #42
+
+  - Split purl2url into `get_repo_url()` and `get_download_url()` returning
+    accordingly a "Repository URL" and a "Download URL".
+  - A new `get_inferred_urls` function is available to get return all
+    inferred URLs (repository and download) values.
+  - Add support in purl2url for npm, pypi, hackage, and nuget.
+  - Package URL qualifiers can now be provided to `purl_from_pattern()`.
+  - The `download_url` qualifier is returned in `get_download_url()` when available.
+
+- Usage of `purl2url.purl2url` and `purl2url.get_url` is still available for
+  backward compatibility but should be migrated to `purl2url.get_repo_url`.
+
+- Include the `version_prefix` ("v" or "V") as a qualifier in build_github_purl #42
+  This allow to infer valid URLs in the context of purl2url.
+
 
 0.10.3 (2022-09-15)
 -------------------
