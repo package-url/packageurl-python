@@ -376,10 +376,10 @@ class PackageURL(namedtuple("PackageURL", _components)):
         path = path.lstrip("/")
 
         # NPM purl have a namespace in the path
-        # and the namespace in an npm purl is 
+        # and the namespace in an npm purl is
         # different from others because it starts with `@`
         # so we need to handle this case separately
-        if type=="npm" and path.startswith("@"):
+        if type == "npm" and path.startswith("@"):
             namespace = ""
             name = ""
             namespace, sep, name_version = path.partition("/")
