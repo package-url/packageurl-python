@@ -1,6 +1,12 @@
 Changelog
 =========
 
+0.10.5 (2022-11-29)
+-------------------
+
+- Fixed `PackageURL.from_string` to properly handle npm purls
+  with namespace.
+
 0.10.4 (2022-10-17)
 -------------------
 
