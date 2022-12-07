@@ -34,6 +34,7 @@ download_router = Router()
 
 def _get_url_from_router(router, purl):
     if purl:
+        print("in _get_url_from_router, router")
         try:
             return router.process(purl)
         except NoRouteAvailable:
@@ -44,6 +45,7 @@ def get_repo_url(purl):
     """
     Return a repository URL inferred from the `purl` string.
     """
+    print("In get_repo_url")
     return _get_url_from_router(repo_router, purl)
 
 
@@ -237,6 +239,54 @@ def build_hackage_repo_url(purl):
     elif name:
         return f"https://hackage.haskell.org/package/{name}"
 
+@repo_router.route("pkg:golang/.*")
+def build_golang_pkg_go_repo_url(purl):
+    """
+    Return a google.cloud download URL from the `purl` string.
+    """
+
+    purl_data = PackageURL.from_string(purl)
+
+    namespace = purl_data.namespace
+    name = purl_data.name
+    version = purl_data.version
+    qualifiers = purl_data.qualifiers
+
+    download_url = qualifiers.get("download_url")
+    
+    if download_url:
+        return download_url
+
+    if not (namespace and name and version):
+        return
+    
+#    print("PURL PKG: namespace: " + purl_data.namespace)
+#    print(f"name: {purl_data.name}")
+#    print("version: " + version)
+#    print("qualifiers:" + str(qualifiers))
+
+
+# Resolve download urls: https://proxy.golang.org/
+# Resolve download urls: https://github.com/gomods/athens
+    # Unfortunatelly I could not find a general logic valid for all golang repos. 
+    if "github.com" in purl_data.namespace:
+        namespace = purl_data.namespace.split("/");
+#        print(f"Size of namespace: {str(len(namespace))}")
+        # If the referred module is in a directory of a repo, than parts of the url and added as a part of a tag
+        if len(namespace) > 3:
+            # Constructing the basic part of the URL
+            url = f"https://{namespace[0]}/{namespace[1]}/{namespace[2]}/releases/tag/"
+            # adding the remains of the path to the tag
+            for i in range(3, len(namespace)):
+                url = url + namespace[i] + "%2F"
+            # and finally adding the version
+            url = url + f"{purl_data.name}%2F{version}"
+            return url
+        else:
+            return f"https://{purl_data.namespace}/{purl_data.name}/releases/tag/{version}"
+    else:
+        return f"https://pkg.go.dev/{purl_data.namespace}/{purl_data.name}@{version}"
+
 
 # Download URLs:
 
@@ -334,3 +384,4 @@ def build_github_download_url(purl):
     version = f"{version_prefix}{version}"
 
     return f"https://github.com/{namespace}/{name}/archive/refs/tags/{version}.zip"
+
