@@ -298,5 +298,53 @@
     "qualifiers": {"in production": "true"},
     "subpath": null,
     "is_invalid": true
+  },
+  {
+    "description": "valid npm purl without version and with subpath",
+    "purl": "pkg:npm/@babel/core#/googleapis/api/annotations/",
+    "canonical_purl": "pkg:npm/%40babel/core#googleapis/api/annotations",
+    "type": "npm",
+    "namespace": "@babel",
+    "name": "core",
+    "version": null,
+    "qualifiers": null,
+    "subpath": "googleapis/api/annotations",
+    "is_invalid": false
+  },
+  {
+    "description": "valid npm purl with namespace, version and subpath",
+    "purl": "pkg:npm/@babel/core@1.0.2#/googleapis/api/annotations/",
+    "canonical_purl": "pkg:npm/%40babel/core@1.0.2#googleapis/api/annotations",
+    "type": "npm",
+    "namespace": "@babel",
+    "name": "core",
+    "version": "1.0.2",
+    "qualifiers": null,
+    "subpath": "googleapis/api/annotations",
+    "is_invalid": false
+  },
+  {
+    "description": "valid npm purl without namespace and with subpath",
+    "purl": "pkg:npm/core@1.0.2#/googleapis/api/annotations/",
+    "canonical_purl": "pkg:npm/core@1.0.2#googleapis/api/annotations",
+    "type": "npm",
+    "namespace": null,
+    "name": "core",
+    "version": "1.0.2",
+    "qualifiers": null,
+    "subpath": "googleapis/api/annotations",
+    "is_invalid": false
+  },
+  {
+    "description": "valid npm purl without namespace, version and subpath",
+    "purl": "pkg:npm/core#/googleapis/api/annotations/",
+    "canonical_purl": "pkg:npm/core#googleapis/api/annotations",
+    "type": "npm",
+    "namespace": null,
+    "name": "core",
+    "version": null,
+    "qualifiers": null,
+    "subpath": "googleapis/api/annotations",
+    "is_invalid": false
   }
 ]

@@ -374,6 +374,15 @@ class PackageURL(namedtuple("PackageURL", _components)):
             raise ValueError(msg)
 
         path = path.lstrip("/")
+
+        namespace = ""
+        # NPM purl have a namespace in the path
+        # and the namespace in an npm purl is
+        # different from others because it starts with `@`
+        # so we need to handle this case separately
+        if type == "npm" and path.startswith("@"):
+            namespace, sep, path = path.partition("/")
+
         remainder, sep, version = path.rpartition("@")
         if not sep:
             remainder = version
@@ -382,9 +391,8 @@ class PackageURL(namedtuple("PackageURL", _components)):
         ns_name = remainder.strip().strip("/")
         ns_name = ns_name.split("/")
         ns_name = [seg for seg in ns_name if seg and seg.strip()]
-        namespace = ""
         name = ""
-        if len(ns_name) > 1:
+        if not namespace and len(ns_name) > 1:
             name = ns_name[-1]
             ns = ns_name[0:-1]
             namespace = "/".join(ns)
