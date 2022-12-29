@@ -7,6 +7,7 @@ Changelog
 - Apply typing
 - Add support for Python 3.11
 - Fix minor typos
+- Drop Python 3.6
 
 
 0.10.5rc1 (2022-12-28)
