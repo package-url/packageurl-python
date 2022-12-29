@@ -351,9 +351,7 @@ class PackageURL(namedtuple("PackageURL", _components)):
 
         scheme, sep, remainder = purl.partition(":")
         if not sep or scheme != "pkg":
-            raise ValueError(
-                f'purl is missing the required "pkg" scheme component: {repr(purl)}.'
-            )
+            raise ValueError(f'purl is missing the required "pkg" scheme component: {repr(purl)}.')
 
         # this strip '/, // and /// as possible in :// or :///
         remainder = remainder.strip().lstrip("/")
