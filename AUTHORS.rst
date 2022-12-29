@@ -10,3 +10,4 @@ packageurl-python:
 - Haiko Schol @haikoschol
 - Paul Horton @madpah
 - Aditi Rao @aditirao7
+- Anton Grübel @gruebel
