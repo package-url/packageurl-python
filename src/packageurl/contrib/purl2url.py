@@ -27,6 +27,7 @@
 from packageurl import PackageURL
 from packageurl.contrib.route import NoRouteAvailable
 from packageurl.contrib.route import Router
+import re
 
 repo_router = Router()
 download_router = Router()
@@ -34,7 +35,6 @@ download_router = Router()
 
 def _get_url_from_router(router, purl):
     if purl:
-        print("in _get_url_from_router, router")
         try:
             return router.process(purl)
         except NoRouteAvailable:
@@ -45,7 +45,6 @@ def get_repo_url(purl):
     """
     Return a repository URL inferred from the `purl` string.
     """
-    print("In get_repo_url")
     return _get_url_from_router(repo_router, purl)
 
 
@@ -242,8 +241,16 @@ def build_hackage_repo_url(purl):
 @repo_router.route("pkg:golang/.*")
 def build_golang_pkg_go_repo_url(purl):
     """
-    Return a google.cloud download URL from the `purl` string.
+    Return a a download URL from the `purl` string for golang. Due to the non deterministic nature of go package
+    locations this function works in a best effort basis.
     """
+
+    ##
+    # This function is built using a trial and error method using the golang purl-s I ran across and needed to convert.
+    # To have a more reliable algorithm golang would need to implement a determinaists way to refer to packages or the
+    # method should rely on the active golang proxies (https://proxy.golang.org/ or maybe
+    # https://github.com/gomods/athens)to determine the url.
+
 
     purl_data = PackageURL.from_string(purl)
 
@@ -253,39 +260,61 @@ def build_golang_pkg_go_repo_url(purl):
     qualifiers = purl_data.qualifiers
 
     download_url = qualifiers.get("download_url")
-    
+
     if download_url:
         return download_url
 
     if not (namespace and name and version):
         return
     
-#    print("PURL PKG: namespace: " + purl_data.namespace)
-#    print(f"name: {purl_data.name}")
-#    print("version: " + version)
-#    print("qualifiers:" + str(qualifiers))
+    print(f"namespace: {purl_data.namespace}, name {purl_data.name}, version: {purl_data.version}, qualifiers: {purl_data.qualifiers}")
 
-
-# Resolve download urls: https://proxy.golang.org/
-# Resolve download urls: https://github.com/gomods/athens
-    # Unfortunatelly I could not find a general logic valid for all golang repos. 
     if "github.com" in purl_data.namespace:
-        namespace = purl_data.namespace.split("/");
-#        print(f"Size of namespace: {str(len(namespace))}")
-        # If the referred module is in a directory of a repo, than parts of the url and added as a part of a tag
-        if len(namespace) > 3:
+
+        namespace = purl_data.namespace.split("/")
+        exp = re.compile("v[0-9]+")
+
+        # if the version is a pseudo version and contains several sections separated by - the last section is a git 
+        # commit id what should be referred in the tree of the repo
+        # https://stackoverflow.com/questions/57355929/what-does-incompatible-in-go-mod-mean-will-it-cause-harm
+        if "-" in purl_data.version:
+            version = purl_data.version.split("-")
+            if exp.match(purl_data.name):
+                return f"https://{namespace[0]}/{namespace[1]}/{namespace[2]}/tree/{version[len(version) - 1]}"
+            else:
+                return f"https://{namespace[0]}/{namespace[1]}/{purl_data.name}/tree/{version[len(version) - 1]}"
+
+        # if the version refers to a module using semantic versioning, but not opted to use modules it has a
+        # '+incompatible' differentiator in the version what can be just omitted in our case.
+        # Ref: https://stackoverflow.com/questions/57355929/what-does-incompatible-in-go-mod-mean-will-it-cause-harm
+        # Ref: https://github.com/golang/go/wiki/Modules#can-a-module-consume-a-package-that-has-not-opted-in-to-modules
+        
+        version = purl_data.version.replace("+incompatible", "")
+        # If the referred module is in a directory of a repo, than parts of the url are added as a part of a tag
+        if len(namespace) >= 3:
             # Constructing the basic part of the URL
             url = f"https://{namespace[0]}/{namespace[1]}/{namespace[2]}/releases/tag/"
             # adding the remains of the path to the tag
             for i in range(3, len(namespace)):
                 url = url + namespace[i] + "%2F"
             # and finally adding the version
-            url = url + f"{purl_data.name}%2F{version}"
+            if exp.match(purl_data.name):
+                url = url + f"{version}"    
+            else:
+                url = url + f"{purl_data.name}%2F{version}"
             return url
         else:
-            return f"https://{purl_data.namespace}/{purl_data.name}/releases/tag/{version}"
+            if exp.match(purl_data.name):
+                return f"https://{purl_data.namespace}/releases/tag/{version}"
+            else:
+                print("No match")
+                return f"https://{purl_data.namespace}/{purl_data.name}/releases/tag/{version}"
     else:
-        return f"https://pkg.go.dev/{purl_data.namespace}/{purl_data.name}@{version}"
+        if "-" in purl_data.version:
+            # Version is not semantic version, therefore not compatible with pkg.go.dev
+            return
+        else:
+            return f"https://pkg.go.dev/{purl_data.namespace}/{purl_data.name}@{version}"
 
 
 # Download URLs:
