@@ -274,7 +274,7 @@ def build_rubygems_purl(uri):
     rubygems_pattern = (
         r"^https?://rubygems.org/(downloads|gems)/(?P<name>.+)-(?P<version>.+)(\.gem)$"
     )
-    return purl_from_pattern("rubygems", rubygems_pattern, uri)
+    return purl_from_pattern("gem", rubygems_pattern, uri)
 
 
 # https://pypi.python.org/packages/source/a/anyjson/anyjson-0.3.3.tar.gz
