@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.11.1 (unreleased)
+0.11.1 (2022-03-24)
 -------------------
 
 - Add support for the golang type in `purl2url.get_repo_url()` #107
