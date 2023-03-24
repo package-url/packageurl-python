@@ -368,7 +368,6 @@ class PackageURL(
         qualifiers: Union[AnyStr, Dict[str, str], None] = None,
         subpath: Optional[AnyStr] = None,
     ) -> "PackageURL":  # this should be 'Self' https://github.com/python/mypy/pull/13133
-
         required = dict(type=type, name=name)
         for key, value in required.items():
             if value:
