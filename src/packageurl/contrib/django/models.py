@@ -55,7 +55,7 @@ def without_empty_values(input_dict):
 
 class PackageURLQuerySetMixin:
     """
-    Add Package URL filtering method to a django.db.models.QuerySet.
+    Add Package URL filtering methods to a django.db.models.QuerySet.
     """
 
     def for_package_url(self, purl_str, encode=True):
@@ -139,20 +139,27 @@ class PackageURLMixin(models.Model):
     @property
     def package_url(self):
         """
-        Return a compact Package URL "purl" string.
+        Return the Package URL "purl" string.
         """
         try:
-            purl = PackageURL(
-                self.type,
-                self.namespace,
-                self.name,
-                self.version,
-                self.qualifiers,
-                self.subpath,
-            )
+            package_url = self.get_package_url()
         except ValueError:
             return ""
-        return str(purl)
+
+        return str(package_url)
+
+    def get_package_url(self):
+        """
+        Get the PackageURL instance.
+        """
+        return PackageURL(
+            self.type,
+            self.namespace,
+            self.name,
+            self.version,
+            self.qualifiers,
+            self.subpath,
+        )
 
     def set_package_url(self, package_url):
         """
