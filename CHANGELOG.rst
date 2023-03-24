@@ -1,8 +1,13 @@
 Changelog
 =========
 
+0.11.1 (unreleased)
+-------------------
+
+- Add support for the golang type in `purl2url.get_repo_url()` #107
+
 0.11.0rc1 (2022-12-29)
--------------------------
+----------------------
 
 - Apply typing
 - Add support for Python 3.11
@@ -11,14 +16,13 @@ Changelog
 
 
 0.10.5rc1 (2022-12-28)
-------------------------
+----------------------
 
-- Fixed `PackageURL.from_string` to properly handle npm purls
-  with namespace.
+- Fixed `PackageURL.from_string` to properly handle npm purls with namespace.
 
 
 0.10.4 (2022-10-17)
---------------------
+-------------------
 
 - Refactor the purl2url functions and utilities #42
 

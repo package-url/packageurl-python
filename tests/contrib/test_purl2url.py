@@ -57,6 +57,9 @@ def test_purl2url_get_repo_url():
         "pkg:nuget/System.Text.Json@6.0.6": "https://www.nuget.org/packages/System.Text.Json/6.0.6",
         "pkg:hackage/cli-extras": "https://hackage.haskell.org/package/cli-extras",
         "pkg:hackage/cli-extras@0.2.0.0": "https://hackage.haskell.org/package/cli-extras-0.2.0.0",
+        "pkg:golang/xorm.io/xorm": "https://pkg.go.dev/xorm.io/xorm",
+        "pkg:golang/xorm.io/xorm@v0.8.2": "https://pkg.go.dev/xorm.io/xorm@v0.8.2",
+        "pkg:golang/gopkg.in/ldap.v3@v3.1.0": "https://pkg.go.dev/gopkg.in/ldap.v3@v3.1.0",
     }
 
     for purl, url in purls_url.items():
@@ -86,6 +89,8 @@ def test_purl2url_get_download_url():
         "pkg:bitbucket/birkenfeld": None,
         "pkg:gitlab/tg1999/firebase@1a122122": None,
         "pkg:pypi/sortedcontainers@2.4.0": None,
+        "pkg:golang/xorm.io/xorm@v0.8.2": None,
+        "pkg:golang/gopkg.in/ldap.v3@v3.1.0": None,
     }
 
     for purl, url in purls_url.items():
