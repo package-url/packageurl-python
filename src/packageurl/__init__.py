@@ -518,7 +518,7 @@ class PackageURL(
         # and the namespace in an npm purl is
         # different from others because it starts with `@`
         # so we need to handle this case separately
-        if type == "npm" and path.startswith("@"):
+        if type.lower() == "npm" and path.startswith("@"):
             namespace, sep, path = path.partition("/")
 
         remainder, sep, version = path.rpartition("@")
@@ -530,7 +530,10 @@ class PackageURL(
         ns_name_parts = ns_name.split("/")
         ns_name_parts = [seg for seg in ns_name_parts if seg and seg.strip()]
         name = ""
-        if not namespace and len(ns_name_parts) > 1:
+        if type.lower() == "golang":
+            name = "/".join(ns_name_parts)
+            namespace = ""
+        elif not namespace and len(ns_name_parts) > 1:
             name = ns_name_parts[-1]
             ns = ns_name_parts[0:-1]
             namespace = "/".join(ns)

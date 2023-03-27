@@ -1,6 +1,11 @@
 Changelog
 =========
 
+0.11.2 (2023-03-27)
+-------------------
+
+- Modified `PackageURL.from_string` to properly handle golang purls.
+
 0.11.1 (2022-03-24)
 -------------------
 
