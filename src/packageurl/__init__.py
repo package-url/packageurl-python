@@ -500,6 +500,8 @@ class PackageURL(
         if not type or not sep:
             raise ValueError(f"purl is missing the required type component: {repr(purl)}.")
 
+        type = type.lower()
+
         scheme, authority, path, qualifiers_str, subpath = _urlsplit(
             url=remainder, scheme="", allow_fragments=True
         )
@@ -518,7 +520,7 @@ class PackageURL(
         # and the namespace in an npm purl is
         # different from others because it starts with `@`
         # so we need to handle this case separately
-        if type.lower() == "npm" and path.startswith("@"):
+        if type == "npm" and path.startswith("@"):
             namespace, sep, path = path.partition("/")
 
         remainder, sep, version = path.rpartition("@")
@@ -530,7 +532,7 @@ class PackageURL(
         ns_name_parts = ns_name.split("/")
         ns_name_parts = [seg for seg in ns_name_parts if seg and seg.strip()]
         name = ""
-        if type.lower() == "golang":
+        if type == "golang":
             name = "/".join(ns_name_parts)
             namespace = ""
         elif not namespace and len(ns_name_parts) > 1:
