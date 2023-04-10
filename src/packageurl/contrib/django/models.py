@@ -24,33 +24,12 @@
 # Visit https://github.com/package-url/packageurl-python for support and
 # download.
 
-import warnings
-
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
 from packageurl import PackageURL
-from packageurl.contrib.django.utils import purl_to_lookups as _purl_to_lookups
-from packageurl.contrib.django.utils import without_empty_values as _without_empty_values
-
-
-def purl_to_lookups(purl, encode=True):
-    warnings.warn(
-        "purl_to_lookups is deprecated and will be removed in a future version. "
-        "Use packageurl.contrib.django.utils.purl_to_lookups instead.",
-        DeprecationWarning,
-    )
-    return _purl_to_lookups(purl_str=purl, encode=encode)
-
-
-def without_empty_values(input_dict):
-    warnings.warn(
-        "without_empty_values is deprecated and will be removed in a future version. "
-        "Use packageurl.contrib.django.utils.without_empty_values instead.",
-        DeprecationWarning,
-    )
-    return _without_empty_values(input_dict)
+from packageurl.contrib.django.utils import purl_to_lookups
 
 
 class PackageURLQuerySetMixin:
@@ -63,7 +42,7 @@ class PackageURLQuerySetMixin:
         Filter the QuerySet with the provided Package URL string.
         The purl string is validated and transformed into filtering lookups.
         """
-        lookups = purl_to_lookups(purl=purl_str, encode=encode)
+        lookups = purl_to_lookups(purl_str=purl_str, encode=encode)
         if lookups:
             return self.filter(**lookups)
         return self.none()
