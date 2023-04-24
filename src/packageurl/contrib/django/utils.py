@@ -28,7 +28,7 @@
 from packageurl import PackageURL
 
 
-def purl_to_lookups(purl_str, encode=True):
+def purl_to_lookups(purl_str, encode=True, with_empty_values=False, empty=None):
     """
     Return a lookups dict built from the provided `purl` string.
     Those lookups can be used as QuerySet filters.
@@ -41,8 +41,12 @@ def purl_to_lookups(purl_str, encode=True):
     except ValueError:
         return  # Not a valid PackageURL
 
-    package_url_dict = package_url.to_dict(encode=encode)
-    return without_empty_values(package_url_dict)
+    package_url_dict = package_url.to_dict(encode=encode, empty=empty)
+
+    if with_empty_values:
+        return package_url_dict
+    else:
+        return without_empty_values(package_url_dict)
 
 
 def without_empty_values(input_dict):

@@ -53,3 +53,27 @@ def test_purl_to_lookups_with_encode():
         "version": "0",
         "qualifiers": "arch=aarch64&distroversion=edge&reponame=main",
     }
+
+
+def test_purl_to_lookups_with_empty_values():
+    assert purl_to_lookups(purl_str="pkg:alpine/openssl", encode=True, with_empty_values=True) == {
+        "type": "alpine",
+        "namespace": None,
+        "name": "openssl",
+        "version": None,
+        "qualifiers": None,
+        "subpath": None,
+    }
+
+
+def test_purl_to_lookups_with_empty_values_replaced():
+    assert purl_to_lookups(
+        purl_str="pkg:alpine/openssl", encode=True, with_empty_values=True, empty=""
+    ) == {
+        "type": "alpine",
+        "namespace": "",
+        "name": "openssl",
+        "version": "",
+        "qualifiers": "",
+        "subpath": "",
+    }
