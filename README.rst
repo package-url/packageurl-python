@@ -49,7 +49,12 @@ Utilities
 Django models
 ^^^^^^^^^^^^^
 
-`packageurl.contrib.django_models.PackageURLMixin` is a Django abstract model mixin to use Package URLs in Django.
+`packageurl.contrib.django.models.PackageURLMixin` is a Django abstract model mixin to use Package URLs in Django.
+
+SQLAlchemy mixin
+^^^^^^^^^^^^^^^^
+
+`packageurl.contrib.sqlalchemy.mixin.PackageURLMixin` is a SQLAlchemy declarative mixin to use Package URLs in SQLAlchemy models.
 
 URL to PURL
 ^^^^^^^^^^^
