@@ -455,6 +455,11 @@ class PackageURL(
             encode=True,
         )
 
+        if name:
+            name = name.replace("/", "%2F")
+        if version:
+            version = version.replace("/", "%2F")
+
         purl = ["pkg:", type, "/"]
 
         if namespace:
