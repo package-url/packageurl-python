@@ -48,6 +48,18 @@
     "is_invalid": false
   },
   {
+    "description": "valid go purl with version, subpath, and multi-part namespace",
+    "purl": "pkg:GOLANG/github.com/gorilla/context@234fd47e07d1004f0aed9c#api/",
+    "canonical_purl": "pkg:golang/github.com/gorilla/context@234fd47e07d1004f0aed9c#api",
+    "type": "golang",
+    "namespace": "github.com/gorilla",
+    "name": "context",
+    "version": "234fd47e07d1004f0aed9c",
+    "qualifiers": null,
+    "subpath": "api",
+    "is_invalid": false
+  },
+  {
     "description": "bitbucket namespace and name should be lowercased",
     "purl": "pkg:bitbucket/birKenfeld/pyGments-main@244fd47e07d1014f0aed9c",
     "canonical_purl": "pkg:bitbucket/birkenfeld/pygments-main@244fd47e07d1014f0aed9c",
@@ -79,7 +91,10 @@
     "namespace": "debian",
     "name": "curl",
     "version": "7.50.3-1",
-    "qualifiers": {"arch": "i386", "distro": "jessie"},
+    "qualifiers": {
+      "arch": "i386",
+      "distro": "jessie"
+    },
     "subpath": null,
     "is_invalid": false
   },
@@ -91,7 +106,7 @@
     "namespace": "customer",
     "name": "dockerimage",
     "version": "sha256:244fd47e07d1004f0aed9c",
-    "qualifiers": {"repository_url": "gcr.io"},
+    "qualifiers": { "repository_url": "gcr.io" },
     "subpath": null,
     "is_invalid": false
   },
@@ -103,7 +118,7 @@
     "namespace": null,
     "name": "jruby-launcher",
     "version": "1.1.2",
-    "qualifiers": {"platform": "java"},
+    "qualifiers": { "platform": "java" },
     "subpath": null,
     "is_invalid": false
   },
@@ -115,7 +130,10 @@
     "namespace": "org.apache.xmlgraphics",
     "name": "batik-anim",
     "version": "1.9.1",
-    "qualifiers": {"classifier": "sources", "repository_url": "repo.spring.io/release"},
+    "qualifiers": {
+      "classifier": "sources",
+      "repository_url": "repo.spring.io/release"
+    },
     "subpath": null,
     "is_invalid": false
   },
@@ -127,7 +145,10 @@
     "namespace": "org.apache.xmlgraphics",
     "name": "batik-anim",
     "version": "1.9.1",
-    "qualifiers": {"extension": "pom", "repository_url": "repo.spring.io/release"},
+    "qualifiers": {
+      "extension": "pom",
+      "repository_url": "repo.spring.io/release"
+    },
     "subpath": null,
     "is_invalid": false
   },
@@ -139,7 +160,10 @@
     "namespace": "net.sf.jacob-project",
     "name": "jacob",
     "version": "1.14.3",
-    "qualifiers": {"classifier": "x86", "type": "dll"},
+    "qualifiers": {
+      "classifier": "x86",
+      "type": "dll"
+    },
     "subpath": null,
     "is_invalid": false
   },
@@ -151,6 +175,18 @@
     "namespace": "@angular",
     "name": "animation",
     "version": "12.3.1",
+    "qualifiers": null,
+    "subpath": null,
+    "is_invalid": false
+  },
+  {
+    "description": "npm names are case sensitive (npm only requires lowercase names for new packages)",
+    "purl": "pkg:npm/Acid@3.0.17",
+    "canonical_purl": "pkg:npm/Acid@3.0.17",
+    "type": "npm",
+    "namespace": null,
+    "name": "Acid",
+    "version": "3.0.17",
     "qualifiers": null,
     "subpath": null,
     "is_invalid": false
@@ -187,7 +223,10 @@
     "namespace": "fedora",
     "name": "curl",
     "version": "7.50.3-1.fc25",
-    "qualifiers": {"arch": "i386", "distro": "fedora-25"},
+    "qualifiers": {
+      "arch": "i386",
+      "distro": "fedora-25"
+    },
     "subpath": null,
     "is_invalid": false
   },
@@ -264,87 +303,147 @@
     "is_invalid": false
   },
   {
-    "description": "valid maven purl with case sensitive namespace and name",
-    "purl": "pkg:maven/HTTPClient/HTTPClient@0.3-3",
-    "canonical_purl": "pkg:maven/HTTPClient/HTTPClient@0.3-3",
-    "type": "maven",
-    "namespace": "HTTPClient",
-    "name": "HTTPClient",
-    "version": "0.3-3",
+    "description": "cocoapods names are case sensitive",
+    "purl": "pkg:cocoapods/MapsIndoors@3.24.0",
+    "canonical_purl": "pkg:cocoapods/MapsIndoors@3.24.0",
+    "type": "cocoapods",
+    "namespace": null,
+    "name": "MapsIndoors",
+    "version": "3.24.0",
     "qualifiers": null,
     "subpath": null,
     "is_invalid": false
   },
   {
-    "description": "valid maven purl containing a space in the version and qualifier",
-    "purl": "pkg:maven/mygroup/myartifact@1.0.0%20Final?mykey=my%20value",
-    "canonical_purl": "pkg:maven/mygroup/myartifact@1.0.0%20Final?mykey=my%20value",
+    "description": "cpan names are case sensitive",
+    "purl": "pkg:cpan/Perl-Version@1.013",
+    "canonical_purl": "pkg:cpan/Perl-Version@1.013",
+    "type": "cpan",
+    "namespace": null,
+    "name": "Perl-Version",
+    "version": "1.013",
+    "qualifiers": null,
+    "subpath": null,
+    "is_invalid": false
+  },
+  {
+    "description": "cran names are case sensitive",
+    "purl": "pkg:cran/MixTwice@2.0",
+    "canonical_purl": "pkg:cran/MixTwice@2.0",
+    "type": "cran",
+    "namespace": null,
+    "name": "MixTwice",
+    "version": "2.0",
+    "qualifiers": null,
+    "subpath": null,
+    "is_invalid": false
+  },
+  {
+    "description": "Visual Studio Marketplace namespaces are case sensitive",
+    "purl": "pkg:vsm/MS-CST-E/vscode-devskim@0.6.8",
+    "canonical_purl": "pkg:vsm/MS-CST-E/vscode-devskim@0.6.8",
+    "type": "vsm",
+    "namespace": "MS-CST-E",
+    "name": "vscode-devskim",
+    "version": "0.6.8",
+    "qualifiers": null,
+    "subpath": null,
+    "is_invalid": false
+  },
+  {
+    "description": "Visual Studio Marketplace names are case sensitive",
+    "purl": "pkg:vsm/ritwickdey/LiveServer@5.7.4",
+    "canonical_purl": "pkg:vsm/ritwickdey/LiveServer@5.7.4",
+    "type": "vsm",
+    "namespace": "ritwickdey",
+    "name": "LiveServer",
+    "version": "5.7.4",
+    "qualifiers": null,
+    "subpath": null,
+    "is_invalid": false
+  },
+  {
+    "description": "Maven names are case sensitive",
+    "purl": "pkg:maven/com.googlecode.javaewah/JavaEWAH@1.1.12",
+    "canonical_purl": "pkg:maven/com.googlecode.javaewah/JavaEWAH@1.1.12",
+    "type": "maven",
+    "namespace": "com.googlecode.javaewah",
+    "name": "JavaEWAH",
+    "version": "1.1.12",
+    "qualifiers": null,
+    "subpath": null,
+    "is_invalid": false
+  },
+  {
+    "description": "github namespace and name should be lowercased",
+    "purl": "pkg:github/Package-url/purl-Spec@244fd47e07d1004f0aed9c",
+    "canonical_purl": "pkg:github/package-url/purl-spec@244fd47e07d1004f0aed9c",
+    "type": "github",
+    "namespace": "package-url",
+    "name": "purl-spec",
+    "version": "244fd47e07d1004f0aed9c",
+    "qualifiers": null,
+    "subpath": null,
+    "is_invalid": false
+  },
+  {
+    "description": "valid nuget purl containing a + in version",
+    "purl": "pkg:nuget/Microsoft.NET.Sdk.MacCatalyst.Manifest-6.0.400@15.4.471%2Bsha.9382aa8e0",
+    "canonical_purl": "pkg:nuget/Microsoft.NET.Sdk.MacCatalyst.Manifest-6.0.400@15.4.471%2Bsha.9382aa8e0",
+    "type": "nuget",
+    "name": "Microsoft.NET.Sdk.MacCatalyst.Manifest-6.0.400",
+    "version": "15.4.471+sha.9382aa8e0",
+    "qualifiers": null,
+    "namespace": null,
+    "subpath": null,
+    "is_invalid": false
+  },
+  {
+    "description": "valid maven purl containing a plus in qualifier",
+    "purl": "pkg:maven/mygroup/myartifact@1.0.0Final?mykey=my%2Bvalue",
+    "canonical_purl": "pkg:maven/mygroup/myartifact@1.0.0Final?mykey=my%2Bvalue",
     "type": "maven",
     "namespace": "mygroup",
     "name": "myartifact",
-    "version": "1.0.0 Final",
-    "qualifiers": {"mykey": "my value"},
+    "version": "1.0.0Final",
+    "qualifiers": { "mykey": "my+value" },
     "subpath": null,
     "is_invalid": false
   },
   {
-    "description": "checks for invalid qualifier keys",
-    "purl": "pkg:npm/myartifact@1.0.0?in%20production=true",
-    "canonical_purl": null,
-    "type": "npm",
-    "namespace": null,
-    "name": "myartifact",
-    "version": "1.0.0",
-    "qualifiers": {"in production": "true"},
+    "description": "valid go purl with plus in subpath",
+    "purl": "pkg:GOLANG/google.golang.org/genproto#/google%2Bapis/api/annotations/",
+    "canonical_purl": "pkg:golang/google.golang.org/genproto#google%2Bapis/api/annotations",
+    "type": "golang",
+    "namespace": "google.golang.org",
+    "name": "genproto",
+    "version": null,
+    "qualifiers": null,
+    "subpath": "google+apis/api/annotations",
+    "is_invalid": false
+  },
+  {
+    "description": "valid go purl with colon unencoded in name, version and subpath",
+    "purl": "pkg:GOLANG/google.golang.org/gen:proto@abc:dedf#/google:apis/api/annotations/",
+    "canonical_purl": "pkg:golang/google.golang.org/gen:proto@abc:dedf#google:apis/api/annotations",
+    "type": "golang",
+    "namespace": "google.golang.org",
+    "name": "gen:proto",
+    "version": "abc:dedf",
+    "qualifiers": null,
+    "subpath": "google:apis/api/annotations",
+    "is_invalid": false
+  },
+  {
+    "description": "valid go purl with slash in name, namespace, version and qualifier",
+    "purl": "pkg:GOLANG/google.golang.org/repo/gen%2Fproto@abc%2Fdedf?repository_url=go.googlesource.com/go",
+    "canonical_purl": "pkg:golang/google.golang.org/repo/gen%2Fproto@abc%2Fdedf?repository_url=go.googlesource.com/go",
+    "type": "golang",
+    "namespace": "google.golang.org/repo",
+    "name": "gen/proto",
+    "version": "abc/dedf",
+    "qualifiers": { "repository_url": "go.googlesource.com/go" },
     "subpath": null,
-    "is_invalid": true
-  },
-  {
-    "description": "valid npm purl without version and with subpath",
-    "purl": "pkg:npm/@babel/core#/googleapis/api/annotations/",
-    "canonical_purl": "pkg:npm/%40babel/core#googleapis/api/annotations",
-    "type": "npm",
-    "namespace": "@babel",
-    "name": "core",
-    "version": null,
-    "qualifiers": null,
-    "subpath": "googleapis/api/annotations",
-    "is_invalid": false
-  },
-  {
-    "description": "valid npm purl with namespace, version and subpath",
-    "purl": "pkg:npm/@babel/core@1.0.2#/googleapis/api/annotations/",
-    "canonical_purl": "pkg:npm/%40babel/core@1.0.2#googleapis/api/annotations",
-    "type": "npm",
-    "namespace": "@babel",
-    "name": "core",
-    "version": "1.0.2",
-    "qualifiers": null,
-    "subpath": "googleapis/api/annotations",
-    "is_invalid": false
-  },
-  {
-    "description": "valid npm purl without namespace and with subpath",
-    "purl": "pkg:npm/core@1.0.2#/googleapis/api/annotations/",
-    "canonical_purl": "pkg:npm/core@1.0.2#googleapis/api/annotations",
-    "type": "npm",
-    "namespace": null,
-    "name": "core",
-    "version": "1.0.2",
-    "qualifiers": null,
-    "subpath": "googleapis/api/annotations",
-    "is_invalid": false
-  },
-  {
-    "description": "valid npm purl without namespace, version and subpath",
-    "purl": "pkg:npm/core#/googleapis/api/annotations/",
-    "canonical_purl": "pkg:npm/core#googleapis/api/annotations",
-    "type": "npm",
-    "namespace": null,
-    "name": "core",
-    "version": null,
-    "qualifiers": null,
-    "subpath": "googleapis/api/annotations",
     "is_invalid": false
   }
 ]
