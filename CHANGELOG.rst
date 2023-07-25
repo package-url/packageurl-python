@@ -1,12 +1,13 @@
 Changelog
 =========
 
-unreleased
-----------
+0.11.2 (2022-07-25)
+--------------------
 
 - Remove deprecated `purl_to_lookups` and `without_empty_values` import compatibility
   from `packageurl.contrib.django.models`.
   Replace those functions import using `packageurl.contrib.django.utils`.
+- Add download purl2url support for bitbucket and gitlab.
 
 0.11.1 (2022-03-24)
 -------------------
