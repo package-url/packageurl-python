@@ -277,6 +277,7 @@ def build_rubygems_purl(uri):
     return purl_from_pattern("rubygems", rubygems_pattern, uri)
 
 
+# https://pypi.org/packages/source/a/anyjson/anyjson-0.3.3.tar.gz
 # https://pypi.python.org/packages/source/a/anyjson/anyjson-0.3.3.tar.gz
 # https://pypi.python.org/packages/2.6/t/threadpool/threadpool-1.2.7-py2.6.egg
 # https://pypi.python.org/packages/any/s/setuptools/setuptools-0.6c11-1.src.rpm
@@ -296,7 +297,10 @@ wheel_file_re = re.compile(
 )
 
 
-@purl_router.route("https?://.+python.+org/packages/.*")
+@purl_router.route(
+    "https?://pypi.org/packages/.*",
+    "https?://.+python.+org/packages/.*",
+)
 def build_pypi_purl(uri):
     path = unquote_plus(urlparse(uri).path)
     last_segment = path.split("/")[-1]
