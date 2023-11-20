@@ -463,6 +463,11 @@ def build_github_purl(url):
         r"/releases/download/(?P<version_prefix>v|V?)(?P<version>[^/]+)/.*$"
     )
 
+    releases_tag_pattern = (
+        r"https?://github.com/(?P<namespace>.+)/(?P<name>.+)"
+        r"/releases/tag/(?P<version_prefix>v|V?)(?P<version>[^/]+)/?.*$"
+    )
+
     # https://github.com/pombredanne/schematics.git
     git_pattern = r"https?://github.com/(?P<namespace>.+)/(?P<name>.+).(git)"
 
@@ -471,6 +476,7 @@ def build_github_purl(url):
         raw_pattern,
         blob_pattern,
         releases_download_pattern,
+        releases_tag_pattern,
         download_pattern,
         git_pattern,
     )

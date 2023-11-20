@@ -226,6 +226,7 @@
   "https://github.com/renozao/NMF/archive/hotfix/0.20.1.zip": "pkg:github/renozao/nmf@0.20.1",
   "https://github.com/apache/cordova-osx/archive/rel/4.0.0.zip": "pkg:github/apache/cordova-osx@4.0.0",
   "https://github.com/sehmaschine/django-grappelli/archive/stable/2.13.x.zip": "pkg:github/sehmaschine/django-grappelli@2.13.x",
+  "https://github.com/package-url/packageurl-python/releases/tag/v0.11.1": "pkg:github/package-url/packageurl-python@0.11.1?version_prefix=v",
   "https://bitbucket.org/TG1999/first_repo/src/qa/": "pkg:bitbucket/tg1999/first_repo@qa",
   "https://bitbucket.org/TG1999/first_repo/src/QA/": "pkg:bitbucket/tg1999/first_repo@QA",
   "https://bitbucket.org/TG1999/first_repo/": "pkg:bitbucket/tg1999/first_repo",
