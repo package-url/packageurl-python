@@ -465,7 +465,7 @@ def build_github_purl(url):
 
     releases_tag_pattern = (
         r"https?://github.com/(?P<namespace>.+)/(?P<name>.+)"
-        r"/releases/tag/(?P<version_prefix>v|V?)(?P<version>[^/]+)/?.*$"
+        r"/releases/tag/(?P<version_prefix>v|V?)(?P<version>[\w\.\-\/@]+)(?<!\/)(\/*)$"
     )
 
     # https://github.com/pombredanne/schematics.git
@@ -482,6 +482,7 @@ def build_github_purl(url):
     )
 
     for pattern in patterns:
+        url = unquote_plus(url)
         matches = re.search(pattern, url)
         qualifiers = {}
         if matches:

@@ -227,6 +227,8 @@
   "https://github.com/apache/cordova-osx/archive/rel/4.0.0.zip": "pkg:github/apache/cordova-osx@4.0.0",
   "https://github.com/sehmaschine/django-grappelli/archive/stable/2.13.x.zip": "pkg:github/sehmaschine/django-grappelli@2.13.x",
   "https://github.com/package-url/packageurl-python/releases/tag/v0.11.1": "pkg:github/package-url/packageurl-python@0.11.1?version_prefix=v",
+  "https://github.com/n1ru4l/envelop/releases/tag/%40envelop%2Fcore%402.3.3": "pkg:github/n1ru4l/envelop@%40envelop/core%402.3.3",
+  "https://github.com/n1ru4l/envelop/releases/tag/@envelop/core@2.3.3": "pkg:github/n1ru4l/envelop@%40envelop/core%402.3.3",
   "https://bitbucket.org/TG1999/first_repo/src/qa/": "pkg:bitbucket/tg1999/first_repo@qa",
   "https://bitbucket.org/TG1999/first_repo/src/QA/": "pkg:bitbucket/tg1999/first_repo@QA",
   "https://bitbucket.org/TG1999/first_repo/": "pkg:bitbucket/tg1999/first_repo",
