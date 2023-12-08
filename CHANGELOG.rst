@@ -1,6 +1,12 @@
 Changelog
 =========
 
+0.11.3 (2023-12-08)
+--------------------
+
+- Add support for GitLab "/archive/" URLs in `url2purl`.
+  https://github.com/package-url/packageurl-python/issues/133
+
 0.11.2 (2022-07-25)
 --------------------
 

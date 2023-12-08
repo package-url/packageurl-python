@@ -564,7 +564,7 @@ def build_bitbucket_purl(url):
     )
 
 
-@purl_router.route("https?://gitlab\\.com/.*")
+@purl_router.route("https?://gitlab\\.com/(?!.*/archive/).*")
 def build_gitlab_purl(url):
     """
     Return a PackageURL object from Gitlab `url`.
@@ -600,6 +600,17 @@ def build_gitlab_purl(url):
         version=version,
         subpath=subpath,
     )
+
+
+# https://gitlab.com/hoppr/hoppr/-/archive/v1.11.1-dev.2/hoppr-v1.11.1-dev.2.tar.gz
+gitlab_archive_pattern = (
+    r"^https?://gitlab.com/"
+    r"(?P<namespace>.+)/(?P<name>.+)/-/archive/(?P<version>.+)/"
+    r"(?P=name)-(?P=version).*"
+    r"[^/]$"
+)
+
+register_pattern("gitlab", gitlab_archive_pattern)
 
 
 # https://hackage.haskell.org/package/cli-extras-0.2.0.0/cli-extras-0.2.0.0.tar.gz
