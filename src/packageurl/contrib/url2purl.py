@@ -277,6 +277,7 @@ def build_rubygems_purl(uri):
     return purl_from_pattern("gem", rubygems_pattern, uri)
 
 
+# https://pypi.org/packages/source/a/anyjson/anyjson-0.3.3.tar.gz
 # https://pypi.python.org/packages/source/a/anyjson/anyjson-0.3.3.tar.gz
 # https://pypi.python.org/packages/2.6/t/threadpool/threadpool-1.2.7-py2.6.egg
 # https://pypi.python.org/packages/any/s/setuptools/setuptools-0.6c11-1.src.rpm
@@ -296,10 +297,14 @@ wheel_file_re = re.compile(
 )
 
 
-@purl_router.route("https?://.+python.+org/packages/.*")
+@purl_router.route(
+    "https?://pypi.org/(packages|project)/.+",
+    "https?://.+python.+org/(packages|project)/.*",
+)
 def build_pypi_purl(uri):
     path = unquote_plus(urlparse(uri).path)
-    last_segment = path.split("/")[-1]
+    segments = path.split("/")
+    last_segment = segments[-1]
 
     # /wheel-0.29.0-py2.py3-none-any.whl
     if last_segment.endswith(".whl"):
@@ -310,6 +315,13 @@ def build_pypi_purl(uri):
                 name=match.group("name"),
                 version=match.group("version"),
             )
+
+    if segments[1] == "project":
+        return PackageURL(
+            "pypi",
+            name=segments[2],
+            version=segments[3] if len(segments) > 3 else None,
+        )
 
     return purl_from_pattern("pypi", pypi_pattern, last_segment)
 
@@ -564,7 +576,7 @@ def build_bitbucket_purl(url):
     )
 
 
-@purl_router.route("https?://gitlab\\.com/.*")
+@purl_router.route("https?://gitlab\\.com/(?!.*/archive/).*")
 def build_gitlab_purl(url):
     """
     Return a PackageURL object from Gitlab `url`.
@@ -600,6 +612,17 @@ def build_gitlab_purl(url):
         version=version,
         subpath=subpath,
     )
+
+
+# https://gitlab.com/hoppr/hoppr/-/archive/v1.11.1-dev.2/hoppr-v1.11.1-dev.2.tar.gz
+gitlab_archive_pattern = (
+    r"^https?://gitlab.com/"
+    r"(?P<namespace>.+)/(?P<name>.+)/-/archive/(?P<version>.+)/"
+    r"(?P=name)-(?P=version).*"
+    r"[^/]$"
+)
+
+register_pattern("gitlab", gitlab_archive_pattern)
 
 
 # https://hackage.haskell.org/package/cli-extras-0.2.0.0/cli-extras-0.2.0.0.tar.gz

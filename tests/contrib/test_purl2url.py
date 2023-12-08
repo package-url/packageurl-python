@@ -57,6 +57,9 @@ def test_purl2url_get_repo_url():
         "pkg:nuget/System.Text.Json@6.0.6": "https://www.nuget.org/packages/System.Text.Json/6.0.6",
         "pkg:hackage/cli-extras": "https://hackage.haskell.org/package/cli-extras",
         "pkg:hackage/cli-extras@0.2.0.0": "https://hackage.haskell.org/package/cli-extras-0.2.0.0",
+        "pkg:golang/xorm.io/xorm": "https://pkg.go.dev/xorm.io/xorm",
+        "pkg:golang/xorm.io/xorm@v0.8.2": "https://pkg.go.dev/xorm.io/xorm@v0.8.2",
+        "pkg:golang/gopkg.in/ldap.v3@v3.1.0": "https://pkg.go.dev/gopkg.in/ldap.v3@v3.1.0",
     }
 
     for purl, url in purls_url.items():
@@ -71,7 +74,11 @@ def test_purl2url_get_download_url():
         "pkg:npm/is-npm@1.0.0": "http://registry.npmjs.org/is-npm/-/is-npm-1.0.0.tgz",
         "pkg:hackage/cli-extras@0.2.0.0": "https://hackage.haskell.org/package/cli-extras-0.2.0.0/cli-extras-0.2.0.0.tar.gz",
         "pkg:nuget/System.Text.Json@6.0.6": "https://www.nuget.org/api/v2/package/System.Text.Json/6.0.6",
-        "pkg:github/nexb/scancode-toolkit@3.1.1?version_prefix=v": "https://github.com/nexb/scancode-toolkit/archive/refs/tags/v3.1.1.zip",
+        "pkg:github/nexb/scancode-toolkit@3.1.1?version_prefix=v": "https://github.com/nexb/scancode-toolkit/archive/refs/tags/v3.1.1.tar.gz",
+        "pkg:bitbucket/robeden/trove@3.0.3": "https://bitbucket.org/robeden/trove/get/3.0.3.tar.gz",
+        "pkg:bitbucket/robeden/trove@3.0.3?version_prefix=v": "https://bitbucket.org/robeden/trove/get/v3.0.3.tar.gz",
+        "pkg:gitlab/tg1999/firebase@1a122122": "https://gitlab.com/tg1999/firebase/-/archive/1a122122/firebase-1a122122.tar.gz",
+        "pkg:gitlab/tg1999/firebase@1a122122?version_prefix=v": "https://gitlab.com/tg1999/firebase/-/archive/v1a122122/firebase-v1a122122.tar.gz",
         # From `download_url` qualifier
         "pkg:github/yarnpkg/yarn@1.3.2?download_url=https://github.com/yarnpkg/yarn/releases/download/v1.3.2/yarn-v1.3.2.tar.gz&version_prefix=v": "https://github.com/yarnpkg/yarn/releases/download/v1.3.2/yarn-v1.3.2.tar.gz",
         "pkg:generic/lxc-master.tar.gz?download_url=https://salsa.debian.org/lxc-team/lxc/-/archive/master/lxc-master.tar.gz": "https://salsa.debian.org/lxc-team/lxc/-/archive/master/lxc-master.tar.gz",
@@ -84,8 +91,9 @@ def test_purl2url_get_download_url():
         "pkg:cargo/abc": None,
         "pkg:rubygems/package-name": None,
         "pkg:bitbucket/birkenfeld": None,
-        "pkg:gitlab/tg1999/firebase@1a122122": None,
         "pkg:pypi/sortedcontainers@2.4.0": None,
+        "pkg:golang/xorm.io/xorm@v0.8.2": None,
+        "pkg:golang/gopkg.in/ldap.v3@v3.1.0": None,
     }
 
     for purl, url in purls_url.items():
@@ -116,7 +124,10 @@ def test_purl2url_get_inferred_urls():
         ],
         "pkg:cargo/abc": ["https://crates.io/crates/abc"],
         "pkg:github/tg1999/fetchcode": ["https://github.com/tg1999/fetchcode"],
-        "pkg:gitlab/tg1999/firebase@1a122122": ["https://gitlab.com/tg1999/firebase"],
+        "pkg:gitlab/tg1999/firebase@1a122122": [
+            "https://gitlab.com/tg1999/firebase",
+            "https://gitlab.com/tg1999/firebase/-/archive/1a122122/firebase-1a122122.tar.gz",
+        ],
         "pkg:pypi/sortedcontainers@2.4.0": ["https://pypi.org/project/sortedcontainers/2.4.0/"],
         "pkg:rubygems/package-name": [],
         "pkg:bitbucket/birkenfeld": [],

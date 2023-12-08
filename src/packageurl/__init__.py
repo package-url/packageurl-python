@@ -368,7 +368,6 @@ class PackageURL(
         qualifiers: Union[AnyStr, Dict[str, str], None] = None,
         subpath: Optional[AnyStr] = None,
     ) -> "PackageURL":  # this should be 'Self' https://github.com/python/mypy/pull/13133
-
         required = dict(type=type, name=name)
         for key, value in required.items():
             if value:
@@ -501,6 +500,8 @@ class PackageURL(
         if not type or not sep:
             raise ValueError(f"purl is missing the required type component: {repr(purl)}.")
 
+        type = type.lower()
+
         scheme, authority, path, qualifiers_str, subpath = _urlsplit(
             url=remainder, scheme="", allow_fragments=True
         )
@@ -531,7 +532,10 @@ class PackageURL(
         ns_name_parts = ns_name.split("/")
         ns_name_parts = [seg for seg in ns_name_parts if seg and seg.strip()]
         name = ""
-        if not namespace and len(ns_name_parts) > 1:
+        if type == "golang":
+            name = "/".join(ns_name_parts)
+            namespace = ""
+        elif not namespace and len(ns_name_parts) > 1:
             name = ns_name_parts[-1]
             ns = ns_name_parts[0:-1]
             namespace = "/".join(ns)

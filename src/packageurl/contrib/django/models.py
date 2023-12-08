@@ -24,38 +24,17 @@
 # Visit https://github.com/package-url/packageurl-python for support and
 # download.
 
-import warnings
-
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
 from packageurl import PackageURL
-from packageurl.contrib.django.utils import purl_to_lookups as _purl_to_lookups
-from packageurl.contrib.django.utils import without_empty_values as _without_empty_values
-
-
-def purl_to_lookups(purl, encode=True):
-    warnings.warn(
-        "purl_to_lookups is deprecated and will be removed in a future version. "
-        "Use packageurl.contrib.django.utils.purl_to_lookups instead.",
-        DeprecationWarning,
-    )
-    return _purl_to_lookups(purl_str=purl, encode=encode)
-
-
-def without_empty_values(input_dict):
-    warnings.warn(
-        "without_empty_values is deprecated and will be removed in a future version. "
-        "Use packageurl.contrib.django.utils.without_empty_values instead.",
-        DeprecationWarning,
-    )
-    return _without_empty_values(input_dict)
+from packageurl.contrib.django.utils import purl_to_lookups
 
 
 class PackageURLQuerySetMixin:
     """
-    Add Package URL filtering method to a django.db.models.QuerySet.
+    Add Package URL filtering methods to a django.db.models.QuerySet.
     """
 
     def for_package_url(self, purl_str, encode=True):
@@ -63,7 +42,7 @@ class PackageURLQuerySetMixin:
         Filter the QuerySet with the provided Package URL string.
         The purl string is validated and transformed into filtering lookups.
         """
-        lookups = purl_to_lookups(purl=purl_str, encode=encode)
+        lookups = purl_to_lookups(purl_str=purl_str, encode=encode)
         if lookups:
             return self.filter(**lookups)
         return self.none()
@@ -139,20 +118,27 @@ class PackageURLMixin(models.Model):
     @property
     def package_url(self):
         """
-        Return a compact Package URL "purl" string.
+        Return the Package URL "purl" string.
         """
         try:
-            purl = PackageURL(
-                self.type,
-                self.namespace,
-                self.name,
-                self.version,
-                self.qualifiers,
-                self.subpath,
-            )
+            package_url = self.get_package_url()
         except ValueError:
             return ""
-        return str(purl)
+
+        return str(package_url)
+
+    def get_package_url(self):
+        """
+        Get the PackageURL instance.
+        """
+        return PackageURL(
+            self.type,
+            self.namespace,
+            self.name,
+            self.version,
+            self.qualifiers,
+            self.subpath,
+        )
 
     def set_package_url(self, package_url):
         """
