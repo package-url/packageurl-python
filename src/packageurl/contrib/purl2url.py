@@ -28,6 +28,26 @@ from packageurl import PackageURL
 from packageurl.contrib.route import NoRouteAvailable
 from packageurl.contrib.route import Router
 
+
+def get_repo_download_url_by_package_type(
+    type, namespace, name, version, archive_extension="tar.gz"
+):
+    """
+    Return the download URL for a hosted git repository given a package type
+    or None.
+    """
+    assert archive_extension in (
+        "zip",
+        "tar.gz",
+    )
+    download_url_by_type = {
+        "github": f"https://github.com/{namespace}/{name}/archive/refs/tags/{version}.{archive_extension}",
+        "bitbucket": f"https://bitbucket.org/{namespace}/{name}/get/{version}.{archive_extension}",
+        "gitlab": f"https://gitlab.com/{namespace}/{name}/-/archive/{version}/{name}-{version}.{archive_extension}",
+    }
+    return download_url_by_type.get(type)
+
+
 repo_router = Router()
 download_router = Router()
 
@@ -327,14 +347,24 @@ def build_nuget_download_url(purl):
         return f"https://www.nuget.org/api/v2/package/{name}/{version}"
 
 
-@download_router.route("pkg:github/.*")
-def build_github_download_url(purl):
+@download_router.route("pkg:gitlab/.*", "pkg:bitbucket/.*", "pkg:github/.*")
+def build_repo_download_url(purl):
     """
-    Return a github download URL from the `purl` string.
+    Return a gitlab download URL from the `purl` string.
+    """
+    return get_repo_download_url(purl)
+
+
+def get_repo_download_url(purl):
+    """
+    Return ``download_url`` if present in ``purl`` qualifiers or
+    if ``namespace``, ``name`` and ``version`` are present in ``purl``
+    else return None.
     """
     purl_data = PackageURL.from_string(purl)
 
     namespace = purl_data.namespace
+    type = purl_data.type
     name = purl_data.name
     version = purl_data.version
     qualifiers = purl_data.qualifiers
@@ -349,4 +379,6 @@ def build_github_download_url(purl):
     version_prefix = qualifiers.get("version_prefix", "")
     version = f"{version_prefix}{version}"
 
-    return f"https://github.com/{namespace}/{name}/archive/refs/tags/{version}.zip"
+    return get_repo_download_url_by_package_type(
+        type=type, namespace=namespace, name=name, version=version
+    )

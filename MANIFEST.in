@@ -5,6 +5,7 @@ include mit.LICENSE
 include setup.py
 include setup.cfg
 include README.rst
+include Makefile
 include MANIFEST.in
 include CHANGELOG.rst
 include CONTRIBUTING.rst

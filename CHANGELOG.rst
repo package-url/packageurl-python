@@ -1,10 +1,24 @@
 Changelog
 =========
 
-0.11.2 (2023-03-27)
+0.11.4 (2023-12-08)
 -------------------
 
 - Modified `PackageURL.from_string` to properly handle golang purls.
+
+0.11.3 (2023-12-08)
+--------------------
+
+- Add support for GitLab "/archive/" URLs in `url2purl`.
+  https://github.com/package-url/packageurl-python/issues/133
+
+0.11.2 (2022-07-25)
+--------------------
+
+- Remove deprecated `purl_to_lookups` and `without_empty_values` import compatibility
+  from `packageurl.contrib.django.models`.
+  Replace those functions import using `packageurl.contrib.django.utils`.
+- Add download purl2url support for bitbucket and gitlab.
 
 0.11.1 (2022-03-24)
 -------------------
