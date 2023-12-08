@@ -107,31 +107,21 @@ Run tests::
 Make a new release
 ==================
 
-- start a new release branch
-- update the CHANGELOG.rst and AUTHORS.rst
-- update README.rst if needed
-- bump version in setup.cfg
-- run all tests
-- install restview and validate that all .rst docs are correct
-- commit and push this branch
-- tag and push that tag
-- make a PR to merge branch
-- once merged, run::
+- Start a new release branch
+- Update the CHANGELOG.rst, AUTHORS.rst, and README.rst if needed
+- Bump version in setup.cfg
+- Run all tests
+- Install restview and validate that all .rst docs are correct
+- Commit and push this branch
+- Make a PR and merge once approved
+- Tag and push that tag. This triggers the pypi-release.yml workflow that takes care of
+  building the dist release files and upload those to pypi::
 
-    bin/pip install --upgrade pip wheel twine setuptools
+    git tag -a vx.x.x -m "Tag vx.x.x"
+    git push origin vx.x.x
 
-- delete the "dist" and "build" directories::
-
-    rm -rf dist/ build/
-
-- create a source distribution and wheel with::
-
-    bin/python setup.py sdist bdist_wheel
-
-- finally, upload to PyPI::
-
-    bin/twine upload dist/*
-
+- Review and publish the "draft" release created by the workflow at
+  https://github.com/package-url/packageurl-python/releases
 
 .. |ci-tests| image:: https://github.com/package-url/packageurl-python/actions/workflows/ci.yml/badge.svg?branch=main
     :target: https://github.com/package-url/packageurl-python/actions/workflows/ci.yml
