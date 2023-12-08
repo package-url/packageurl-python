@@ -171,7 +171,7 @@ def build_gitlab_repo_url(purl):
         return f"https://gitlab.com/{namespace}/{name}"
 
 
-@repo_router.route("pkg:gem/.*")
+@repo_router.route("pkg:(gem|rubygems)/.*")
 def build_rubygems_repo_url(purl):
     """
     Return a rubygems repo URL from the `purl` string.

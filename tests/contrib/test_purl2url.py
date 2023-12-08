@@ -39,7 +39,8 @@ def test_purl2url_get_repo_url():
         "pkg:cargo/rand@0.7.2": "https://crates.io/crates/rand/0.7.2",
         "pkg:cargo/abc": "https://crates.io/crates/abc",
         "pkg:gem/bundler@2.3.23": "https://rubygems.org/gems/bundler/versions/2.3.23",
-        "pkg:rubygems/package-name": None,
+        "pkg:rubygems/bundler@2.3.23": "https://rubygems.org/gems/bundler/versions/2.3.23",
+        "pkg:rubygems/package-name": "https://rubygems.org/gems/package-name",
         "pkg:bitbucket/birkenfeld/pygments-main": "https://bitbucket.org/birkenfeld/pygments-main",
         "pkg:bitbucket/birkenfeld/pygments-main@244fd47e07d1014f0aed9c": "https://bitbucket.org/birkenfeld/pygments-main",
         "pkg:bitbucket/birkenfeld/pygments-main@master#views": "https://bitbucket.org/birkenfeld/pygments-main",
@@ -128,8 +129,10 @@ def test_purl2url_get_inferred_urls():
             "https://gitlab.com/tg1999/firebase",
             "https://gitlab.com/tg1999/firebase/-/archive/1a122122/firebase-1a122122.tar.gz",
         ],
-        "pkg:pypi/sortedcontainers@2.4.0": ["https://pypi.org/project/sortedcontainers/2.4.0/"],
-        "pkg:rubygems/package-name": [],
+        "pkg:pypi/sortedcontainers@2.4.0": [
+            "https://pypi.org/project/sortedcontainers/2.4.0/"
+        ],
+        "pkg:rubygems/package-name": ["https://rubygems.org/gems/package-name"],
         "pkg:bitbucket/birkenfeld": [],
     }
 
