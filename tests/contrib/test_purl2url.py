@@ -49,6 +49,7 @@ def test_purl2url_get_repo_url():
         "pkg:gitlab/tg1999/firebase@1a122122#views": "https://gitlab.com/tg1999/firebase",
         "pkg:gitlab/tg1999/firebase": "https://gitlab.com/tg1999/firebase",
         "pkg:gitlab/tg1999": None,
+        "pkg:gitlab/hoppr/hoppr@v1.11.1-dev.2": "https://gitlab.com/hoppr/hoppr",
         "pkg:pypi/sortedcontainers": "https://pypi.org/project/sortedcontainers/",
         "pkg:pypi/sortedcontainers@2.4.0": "https://pypi.org/project/sortedcontainers/2.4.0/",
         "pkg:pypi/packageurl_python": "https://pypi.org/project/packageurl-python/",
@@ -80,6 +81,7 @@ def test_purl2url_get_download_url():
         "pkg:bitbucket/robeden/trove@3.0.3?version_prefix=v": "https://bitbucket.org/robeden/trove/get/v3.0.3.tar.gz",
         "pkg:gitlab/tg1999/firebase@1a122122": "https://gitlab.com/tg1999/firebase/-/archive/1a122122/firebase-1a122122.tar.gz",
         "pkg:gitlab/tg1999/firebase@1a122122?version_prefix=v": "https://gitlab.com/tg1999/firebase/-/archive/v1a122122/firebase-v1a122122.tar.gz",
+        "pkg:gitlab/hoppr/hoppr@v1.11.1-dev.2": "https://gitlab.com/hoppr/hoppr/-/archive/v1.11.1-dev.2/hoppr-v1.11.1-dev.2.tar.gz",
         # From `download_url` qualifier
         "pkg:github/yarnpkg/yarn@1.3.2?download_url=https://github.com/yarnpkg/yarn/releases/download/v1.3.2/yarn-v1.3.2.tar.gz&version_prefix=v": "https://github.com/yarnpkg/yarn/releases/download/v1.3.2/yarn-v1.3.2.tar.gz",
         "pkg:generic/lxc-master.tar.gz?download_url=https://salsa.debian.org/lxc-team/lxc/-/archive/master/lxc-master.tar.gz": "https://salsa.debian.org/lxc-team/lxc/-/archive/master/lxc-master.tar.gz",

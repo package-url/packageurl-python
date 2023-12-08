@@ -36,10 +36,9 @@ def get_repo_download_url_by_package_type(
     Return the download URL for a hosted git repository given a package type
     or None.
     """
-    assert archive_extension in (
-        "zip",
-        "tar.gz",
-    )
+    if archive_extension not in ("zip", "tar.gz"):
+        raise ValueError("Only zip and tar.gz extensions are supported")
+
     download_url_by_type = {
         "github": f"https://github.com/{namespace}/{name}/archive/refs/tags/{version}.{archive_extension}",
         "bitbucket": f"https://bitbucket.org/{namespace}/{name}/get/{version}.{archive_extension}",
@@ -291,7 +290,7 @@ def build_cargo_download_url(purl):
         return f"https://crates.io/api/v1/crates/{name}/{version}/download"
 
 
-@download_router.route("pkg:gem/.*")
+@download_router.route("pkg:(gem|rubygems)/.*")
 def build_rubygems_download_url(purl):
     """
     Return a rubygems download URL from the `purl` string.
