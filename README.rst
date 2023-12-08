@@ -117,8 +117,9 @@ Make a new release
 - Tag and push that tag. This triggers the pypi-release.yml workflow that takes care of
   building the dist release files and upload those to pypi::
 
-    git tag -a vx.x.x -m "Tag vx.x.x"
-    git push origin vx.x.x
+    VERSION=v0.x.x
+    git tag -a $VERSION -m "Tag $VERSION"
+    git push origin $VERSION
 
 - Review and publish the "draft" release created by the workflow at
   https://github.com/package-url/packageurl-python/releases
