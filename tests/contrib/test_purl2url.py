@@ -38,8 +38,8 @@ def test_purl2url_get_repo_url():
         "pkg:github/tg1999": None,
         "pkg:cargo/rand@0.7.2": "https://crates.io/crates/rand/0.7.2",
         "pkg:cargo/abc": "https://crates.io/crates/abc",
-        "pkg:rubygems/bundler@2.3.23": "https://rubygems.org/gems/bundler/versions/2.3.23",
-        "pkg:gem/package-name": None,
+        "pkg:gem/bundler@2.3.23": "https://rubygems.org/gems/bundler/versions/2.3.23",
+        "pkg:rubygems/package-name": None,
         "pkg:bitbucket/birkenfeld/pygments-main": "https://bitbucket.org/birkenfeld/pygments-main",
         "pkg:bitbucket/birkenfeld/pygments-main@244fd47e07d1014f0aed9c": "https://bitbucket.org/birkenfeld/pygments-main",
         "pkg:bitbucket/birkenfeld/pygments-main@master#views": "https://bitbucket.org/birkenfeld/pygments-main",
@@ -70,7 +70,7 @@ def test_purl2url_get_download_url():
     purls_url = {
         # Generated
         "pkg:cargo/rand@0.7.2": "https://crates.io/api/v1/crates/rand/0.7.2/download",
-        "pkg:rubygems/bundler@2.3.23": "https://rubygems.org/downloads/bundler-2.3.23.gem",
+        "pkg:gem/bundler@2.3.23": "https://rubygems.org/downloads/bundler-2.3.23.gem",
         "pkg:npm/is-npm@1.0.0": "http://registry.npmjs.org/is-npm/-/is-npm-1.0.0.tgz",
         "pkg:hackage/cli-extras@0.2.0.0": "https://hackage.haskell.org/package/cli-extras-0.2.0.0/cli-extras-0.2.0.0.tar.gz",
         "pkg:nuget/System.Text.Json@6.0.6": "https://www.nuget.org/api/v2/package/System.Text.Json/6.0.6",
@@ -89,7 +89,7 @@ def test_purl2url_get_download_url():
         # Not-supported
         "pkg:github/tg1999/fetchcode": None,
         "pkg:cargo/abc": None,
-        "pkg:gem/package-name": None,
+        "pkg:rubygems/package-name": None,
         "pkg:bitbucket/birkenfeld": None,
         "pkg:pypi/sortedcontainers@2.4.0": None,
         "pkg:golang/xorm.io/xorm@v0.8.2": None,
@@ -106,7 +106,7 @@ def test_purl2url_get_inferred_urls():
             "https://crates.io/crates/rand/0.7.2",
             "https://crates.io/api/v1/crates/rand/0.7.2/download",
         ],
-        "pkg:rubygems/bundler@2.3.23": [
+        "pkg:gem/bundler@2.3.23": [
             "https://rubygems.org/gems/bundler/versions/2.3.23",
             "https://rubygems.org/downloads/bundler-2.3.23.gem",
         ],
@@ -129,7 +129,7 @@ def test_purl2url_get_inferred_urls():
             "https://gitlab.com/tg1999/firebase/-/archive/1a122122/firebase-1a122122.tar.gz",
         ],
         "pkg:pypi/sortedcontainers@2.4.0": ["https://pypi.org/project/sortedcontainers/2.4.0/"],
-        "pkg:gem/package-name": [],
+        "pkg:rubygems/package-name": [],
         "pkg:bitbucket/birkenfeld": [],
     }
 
