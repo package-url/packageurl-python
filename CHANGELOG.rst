@@ -1,10 +1,18 @@
 Changelog
 =========
 
-0.11.4 (2023-12-08)
+0.12.0 (2023-12-08)
 -------------------
 
 - Modified `PackageURL.from_string` to properly handle golang purls.
+  https://github.com/package-url/packageurl-python/pull/115/
+
+- Improve support for PyPI URLs in `url2purl`.
+  https://github.com/package-url/packageurl-python/pull/128
+
+- Return the "gem" type instead of "rubygems" for "https://rubygems.org/" URLs in
+  `url2purl`. The `pkg:rubygems/` purls are backward-compatible in `purl2url`.
+  https://github.com/package-url/packageurl-python/pull/114/
 
 0.11.3 (2023-12-08)
 --------------------
