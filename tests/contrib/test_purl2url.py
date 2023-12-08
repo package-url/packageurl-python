@@ -129,9 +129,7 @@ def test_purl2url_get_inferred_urls():
             "https://gitlab.com/tg1999/firebase",
             "https://gitlab.com/tg1999/firebase/-/archive/1a122122/firebase-1a122122.tar.gz",
         ],
-        "pkg:pypi/sortedcontainers@2.4.0": [
-            "https://pypi.org/project/sortedcontainers/2.4.0/"
-        ],
+        "pkg:pypi/sortedcontainers@2.4.0": ["https://pypi.org/project/sortedcontainers/2.4.0/"],
         "pkg:rubygems/package-name": ["https://rubygems.org/gems/package-name"],
         "pkg:bitbucket/birkenfeld": [],
     }

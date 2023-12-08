@@ -13,5 +13,5 @@ pip-selfcheck.json
 pyvenv.cfg
 .Python
 /.tox/
-/.pytest_cache/
+/.*_cache/
 venv

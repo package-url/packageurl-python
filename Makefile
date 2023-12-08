@@ -26,7 +26,7 @@
 PYTHON_EXE?=python3
 ACTIVATE?=. bin/activate;
 VIRTUALENV_PYZ=thirdparty/virtualenv.pyz
-BLACK_ARGS=--exclude=".cache|migrations|data|lib|bin|var"
+BLACK_ARGS=--exclude=".cache|lib|bin|var" --line-length 100
 
 virtualenv:
 	@echo "-> Bootstrap the virtualenv with PYTHON_EXE=${PYTHON_EXE}"
@@ -46,9 +46,27 @@ clean:
 	find . -type f -name '*.py[co]' -delete -o -type d -name __pycache__ \
 		-delete -type d -name '*.egg-info' -delete
 
+isort:
+	@echo "-> Apply isort changes to ensure proper imports ordering"
+	@${ACTIVATE} isort --profile black src/ tests/
+
+black:
+	@echo "-> Apply black code formatter"
+	@${ACTIVATE} black ${BLACK_ARGS} .
+
+mypy:
+	@echo "-> Type check the Python code."
+	@${ACTIVATE} mypy
+
+valid:
+	@${ACTIVATE} pip install -e .[lint]
+	@$(MAKE) isort
+	@$(MAKE) black
+	@$(MAKE) mypy
+
 test:
 	@echo "-> Run the test suite"
 	${MANAGE} test --noinput
 	bin/py.test tests
 
-.PHONY: virtualenv conf dev clean test
+.PHONY: virtualenv conf dev clean isort black mypy valid test
