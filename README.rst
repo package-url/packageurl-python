@@ -49,12 +49,14 @@ Utilities
 Django models
 ^^^^^^^^^^^^^
 
-`packageurl.contrib.django.models.PackageURLMixin` is a Django abstract model mixin to use Package URLs in Django.
+`packageurl.contrib.django.models.PackageURLMixin` is a Django abstract model mixin to
+use Package URLs in Django.
 
 SQLAlchemy mixin
 ^^^^^^^^^^^^^^^^
 
-`packageurl.contrib.sqlalchemy.mixin.PackageURLMixin` is a SQLAlchemy declarative mixin to use Package URLs in SQLAlchemy models.
+`packageurl.contrib.sqlalchemy.mixin.PackageURLMixin` is a SQLAlchemy declarative mixin
+to use Package URLs in SQLAlchemy models.
 
 URL to PURL
 ^^^^^^^^^^^
@@ -70,9 +72,12 @@ URL to PURL
 PURL to URL
 ^^^^^^^^^^^
 
-- `packageurl.contrib.purl2url.get_repo_url(purl)` returns a repository URL inferred from a Package URL.
-- `packageurl.contrib.purl2url.get_download_url(purl)` returns a download URL inferred from a Package URL.
-- `packageurl.contrib.purl2url.get_inferred_urls(purl)` return all inferred URLs (repository, download) from a Package URL.
+- `packageurl.contrib.purl2url.get_repo_url(purl)` returns a repository URL inferred
+  from a Package URL.
+- `packageurl.contrib.purl2url.get_download_url(purl)` returns a download URL inferred
+  from a Package URL.
+- `packageurl.contrib.purl2url.get_inferred_urls(purl)` return all inferred URLs
+  (repository, download) from a Package URL.
 
 ::
 
