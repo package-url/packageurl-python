@@ -1,6 +1,12 @@
 Changelog
 =========
 
+0.13.0 (2023-12-08)
+-------------------
+
+- Revert changes from 
+  https://github.com/package-url/packageurl-python/pull/115/
+
 0.12.0 (2023-12-08)
 -------------------
 
