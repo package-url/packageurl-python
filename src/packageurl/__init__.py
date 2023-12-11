@@ -532,10 +532,7 @@ class PackageURL(
         ns_name_parts = ns_name.split("/")
         ns_name_parts = [seg for seg in ns_name_parts if seg and seg.strip()]
         name = ""
-        if type == "golang":
-            name = "/".join(ns_name_parts)
-            namespace = ""
-        elif not namespace and len(ns_name_parts) > 1:
+        if not namespace and len(ns_name_parts) > 1:
             name = ns_name_parts[-1]
             ns = ns_name_parts[0:-1]
             namespace = "/".join(ns)

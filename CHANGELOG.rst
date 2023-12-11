@@ -1,10 +1,17 @@
 Changelog
 =========
 
-0.12.1 (unreleased)
+0.13.1 (2023-12-11)
 -------------------
 
 - Add support for Python 3.12
+  https://github.com/package-url/packageurl-python/pull/135
+
+0.13.0 (2023-12-08)
+-------------------
+
+- Revert changes from 
+  https://github.com/package-url/packageurl-python/pull/115/
 
 0.12.0 (2023-12-08)
 -------------------
