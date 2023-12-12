@@ -11,7 +11,10 @@ Changelog
 -------------------
 
 - Revert changes from 
-  https://github.com/package-url/packageurl-python/pull/115/
+  https://github.com/package-url/packageurl-python/pull/115/ 
+  In above PR we dropped namespaces for a golang purl and stored 
+  whole namespace and name in name itself, which was further discussed 
+  again and decided we will like to keep namespace back. 
 
 0.12.0 (2023-12-08)
 -------------------
