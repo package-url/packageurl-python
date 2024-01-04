@@ -344,7 +344,7 @@ nuget_api_pattern = (
 register_pattern("nuget", nuget_api_pattern)
 
 
-@purl_router.route("https?://.*sourceforge.net/project/.*")
+@purl_router.route("https?://.*sourceforge.net/projects?/.*")
 def build_sourceforge_purl(uri):
     # We use a more general route pattern instead of using `sourceforge_pattern`
     # below by itself because we want to capture all sourceforge download URLs,
@@ -353,9 +353,11 @@ def build_sourceforge_purl(uri):
     # URL that we can't handle.
 
     # http://master.dl.sourceforge.net/project/libpng/zlib/1.2.3/zlib-1.2.3.tar.bz2
+    # https://sourceforge.net/projects/scribus/files/scribus/1.6.0/scribus-1.6.0.tar.gz/download
     sourceforge_pattern = (
-        r"^https?://.*sourceforge.net/project/"
+        r"^https?://.*sourceforge.net/projects?/"
         r"(?P<namespace>([^/]+))/"  # do not allow more "/" segments
+        r"(files/)?"  # optional segment for "*/download" type URLs
         r"(?P<name>.+)/"
         r"(?P<version>[0-9\.]+)/"  # version restricted to digits and dots
         r"(?P=name)-(?P=version).*"  # {name}-{version} repeated in the filename
