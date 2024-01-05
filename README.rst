@@ -121,7 +121,7 @@ Make a new release
     git tag -a $VERSION -m "Tag $VERSION"
     git push origin $VERSION
 
-- Review and publish the "draft" release created by the workflow at
+- Review the GitHub release created by the workflow at
   https://github.com/package-url/packageurl-python/releases
 
 .. |ci-tests| image:: https://github.com/package-url/packageurl-python/actions/workflows/ci.yml/badge.svg?branch=main
