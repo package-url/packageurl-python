@@ -298,7 +298,7 @@ def build_rubygems_purl(uri):
 # https://pypi.python.org/packages/any/s/setuptools/setuptools-0.6c11-1.src.rpm
 # https://files.pythonhosted.org/packages/84/d8/451842a5496844bb5c7634b231a2e4caf0d867d2e25f09b840d3b07f3d4b/multi_key_dict-2.0.win32.exe
 pypi_pattern = (
-    r"(?P<name>(\w\.?)+(-\w+)*)-(?P<version>.+)\.(zip|tar.gz|tar.bz2|tgz|egg|rpm|exe)$"
+    r"(?P<name>(\w\.?)+(-\w+)*)-(?P<version>.+)\.(zip|tar\.gz|tar\.bz2|tgz|egg|rpm|exe)$"
 )
 
 # This pattern can be found in the following locations:
@@ -456,7 +456,7 @@ def build_github_api_purl(url):
 # https://codeload.github.com/berngp/grails-rest/zip/release/0.7
 github_codeload_pattern = (
     r"https?://codeload\.github\.com/(?P<namespace>.+)/(?P<name>.+)/"
-    r"(zip|tar.gz|tar.bz2|tgz)/(.*/)*"
+    r"(zip|tar\.gz|tar\.bz2|tgz)/([^/]*/)*"
     r"(?P<version_prefix>v|V?)(?P<version>.+)$"
 )
 
@@ -472,16 +472,16 @@ def build_github_purl(url):
     # https://github.com/nexB/scancode-toolkit/archive/v3.1.1.zip
     archive_pattern = (
         r"https?://github\.com/(?P<namespace>.+)/(?P<name>.+)"
-        r"/archive/(.*/)*"
+        r"/archive/([^/]*/)*"
         r"((?P=name)(-|_|@))?"
-        r"(?P<version_prefix>v|V?)(?P<version>.+).(zip|tar.gz|tar.bz2|.tgz)"
+        r"(?P<version_prefix>v|V?)(?P<version>.+)\.(zip|tar\.gz|tar\.bz2|tgz)"
     )
 
     # https://github.com/downloads/mozilla/rhino/rhino1_7R4.zip
     download_pattern = (
         r"https?://github\.com/downloads/(?P<namespace>.+)/(?P<name>.+)/"
         r"((?P=name)(-|@)?)?"
-        r"(?P<version_prefix>v|V?)(?P<version>.+).(zip|tar.gz|tar.bz2|.tgz)"
+        r"(?P<version_prefix>v|V?)(?P<version>.+)\.(zip|tar\.gz|tar\.bz2|tgz)"
     )
 
     # https://github.com/pypa/get-virtualenv/raw/20.0.31/public/virtualenv.pyz
@@ -502,7 +502,7 @@ def build_github_purl(url):
     )
 
     # https://github.com/pombredanne/schematics.git
-    git_pattern = r"https?://github\.com/(?P<namespace>.+)/(?P<name>.+).(git)"
+    git_pattern = r"https?://github\.com/(?P<namespace>.+)/(?P<name>.+)\.(git)"
 
     patterns = (
         archive_pattern,
@@ -571,7 +571,7 @@ def build_bitbucket_purl(url):
     bitbucket_download_pattern = (
         r"https?://bitbucket.org/"
         r"(?P<namespace>.+)/(?P<name>.+)/downloads/"
-        r"(?P<version>.+).(zip|tar.gz|tar.bz2|.tgz|exe|msi)"
+        r"(?P<version>.+)\.(zip|tar\.gz|tar\.bz2|tgz|exe|msi)"
     )
     matches = re.search(bitbucket_download_pattern, url)
 
