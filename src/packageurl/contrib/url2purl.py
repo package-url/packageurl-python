@@ -70,7 +70,9 @@ def purl_from_pattern(type_, pattern, url, qualifiers=None):
         return
 
     purl_data = {
-        field: value for field, value in match.groupdict().items() if field in PackageURL._fields
+        field: value
+        for field, value in match.groupdict().items()
+        if field in PackageURL._fields
     }
 
     qualifiers = qualifiers or {}
@@ -120,14 +122,16 @@ def build_generic_purl(uri):
         uri_path_segments = get_path_segments(uri)
         if uri_path_segments:
             file_name = uri_path_segments[-1]
-            return PackageURL(type="generic", name=file_name, qualifiers={"download_url": uri})
+            return PackageURL(
+                type="generic", name=file_name, qualifiers={"download_url": uri}
+            )
 
 
 @purl_router.route(
-    "https?://registry.npmjs.*/.*",
-    "https?://registry.yarnpkg.com/.*",
-    "https?://(www\\.)?npmjs.*/package.*",
-    "https?://(www\\.)?yarnpkg.com/package.*",
+    r"https?://registry\.npmjs\.(com|org)/.*",
+    r"https?://registry\.yarnpkg\.com/.*",
+    r"https?://(www\.)?npmjs\.(com|org)/package.*",
+    r"https?://(www\.)?yarnpkg\.com/package.*",
 )
 def build_npm_purl(uri):
     # npm URLs are difficult to disambiguate with regex
@@ -221,9 +225,9 @@ def build_npm_web_purl(uri):
 
 
 @purl_router.route(
-    "https?://repo1.maven.org/maven2/.*",
-    "https?://central.maven.org/maven2/.*",
-    "maven-index://repo1.maven.org/.*",
+    r"https?://repo1\.maven\.org/maven2/.*",
+    r"https?://central\.maven\.org/maven2/.*",
+    r"maven-index://repo1\.maven\.org/.*",
 )
 def build_maven_purl(uri):
     path = unquote_plus(urlparse(uri).path)
@@ -253,7 +257,18 @@ def build_maven_purl(uri):
 
         qualifiers["classifier"] = classifier.strip("-")
 
-        valid_types = ("aar", "ear", "mar", "pom", "rar", "rpm", "sar", "tar.gz", "war", "zip")
+        valid_types = (
+            "aar",
+            "ear",
+            "mar",
+            "pom",
+            "rar",
+            "rpm",
+            "sar",
+            "tar.gz",
+            "war",
+            "zip",
+        )
         if extension in valid_types:
             qualifiers["type"] = extension
 
@@ -261,7 +276,7 @@ def build_maven_purl(uri):
 
 
 # https://rubygems.org/gems/i18n-js-3.0.11.gem
-@purl_router.route("https?://rubygems.org/(downloads|gems)/.*")
+@purl_router.route(r"https?://rubygems\.org/(downloads|gems)/.*")
 def build_rubygems_purl(uri):
     # We use a more general route pattern instead of using `rubygems_pattern`
     # below by itself because we want to capture all rubygems download URLs,
@@ -272,7 +287,7 @@ def build_rubygems_purl(uri):
     # https://rubygems.org/downloads/jwt-0.1.8.gem
     # https://rubygems.org/gems/i18n-js-3.0.11.gem
     rubygems_pattern = (
-        r"^https?://rubygems.org/(downloads|gems)/(?P<name>.+)-(?P<version>.+)(\.gem)$"
+        r"^https?://rubygems\.org/(downloads|gems)/(?P<name>.+)-(?P<version>.+)(\.gem)$"
     )
     return purl_from_pattern("gem", rubygems_pattern, uri)
 
@@ -282,7 +297,9 @@ def build_rubygems_purl(uri):
 # https://pypi.python.org/packages/2.6/t/threadpool/threadpool-1.2.7-py2.6.egg
 # https://pypi.python.org/packages/any/s/setuptools/setuptools-0.6c11-1.src.rpm
 # https://files.pythonhosted.org/packages/84/d8/451842a5496844bb5c7634b231a2e4caf0d867d2e25f09b840d3b07f3d4b/multi_key_dict-2.0.win32.exe
-pypi_pattern = r"(?P<name>(\w\.?)+(-\w+)*)-(?P<version>.+)\.(zip|tar.gz|tar.bz2|tgz|egg|rpm|exe)$"
+pypi_pattern = (
+    r"(?P<name>(\w\.?)+(-\w+)*)-(?P<version>.+)\.(zip|tar.gz|tar.bz2|tgz|egg|rpm|exe)$"
+)
 
 # This pattern can be found in the following locations:
 # - wheel.wheelfile.WHEEL_INFO_RE
@@ -298,8 +315,9 @@ wheel_file_re = re.compile(
 
 
 @purl_router.route(
-    "https?://pypi.org/(packages|project)/.+",
-    "https?://.+python.+org/(packages|project)/.*",
+    r"https?://pypi\.org/(packages|project)/.+",
+    r"https?://pypi\.python\.org/(packages|project)/.*",
+    r"https?://files\.pythonhosted\.org/(packages|project)/.*",
 )
 def build_pypi_purl(uri):
     path = unquote_plus(urlparse(uri).path)
@@ -328,14 +346,16 @@ def build_pypi_purl(uri):
 
 # http://nuget.org/packages/EntityFramework/4.2.0.0
 # https://www.nuget.org/api/v2/package/Newtonsoft.Json/11.0.1
-nuget_www_pattern = r"^https?://.*nuget.org/(api/v2/)?packages?/(?P<name>.+)/(?P<version>.+)$"
+nuget_www_pattern = (
+    r"^https?://(www\.)?nuget\.org/(api/v2/)?packages?/(?P<name>.+)/(?P<version>.+)$"
+)
 
 register_pattern("nuget", nuget_www_pattern)
 
 
 # https://api.nuget.org/v3-flatcontainer/newtonsoft.json/10.0.1/newtonsoft.json.10.0.1.nupkg
 nuget_api_pattern = (
-    r"^https?://api.nuget.org/v3-flatcontainer/"
+    r"^https?://api\.nuget\.org/v3-flatcontainer/"
     r"(?P<name>.+)/"
     r"(?P<version>.+)/"
     r".*(nupkg)$"  # ends with "nupkg"
@@ -344,7 +364,7 @@ nuget_api_pattern = (
 register_pattern("nuget", nuget_api_pattern)
 
 
-@purl_router.route("https?://.*sourceforge.net/projects?/.*")
+@purl_router.route(r"https?://((master|iweb)\.dl\.)?sourceforge\.net/projects?/.*")
 def build_sourceforge_purl(uri):
     # We use a more general route pattern instead of using `sourceforge_pattern`
     # below by itself because we want to capture all sourceforge download URLs,
@@ -355,7 +375,7 @@ def build_sourceforge_purl(uri):
     # http://master.dl.sourceforge.net/project/libpng/zlib/1.2.3/zlib-1.2.3.tar.bz2
     # https://sourceforge.net/projects/scribus/files/scribus/1.6.0/scribus-1.6.0.tar.gz/download
     sourceforge_pattern = (
-        r"^https?://.*sourceforge.net/projects?/"
+        r"^https?://((master|iweb)\.dl\.)?sourceforge\.net/projects?/"
         r"(?P<namespace>([^/]+))/"  # do not allow more "/" segments
         r"(files/)?"  # optional segment for "*/download" type URLs
         r"(?P<name>.+)/"
@@ -380,27 +400,31 @@ def build_sourceforge_purl(uri):
             if remaining_uri_path_segments:
                 project_name = remaining_uri_path_segments[0]  # aloyscore
                 sourceforge_purl = PackageURL(
-                    type="sourceforge", name=project_name, qualifiers={"download_url": uri}
+                    type="sourceforge",
+                    name=project_name,
+                    qualifiers={"download_url": uri},
                 )
     return sourceforge_purl
 
 
 # https://crates.io/api/v1/crates/rand/0.7.2/download
-cargo_pattern = r"^https?://crates.io/api/v1/crates/(?P<name>.+)/(?P<version>.+)(\/download)$"
+cargo_pattern = (
+    r"^https?://crates\.io/api/v1/crates/(?P<name>.+)/(?P<version>.+)(\/download)$"
+)
 
 register_pattern("cargo", cargo_pattern)
 
 
 # https://raw.githubusercontent.com/volatilityfoundation/dwarf2json/master/LICENSE.txt
 github_raw_content_pattern = (
-    r"https?://raw.githubusercontent.com/(?P<namespace>[^/]+)/(?P<name>[^/]+)/"
+    r"https?://raw\.githubusercontent\.com/(?P<namespace>[^/]+)/(?P<name>[^/]+)/"
     r"(?P<version>[^/]+)/(?P<subpath>.*)$"
 )
 
 register_pattern("github", github_raw_content_pattern)
 
 
-@purl_router.route("https?://api.github\\.com/repos/.*")
+@purl_router.route(r"https?://api\.github\.com/repos/.*")
 def build_github_api_purl(url):
     """
     Return a PackageURL object from GitHub API `url`.
@@ -431,7 +455,7 @@ def build_github_api_purl(url):
 # https://codeload.github.com/nexB/scancode-toolkit/tar.gz/v3.1.1
 # https://codeload.github.com/berngp/grails-rest/zip/release/0.7
 github_codeload_pattern = (
-    r"https?://codeload.github.com/(?P<namespace>.+)/(?P<name>.+)/"
+    r"https?://codeload\.github\.com/(?P<namespace>.+)/(?P<name>.+)/"
     r"(zip|tar.gz|tar.bz2|tgz)/(.*/)*"
     r"(?P<version_prefix>v|V?)(?P<version>.+)$"
 )
@@ -439,7 +463,7 @@ github_codeload_pattern = (
 register_pattern("github", github_codeload_pattern)
 
 
-@purl_router.route("https?://github\\.com/.*")
+@purl_router.route(r"https?://github\.com/.*")
 def build_github_purl(url):
     """
     Return a PackageURL object from GitHub `url`.
@@ -447,7 +471,7 @@ def build_github_purl(url):
 
     # https://github.com/nexB/scancode-toolkit/archive/v3.1.1.zip
     archive_pattern = (
-        r"https?://github.com/(?P<namespace>.+)/(?P<name>.+)"
+        r"https?://github\.com/(?P<namespace>.+)/(?P<name>.+)"
         r"/archive/(.*/)*"
         r"((?P=name)(-|_|@))?"
         r"(?P<version_prefix>v|V?)(?P<version>.+).(zip|tar.gz|tar.bz2|.tgz)"
@@ -455,30 +479,30 @@ def build_github_purl(url):
 
     # https://github.com/downloads/mozilla/rhino/rhino1_7R4.zip
     download_pattern = (
-        r"https?://github.com/downloads/(?P<namespace>.+)/(?P<name>.+)/"
+        r"https?://github\.com/downloads/(?P<namespace>.+)/(?P<name>.+)/"
         r"((?P=name)(-|@)?)?"
         r"(?P<version_prefix>v|V?)(?P<version>.+).(zip|tar.gz|tar.bz2|.tgz)"
     )
 
     # https://github.com/pypa/get-virtualenv/raw/20.0.31/public/virtualenv.pyz
     raw_pattern = (
-        r"https?://github.com/(?P<namespace>.+)/(?P<name>.+)"
+        r"https?://github\.com/(?P<namespace>.+)/(?P<name>.+)"
         r"/raw/(?P<version_prefix>v|V?)(?P<version>[^/]+)/(?P<subpath>.*)$"
     )
 
     # https://github.com/fanf2/unifdef/blob/master/unifdef.c
     blob_pattern = (
-        r"https?://github.com/(?P<namespace>.+)/(?P<name>.+)"
+        r"https?://github\.com/(?P<namespace>.+)/(?P<name>.+)"
         r"/blob/(?P<version>[^/]+)/(?P<subpath>.*)$"
     )
 
     releases_download_pattern = (
-        r"https?://github.com/(?P<namespace>.+)/(?P<name>.+)"
+        r"https?://github\.com/(?P<namespace>.+)/(?P<name>.+)"
         r"/releases/download/(?P<version_prefix>v|V?)(?P<version>[^/]+)/.*$"
     )
 
     # https://github.com/pombredanne/schematics.git
-    git_pattern = r"https?://github.com/(?P<namespace>.+)/(?P<name>.+).(git)"
+    git_pattern = r"https?://github\.com/(?P<namespace>.+)/(?P<name>.+).(git)"
 
     patterns = (
         archive_pattern,
@@ -527,7 +551,7 @@ def build_github_purl(url):
     )
 
 
-@purl_router.route("https?://bitbucket\\.org/.*")
+@purl_router.route(r"https?://bitbucket\.org/.*")
 def build_bitbucket_purl(url):
     """
     Return a PackageURL object from BitBucket `url`.
@@ -554,7 +578,9 @@ def build_bitbucket_purl(url):
     qualifiers = {}
     if matches:
         qualifiers["download_url"] = url
-        return PackageURL(type="bitbucket", namespace=namespace, name=name, qualifiers=qualifiers)
+        return PackageURL(
+            type="bitbucket", namespace=namespace, name=name, qualifiers=qualifiers
+        )
 
     version = None
     subpath = None
@@ -578,7 +604,7 @@ def build_bitbucket_purl(url):
     )
 
 
-@purl_router.route("https?://gitlab\\.com/(?!.*/archive/).*")
+@purl_router.route(r"https?://gitlab\.com/(?!.*/archive/).*")
 def build_gitlab_purl(url):
     """
     Return a PackageURL object from Gitlab `url`.
@@ -618,7 +644,7 @@ def build_gitlab_purl(url):
 
 # https://gitlab.com/hoppr/hoppr/-/archive/v1.11.1-dev.2/hoppr-v1.11.1-dev.2.tar.gz
 gitlab_archive_pattern = (
-    r"^https?://gitlab.com/"
+    r"^https?://gitlab\.com/"
     r"(?P<namespace>.+)/(?P<name>.+)/-/archive/(?P<version>.+)/"
     r"(?P=name)-(?P=version).*"
     r"[^/]$"
@@ -629,7 +655,7 @@ register_pattern("gitlab", gitlab_archive_pattern)
 
 # https://hackage.haskell.org/package/cli-extras-0.2.0.0/cli-extras-0.2.0.0.tar.gz
 hackage_download_pattern = (
-    r"^https?://hackage.haskell.org/package/"
+    r"^https?://hackage\.haskell\.org/package/"
     r"(?P<name>.+)-(?P<version>.+)/"
     r"(?P=name)-(?P=version).*"
     r"[^/]$"
@@ -639,13 +665,15 @@ register_pattern("hackage", hackage_download_pattern)
 
 
 # https://hackage.haskell.org/package/cli-extras-0.2.0.0/
-hackage_project_pattern = r"^https?://hackage.haskell.org/package/(?P<name>.+)-(?P<version>[^/]+)/"
+hackage_project_pattern = (
+    r"^https?://hackage\.haskell\.org/package/(?P<name>.+)-(?P<version>[^/]+)/"
+)
 
 register_pattern("hackage", hackage_project_pattern)
 
 
 @purl_router.route(
-    "https?://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/.*"
+    r"https?://storage\.googleapis\.com/google-code-archive-downloads/v2/code.google.com/.*"
 )
 def build_generic_google_code_archive_purl(uri):
     # https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com
