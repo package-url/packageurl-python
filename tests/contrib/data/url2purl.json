@@ -175,6 +175,7 @@
   "https://sourceforge.net/projects/turbovnc/files/3.1/turbovnc-3.1.tar.gz/download": "pkg:sourceforge/turbovnc@3.1",
   "https://sourceforge.net/projects/ventoy/files/v1.0.96/Ventoy%201.0.96%20release%20source%20code.tar.gz/download": "pkg:sourceforge/ventoy@1.0.96",
   "https://sourceforge.net/projects/geoserver/files/GeoServer/2.23.4/geoserver-2.23.4-war.zip/download": "pkg:sourceforge/geoserver@2.23.4",
+  "https://sourceforge.net/projects/spacesniffer/files/spacesniffer_1_3_0_2.zip/download": "pkg:sourceforge/spacesniffer@1_3_0_2",
   "https://crates.io/api/v1/crates/rand/0.7.2/download": "pkg:cargo/rand@0.7.2",
   "https://crates.io/api/v1/crates/clap/2.33.0/download": "pkg:cargo/clap@2.33.0",
   "https://crates.io/api/v1/crates/structopt/0.3.11/download": "pkg:cargo/structopt@0.3.11",

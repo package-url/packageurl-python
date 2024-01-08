@@ -361,6 +361,18 @@ sourceforge_download_pattern = (
 register_pattern("sourceforge", sourceforge_download_pattern)
 
 
+# https://sourceforge.net/projects/spacesniffer/files/spacesniffer_1_3_0_2.zip/download
+sourceforge_download_pattern_bis = (
+    r"^https?://.*sourceforge.net/projects/"
+    r"(?P<name>.+)/"
+    r"files/"
+    r"(?i:(?P=name))_*(?P<version>[0-9_]+).*"
+    r"(/download)$"  # ending with "/download"
+)
+
+register_pattern("sourceforge", sourceforge_download_pattern_bis)
+
+
 @purl_router.route("https?://.*sourceforge.net/project/.*")
 def build_sourceforge_purl(uri):
     # We use a more general route pattern instead of using `sourceforge_pattern`
