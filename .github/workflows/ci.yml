@@ -23,8 +23,11 @@ jobs:
 
       - name: Validate
         run: |
-          isort --check-only src/ tests/
+          isort --version
+          isort --check-only --diff src/ tests/
+          black --version
           black --check --line-length 100 .
+          mypy --version
           mypy
 
   build-and-test:
