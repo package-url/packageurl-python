@@ -83,14 +83,14 @@ PURL to URL
 
     >>> from packageurl.contrib import purl2url
 
-    >>> purl2url.get_repo_url("pkg:rubygems/bundler@2.3.23")
+    >>> purl2url.get_repo_url("pkg:gem/bundler@2.3.23")
     "https://rubygems.org/gems/bundler/versions/2.3.23"
 
-    >>> purl2url.get_download_url("pkg:rubygems/bundler@2.3.23")
+    >>> purl2url.get_download_url("pkg:gem/bundler@2.3.23")
     "https://rubygems.org/downloads/bundler-2.3.23.gem"
 
-    >>> purl2url.get_inferred_urls("pkg:rubygems/bundler@2.3.23")
-    ["https://rubygems.org/gems/bundler/versions/2.3.23", "https://rubygems.org/downloads/bundler-2.3.23.gem",]
+    >>> purl2url.get_inferred_urls("pkg:gem/bundler@2.3.23")
+    ["https://rubygems.org/gems/bundler/versions/2.3.23", "https://rubygems.org/downloads/bundler-2.3.23.gem"]
 
 Run tests
 =========
