@@ -1,6 +1,18 @@
 Changelog
 =========
 
+0.13.4 (2024-01-08)
+-------------------
+
+- Improve support for SourceForge URLs in `url2purl`.
+  https://github.com/package-url/packageurl-python/issues/139
+
+0.13.3 (2024-01-04)
+-------------------
+
+- Improve support for SourceForge URLs in `url2purl`.
+  https://github.com/package-url/packageurl-python/issues/139
+
 0.13.2 (2024-01-04)
 -------------------
 

@@ -25,6 +25,7 @@
 # download.
 
 from packageurl.contrib.django.utils import purl_to_lookups
+from packageurl.utils import get_golang_purl
 
 
 def test_purl_to_lookups_without_encode():
@@ -53,3 +54,15 @@ def test_purl_to_lookups_with_encode():
         "version": "0",
         "qualifiers": "arch=aarch64&distroversion=edge&reponame=main",
     }
+
+
+def test_get_golang_purl():
+    assert None == get_golang_purl(None)
+    golang_purl_1 = get_golang_purl(
+        "github.com/envoyproxy/go-control-plane/envoy/config/listener/v3"
+    )
+    assert "pkg:golang/github.com/envoyproxy/go-control-plane/envoy/config/listener/v3" == str(
+        golang_purl_1
+    )
+    assert golang_purl_1.name == "v3"
+    assert golang_purl_1.namespace == "github.com/envoyproxy/go-control-plane/envoy/config/listener"

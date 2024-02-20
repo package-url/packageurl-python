@@ -364,6 +364,34 @@ nuget_api_pattern = (
 register_pattern("nuget", nuget_api_pattern)
 
 
+# https://sourceforge.net/projects/turbovnc/files/3.1/turbovnc-3.1.tar.gz/download
+# https://sourceforge.net/projects/scribus/files/scribus/1.6.0/scribus-1.6.0.tar.gz/download
+# https://sourceforge.net/projects/ventoy/files/v1.0.96/Ventoy%201.0.96%20release%20source%20code.tar.gz/download
+# https://sourceforge.net/projects/geoserver/files/GeoServer/2.23.4/geoserver-2.23.4-war.zip/download
+sourceforge_download_pattern = (
+    r"^https?://((master|iweb)\.dl\.)?sourceforge\.net/projects/"
+    r"(?P<name>.+)/"
+    r"files/"
+    r"(?i:(?P=name)/)?"  # optional case-insensitive name segment repeated
+    r"v?(?P<version>[0-9\.]+)/"  # version restricted to digits and dots
+    r"(?i:(?P=name)).*(?P=version).*"  # case-insensitive matching for {name}-{version}
+    r"(/download)$"  # ending with "/download"
+)
+
+register_pattern("sourceforge", sourceforge_download_pattern)
+
+
+# https://sourceforge.net/projects/spacesniffer/files/spacesniffer_1_3_0_2.zip/download
+sourceforge_download_pattern_bis = (
+    r"^https?://((master|iweb)\.dl\.)?sourceforge\.net/projects/"
+    r"(?P<name>.+)/"
+    r"files/"
+    r"(?i:(?P=name))_*(?P<version>[0-9_]+).*"
+    r"(/download)$"  # ending with "/download"
+)
+
+register_pattern("sourceforge", sourceforge_download_pattern_bis)
+
 @purl_router.route(r"https?://((master|iweb)\.dl\.)?sourceforge\.net/projects?/.*")
 def build_sourceforge_purl(uri):
     # We use a more general route pattern instead of using `sourceforge_pattern`
@@ -373,14 +401,13 @@ def build_sourceforge_purl(uri):
     # URL that we can't handle.
 
     # http://master.dl.sourceforge.net/project/libpng/zlib/1.2.3/zlib-1.2.3.tar.bz2
-    # https://sourceforge.net/projects/scribus/files/scribus/1.6.0/scribus-1.6.0.tar.gz/download
     sourceforge_pattern = (
         r"^https?://((master|iweb)\.dl\.)?sourceforge\.net/projects?/"
         r"(?P<namespace>([^/]+))/"  # do not allow more "/" segments
-        r"(files/)?"  # optional segment for "*/download" type URLs
+        r"(OldFiles/)?"
         r"(?P<name>.+)/"
-        r"(?P<version>[0-9\.]+)/"  # version restricted to digits and dots
-        r"(?P=name)-(?P=version).*"  # {name}-{version} repeated in the filename
+        r"(?P<version>[v0-9\.]+)/"  # version restricted to digits and dots
+        r"(?P=name).*(?P=version).*"  # {name}-{version} repeated in the filename
         r"[^/]$"  # not ending with "/"
     )
 
@@ -569,7 +596,7 @@ def build_bitbucket_purl(url):
     name = segments[1]
 
     bitbucket_download_pattern = (
-        r"https?://bitbucket.org/"
+        r"https?://bitbucket\.org/"
         r"(?P<namespace>.+)/(?P<name>.+)/downloads/"
         r"(?P<version>.+)\.(zip|tar\.gz|tar\.bz2|tgz|exe|msi)"
     )
@@ -673,7 +700,7 @@ register_pattern("hackage", hackage_project_pattern)
 
 
 @purl_router.route(
-    r"https?://storage\.googleapis\.com/google-code-archive-downloads/v2/code.google.com/.*"
+    r"https?://storage\.googleapis\.com/google-code-archive-downloads/v2/code\.google\.com/.*"
 )
 def build_generic_google_code_archive_purl(uri):
     # https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com
