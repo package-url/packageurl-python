@@ -326,6 +326,21 @@ def build_pypi_purl(uri):
     return purl_from_pattern("pypi", pypi_pattern, last_segment)
 
 
+# https://packagist.org/packages/webmozart/assert#1.9.1
+@purl_router.route("https?://packagist.org/packages/.*")
+def build_composer_purl(uri):
+    # We use a more general route pattern instead of using `composer_pattern`
+    # below by itself because we want to capture all packagist download URLs,
+    # even the ones that are not completely formed. This helps prevent url2purl
+    # from attempting to create a generic PackageURL from an invalid packagist
+    # download URL.
+
+    # https://packagist.org/packages/ralouphie/getallheaders
+    # https://packagist.org/packages/symfony/process#v7.0.0-BETA3
+    composer_pattern = r"^https?://packagist\.org/packages/(?P<namespace>[^/]+)/(?P<name>[^\#]+?)(\#(?P<version>.+))?$"
+    return purl_from_pattern("composer", composer_pattern, uri)
+
+
 # http://nuget.org/packages/EntityFramework/4.2.0.0
 # https://www.nuget.org/api/v2/package/Newtonsoft.Json/11.0.1
 nuget_www_pattern = r"^https?://.*nuget.org/(api/v2/)?packages?/(?P<name>.+)/(?P<version>.+)$"
