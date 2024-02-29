@@ -1,6 +1,15 @@
 Changelog
 =========
 
+0.14.0 (2024-02-29)
+-------------------
+
+- Add support for getting golang purl from go import.
+  https://github.com/nexB/purldb/issues/259
+
+- Fix the "gem" type in the README docs.
+  https://github.com/package-url/packageurl-python/pull/114
+
 0.13.4 (2024-01-08)
 -------------------
 
