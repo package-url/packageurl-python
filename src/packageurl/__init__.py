@@ -84,13 +84,11 @@ def unquote(s: AnyStr) -> str:
 
 
 @overload
-def get_quoter(encode: bool = True) -> "Callable[[AnyStr], str]":
-    ...
+def get_quoter(encode: bool = True) -> "Callable[[AnyStr], str]": ...
 
 
 @overload
-def get_quoter(encode: None) -> "Callable[[str], str]":
-    ...
+def get_quoter(encode: None) -> "Callable[[str], str]": ...
 
 
 def get_quoter(
@@ -176,22 +174,19 @@ def normalize_version(
 @overload
 def normalize_qualifiers(
     qualifiers: Union[AnyStr, Dict[str, str], None], encode: "Literal[True]" = ...
-) -> Optional[str]:
-    ...
+) -> Optional[str]: ...
 
 
 @overload
 def normalize_qualifiers(
     qualifiers: Union[AnyStr, Dict[str, str], None], encode: "Optional[Literal[False]]"
-) -> Optional[Dict[str, str]]:
-    ...
+) -> Optional[Dict[str, str]]: ...
 
 
 @overload
 def normalize_qualifiers(
     qualifiers: Union[AnyStr, Dict[str, str], None], encode: Optional[bool] = ...
-) -> Union[str, Dict[str, str], None]:
-    ...
+) -> Union[str, Dict[str, str], None]: ...
 
 
 def normalize_qualifiers(
@@ -286,8 +281,7 @@ def normalize(
     qualifiers: Union[AnyStr, Dict[str, str], None],
     subpath: Optional[AnyStr],
     encode: "Literal[True]" = ...,
-) -> Tuple[str, Optional[str], str, Optional[str], Optional[str], Optional[str]]:
-    ...
+) -> Tuple[str, Optional[str], str, Optional[str], Optional[str], Optional[str]]: ...
 
 
 @overload
@@ -299,8 +293,7 @@ def normalize(
     qualifiers: Union[AnyStr, Dict[str, str], None],
     subpath: Optional[AnyStr],
     encode: "Optional[Literal[False]]",
-) -> Tuple[str, Optional[str], str, Optional[str], Optional[Dict[str, str]], Optional[str]]:
-    ...
+) -> Tuple[str, Optional[str], str, Optional[str], Optional[Dict[str, str]], Optional[str]]: ...
 
 
 @overload
@@ -312,8 +305,9 @@ def normalize(
     qualifiers: Union[AnyStr, Dict[str, str], None],
     subpath: Optional[AnyStr],
     encode: Optional[bool] = ...,
-) -> Tuple[str, Optional[str], str, Optional[str], Union[str, Dict[str, str], None], Optional[str]]:
-    ...
+) -> Tuple[
+    str, Optional[str], str, Optional[str], Union[str, Dict[str, str], None], Optional[str]
+]: ...
 
 
 def normalize(
