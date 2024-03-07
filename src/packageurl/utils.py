@@ -40,6 +40,8 @@ def get_golang_purl(go_package: str):
     # package version
     # github.com/gorilla/mux v1.8.1
     # https://github.com/moby/moby/blob/6c10086976d07d4746e03dcfd188972a2f07e1c9/vendor.mod#L51
+    if "@" in go_package:
+        raise Exception(f"{go_package} should not contain ``@``")
     if " " in go_package:
         go_package, _, version = go_package.rpartition(" ")
     parts = go_package.split("/")
