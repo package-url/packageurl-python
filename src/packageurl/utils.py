@@ -36,6 +36,10 @@ def get_golang_purl(go_package: str):
     if not go_package:
         return
     version = None
+    # Go package in *.mod files is represented like this
+    # package version
+    # github.com/gorilla/mux v1.8.1
+    # https://github.com/moby/moby/blob/6c10086976d07d4746e03dcfd188972a2f07e1c9/vendor.mod#L51
     if " " in go_package:
         go_package , _ , version = go_package.rpartition(" ")
     parts = go_package.split("/")
