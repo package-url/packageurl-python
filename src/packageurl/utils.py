@@ -31,7 +31,7 @@ def get_golang_purl(go_package: str):
     """
     Return a PackageURL object given an imported ``go_package``
     >>> get_golang_purl(go_package="github.com/gorilla/mux v1.8.1")
-    PackageURL(type="golang", namespace="github.com/gorilla", name="mux", version="v1.8.1", qualifiers={}, subpath=None)
+    PackageURL(type='golang', namespace='github.com/gorilla', name='mux', version='v1.8.1', qualifiers={}, subpath=None)
     """
     if not go_package:
         return
