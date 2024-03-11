@@ -185,6 +185,7 @@ def build_rubygems_repo_url(purl):
     elif name:
         return f"https://rubygems.org/gems/{name}"
 
+
 @repo_router.route("pkg:cran/.*")
 def build_cran_repo_url(purl):
     """
