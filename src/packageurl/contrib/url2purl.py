@@ -277,6 +277,20 @@ def build_rubygems_purl(uri):
     return purl_from_pattern("gem", rubygems_pattern, uri)
 
 
+# https://cran.r-project.org/src/contrib/jsonlite_1.8.8.tar.gz
+# https://packagemanager.rstudio.com/cran/2022-06-23/src/contrib/curl_4.3.2.tar.gz"
+@purl_router.route(
+    "https?://cran.r-project.org/.*",
+    "https?://packagemanager.rstudio.com/cran/.*",
+)
+def build_cran_purl(uri):
+    cran_pattern = r"^https?://(cran\.r-project\.org|packagemanager\.rstudio\.com/cran)/.*?src/contrib/(?P<name>.+)_(?P<version>.+)\.tar.gz$"
+    qualifiers = {}
+    if "//cran.r-project.org/" not in uri:
+        qualifiers["download_url"] = uri
+    return purl_from_pattern("cran", cran_pattern, uri, qualifiers)
+
+
 # https://pypi.org/packages/source/a/anyjson/anyjson-0.3.3.tar.gz
 # https://pypi.python.org/packages/source/a/anyjson/anyjson-0.3.3.tar.gz
 # https://pypi.python.org/packages/2.6/t/threadpool/threadpool-1.2.7-py2.6.egg
