@@ -1,11 +1,13 @@
 Changelog
 =========
 
-Next Release (2024-02-29)
+0.15.0 (2024-03-12)
 -------------------------
 
 - Add support to get PackageURL from ``go_package`` or 
-  go module "name version" string as seen in a go.mod file.
+  go module ``name version`` string as seen in a go.mod file.
+
+- Add cran ecosystem support for url2purl
 
 
 0.14.0 (2024-02-29)
