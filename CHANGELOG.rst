@@ -1,6 +1,13 @@
 Changelog
 =========
 
+Next Release (2024-02-29)
+-------------------------
+
+- Add support to get PackageURL from ``go_package`` or 
+  go module "name version" string as seen in a go.mod file.
+
+
 0.14.0 (2024-02-29)
 -------------------
 

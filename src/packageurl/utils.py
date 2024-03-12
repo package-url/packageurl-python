@@ -30,6 +30,7 @@ from packageurl import PackageURL
 def get_golang_purl(go_package: str):
     """
     Return a PackageURL object given an imported ``go_package``
+    or go module "name version" string as seen in a go.mod file.
     >>> get_golang_purl(go_package="github.com/gorilla/mux v1.8.1")
     PackageURL(type='golang', namespace='github.com/gorilla', name='mux', version='v1.8.1', qualifiers={}, subpath=None)
     """
