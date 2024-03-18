@@ -53,6 +53,8 @@ def test_purl2url_get_repo_url():
         "pkg:pypi/sortedcontainers": "https://pypi.org/project/sortedcontainers/",
         "pkg:pypi/sortedcontainers@2.4.0": "https://pypi.org/project/sortedcontainers/2.4.0/",
         "pkg:pypi/packageurl_python": "https://pypi.org/project/packageurl-python/",
+        "pkg:composer/psr/log": "https://packagist.org/packages/psr/log",
+        "pkg:composer/psr/log@1.1.3": "https://packagist.org/packages/psr/log#1.1.3",
         "pkg:npm/is-npm": "https://www.npmjs.com/package/is-npm",
         "pkg:npm/is-npm@1.0.0": "https://www.npmjs.com/package/is-npm/v/1.0.0",
         "pkg:nuget/System.Text.Json": "https://www.nuget.org/packages/System.Text.Json",
@@ -95,6 +97,7 @@ def test_purl2url_get_download_url():
         "pkg:rubygems/package-name": None,
         "pkg:bitbucket/birkenfeld": None,
         "pkg:pypi/sortedcontainers@2.4.0": None,
+        "pkg:composer/psr/log@1.1.3": None,
         "pkg:golang/xorm.io/xorm@v0.8.2": None,
         "pkg:golang/gopkg.in/ldap.v3@v3.1.0": None,
     }
@@ -132,6 +135,7 @@ def test_purl2url_get_inferred_urls():
             "https://gitlab.com/tg1999/firebase/-/archive/1a122122/firebase-1a122122.tar.gz",
         ],
         "pkg:pypi/sortedcontainers@2.4.0": ["https://pypi.org/project/sortedcontainers/2.4.0/"],
+        "pkg:composer/psr/log@1.1.3": ["https://packagist.org/packages/psr/log#1.1.3"],
         "pkg:rubygems/package-name": ["https://rubygems.org/gems/package-name"],
         "pkg:bitbucket/birkenfeld": [],
     }

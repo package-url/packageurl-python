@@ -238,6 +238,23 @@ def build_pypi_repo_url(purl):
         return f"https://pypi.org/project/{name}/"
 
 
+@repo_router.route("pkg:composer/.*")
+def build_composer_repo_url(purl):
+    """
+    Return a composer repo URL from the `purl` string.
+    """
+    purl_data = PackageURL.from_string(purl)
+
+    name = purl_data.name
+    version = purl_data.version
+    namespace = purl_data.namespace
+
+    if name and version:
+        return f"https://packagist.org/packages/{namespace}/{name}#{version}"
+    elif name:
+        return f"https://packagist.org/packages/{namespace}/{name}"
+
+
 @repo_router.route("pkg:nuget/.*")
 def build_nuget_repo_url(purl):
     """
