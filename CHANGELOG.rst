@@ -1,14 +1,21 @@
 Changelog
 =========
 
+0.16.0 (unreleased)
+-------------------
+
+- Add support for Composer in ``purl2url`` and ``url2purl``.
+  https://github.com/package-url/packageurl-python/pull/144
+
 0.15.0 (2024-03-12)
--------------------------
+-------------------
 
 - Add support to get PackageURL from ``go_package`` or 
   go module ``name version`` string as seen in a go.mod file.
+  https://github.com/package-url/packageurl-python/pull/148
 
 - Add cran ecosystem support for url2purl
-
+  https://github.com/package-url/packageurl-python/pull/149
 
 0.14.0 (2024-02-29)
 -------------------
