@@ -311,9 +311,7 @@ def build_cran_purl(uri):
 # https://pypi.python.org/packages/2.6/t/threadpool/threadpool-1.2.7-py2.6.egg
 # https://pypi.python.org/packages/any/s/setuptools/setuptools-0.6c11-1.src.rpm
 # https://files.pythonhosted.org/packages/84/d8/451842a5496844bb5c7634b231a2e4caf0d867d2e25f09b840d3b07f3d4b/multi_key_dict-2.0.win32.exe
-pypi_pattern = (
-    r"(?P<name>(\w\.?)+(-\w+)*)-(?P<version>.+)\.(zip|tar\.gz|tar\.bz2|tgz|egg|rpm|exe)$"
-)
+pypi_pattern = r"(?P<name>(\w\.?)+(-\w+)*)-(?P<version>.+)\.(zip|tar\.gz|tar\.bz2|tgz|egg|rpm|exe)$"
 
 # This pattern can be found in the following locations:
 # - wheel.wheelfile.WHEEL_INFO_RE
@@ -420,6 +418,7 @@ sourceforge_download_pattern_bis = (
 )
 
 register_pattern("sourceforge", sourceforge_download_pattern_bis)
+
 
 @purl_router.route(r"https?://((master|iweb)\.dl\.)?sourceforge\.net/projects?/.*")
 def build_sourceforge_purl(uri):
