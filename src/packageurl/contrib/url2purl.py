@@ -292,6 +292,20 @@ def build_rubygems_purl(uri):
     return purl_from_pattern("gem", rubygems_pattern, uri)
 
 
+# https://cran.r-project.org/src/contrib/jsonlite_1.8.8.tar.gz
+# https://packagemanager.rstudio.com/cran/2022-06-23/src/contrib/curl_4.3.2.tar.gz"
+@purl_router.route(
+    "https?://cran.r-project.org/.*",
+    "https?://packagemanager.rstudio.com/cran/.*",
+)
+def build_cran_purl(uri):
+    cran_pattern = r"^https?://(cran\.r-project\.org|packagemanager\.rstudio\.com/cran)/.*?src/contrib/(?P<name>.+)_(?P<version>.+)\.tar.gz$"
+    qualifiers = {}
+    if "//cran.r-project.org/" not in uri:
+        qualifiers["download_url"] = uri
+    return purl_from_pattern("cran", cran_pattern, uri, qualifiers)
+
+
 # https://pypi.org/packages/source/a/anyjson/anyjson-0.3.3.tar.gz
 # https://pypi.python.org/packages/source/a/anyjson/anyjson-0.3.3.tar.gz
 # https://pypi.python.org/packages/2.6/t/threadpool/threadpool-1.2.7-py2.6.egg
@@ -342,6 +356,21 @@ def build_pypi_purl(uri):
         )
 
     return purl_from_pattern("pypi", pypi_pattern, last_segment)
+
+
+# https://packagist.org/packages/webmozart/assert#1.9.1
+@purl_router.route("https?://packagist.org/packages/.*")
+def build_composer_purl(uri):
+    # We use a more general route pattern instead of using `composer_pattern`
+    # below by itself because we want to capture all packagist download URLs,
+    # even the ones that are not completely formed. This helps prevent url2purl
+    # from attempting to create a generic PackageURL from an invalid packagist
+    # download URL.
+
+    # https://packagist.org/packages/ralouphie/getallheaders
+    # https://packagist.org/packages/symfony/process#v7.0.0-BETA3
+    composer_pattern = r"^https?://packagist\.org/packages/(?P<namespace>[^/]+)/(?P<name>[^\#]+?)(\#(?P<version>.+))?$"
+    return purl_from_pattern("composer", composer_pattern, uri)
 
 
 # http://nuget.org/packages/EntityFramework/4.2.0.0

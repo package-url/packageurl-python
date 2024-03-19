@@ -24,6 +24,8 @@
 # Visit https://github.com/package-url/packageurl-python for support and
 # download.
 
+import pytest
+
 from packageurl.contrib.django.utils import purl_to_lookups
 from packageurl.utils import get_golang_purl
 
@@ -66,3 +68,9 @@ def test_get_golang_purl():
     )
     assert golang_purl_1.name == "v3"
     assert golang_purl_1.namespace == "github.com/envoyproxy/go-control-plane/envoy/config/listener"
+    golang_purl_2 = get_golang_purl(
+        go_package="github.com/grpc-ecosystem/go-grpc-middleware v1.3.0"
+    )
+    assert "pkg:golang/github.com/grpc-ecosystem/go-grpc-middleware@v1.3.0" == str(golang_purl_2)
+    with pytest.raises(Exception):
+        get_golang_purl("github.com/envoyproxy/go-control-plane/envoy/config/listener@v3.1")
