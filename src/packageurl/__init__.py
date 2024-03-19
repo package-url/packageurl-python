@@ -77,9 +77,7 @@ def unquote(s: AnyStr) -> str:
     Return a percent-decoded unicode string, given an `s` byte or unicode
     string.
     """
-    unquoted = _percent_unquote(
-        s
-    )  # type:ignore[arg-type]  # typeshed is incorrect here
+    unquoted = _percent_unquote(s)  # type:ignore[arg-type]  # typeshed is incorrect here
     if not isinstance(unquoted, str):
         unquoted = unquoted.decode("utf-8")
     return unquoted
@@ -107,9 +105,7 @@ def get_quoter(
         return lambda x: x
 
 
-def normalize_type(
-    type: Optional[AnyStr], encode: Optional[bool] = True
-) -> Optional[str]:  # NOQA
+def normalize_type(type: Optional[AnyStr], encode: Optional[bool] = True) -> Optional[str]:  # NOQA
     if not type:
         return None
     if not isinstance(type, str):
@@ -217,15 +213,11 @@ def normalize_qualifiers(
                 f"Invalid qualifier. Must be a string of key=value pairs:{repr(qualifiers_list)}"
             )
         qualifiers_parts = [kv.partition("=") for kv in qualifiers_list]
-        qualifiers_pairs: "Iterable[Tuple[str, str]]" = [
-            (k, v) for k, _, v in qualifiers_parts
-        ]
+        qualifiers_pairs: "Iterable[Tuple[str, str]]" = [(k, v) for k, _, v in qualifiers_parts]
     elif isinstance(qualifiers, dict):
         qualifiers_pairs = qualifiers.items()
     else:
-        raise ValueError(
-            f"Invalid qualifier. Must be a string or dict:{repr(qualifiers)}"
-        )
+        raise ValueError(f"Invalid qualifier. Must be a string or dict:{repr(qualifiers)}")
 
     quoter = get_quoter(encode)
     qualifiers_map = {
@@ -301,9 +293,7 @@ def normalize(
     qualifiers: Union[AnyStr, Dict[str, str], None],
     subpath: Optional[AnyStr],
     encode: "Optional[Literal[False]]",
-) -> Tuple[
-    str, Optional[str], str, Optional[str], Optional[Dict[str, str]], Optional[str]
-]: ...
+) -> Tuple[str, Optional[str], str, Optional[str], Optional[Dict[str, str]], Optional[str]]: ...
 
 
 @overload
@@ -361,9 +351,7 @@ def normalize(
 
 
 class PackageURL(
-    namedtuple(
-        "PackageURL", ("type", "namespace", "name", "version", "qualifiers", "subpath")
-    )
+    namedtuple("PackageURL", ("type", "namespace", "name", "version", "qualifiers", "subpath"))
 ):
     """
     A purl is a package URL as defined at
@@ -385,9 +373,7 @@ class PackageURL(
         version: Optional[AnyStr] = None,
         qualifiers: Union[AnyStr, Dict[str, str], None] = None,
         subpath: Optional[AnyStr] = None,
-    ) -> (
-        "PackageURL"
-    ):  # this should be 'Self' https://github.com/python/mypy/pull/13133
+    ) -> "PackageURL":  # this should be 'Self' https://github.com/python/mypy/pull/13133
         required = dict(type=type, name=name)
         for key, value in required.items():
             if value:
@@ -405,9 +391,7 @@ class PackageURL(
         for key, value in strings.items():
             if value and isinstance(value, basestring) or not value:
                 continue
-            raise ValueError(
-                f"Invalid purl: {key} argument must be a string: {repr(value)}."
-            )
+            raise ValueError(f"Invalid purl: {key} argument must be a string: {repr(value)}.")
 
         if qualifiers and not isinstance(
             qualifiers,
@@ -447,9 +431,7 @@ class PackageURL(
     def __hash__(self) -> int:
         return hash(self.to_string())
 
-    def to_dict(
-        self, encode: Optional[bool] = False, empty: Any = None
-    ) -> Dict[str, Any]:
+    def to_dict(self, encode: Optional[bool] = False, empty: Any = None) -> Dict[str, Any]:
         """
         Return an ordered dict of purl components as {key: value}.
         If `encode` is True, then "qualifiers" are encoded as a normalized
@@ -512,9 +494,7 @@ class PackageURL(
 
         scheme, sep, remainder = purl.partition(":")
         if not sep or scheme != "pkg":
-            raise ValueError(
-                f'purl is missing the required "pkg" scheme component: {repr(purl)}.'
-            )
+            raise ValueError(f'purl is missing the required "pkg" scheme component: {repr(purl)}.')
 
         # this strip '/, // and /// as possible in :// or :///
         remainder = remainder.strip().lstrip("/")
@@ -524,9 +504,7 @@ class PackageURL(
 
         type, sep, remainder = remainder.partition("/")  # NOQA
         if not type or not sep:
-            raise ValueError(
-                f"purl is missing the required type component: {repr(purl)}."
-            )
+            raise ValueError(f"purl is missing the required type component: {repr(purl)}.")
 
         type = type.lower()
 
@@ -568,9 +546,7 @@ class PackageURL(
             name = ns_name_parts[0]
 
         if not name:
-            raise ValueError(
-                f"purl is missing the required name component: {repr(purl)}"
-            )
+            raise ValueError(f"purl is missing the required name component: {repr(purl)}")
 
         type, namespace, name, version, qualifiers, subpath = normalize(  # NOQA
             type,

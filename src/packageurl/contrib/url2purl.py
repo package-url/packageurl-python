@@ -70,9 +70,7 @@ def purl_from_pattern(type_, pattern, url, qualifiers=None):
         return
 
     purl_data = {
-        field: value
-        for field, value in match.groupdict().items()
-        if field in PackageURL._fields
+        field: value for field, value in match.groupdict().items() if field in PackageURL._fields
     }
 
     qualifiers = qualifiers or {}
@@ -122,9 +120,7 @@ def build_generic_purl(uri):
         uri_path_segments = get_path_segments(uri)
         if uri_path_segments:
             file_name = uri_path_segments[-1]
-            return PackageURL(
-                type="generic", name=file_name, qualifiers={"download_url": uri}
-            )
+            return PackageURL(type="generic", name=file_name, qualifiers={"download_url": uri})
 
 
 @purl_router.route(
@@ -463,9 +459,7 @@ def build_sourceforge_purl(uri):
 
 
 # https://crates.io/api/v1/crates/rand/0.7.2/download
-cargo_pattern = (
-    r"^https?://crates\.io/api/v1/crates/(?P<name>.+)/(?P<version>.+)(\/download)$"
-)
+cargo_pattern = r"^https?://crates\.io/api/v1/crates/(?P<name>.+)/(?P<version>.+)(\/download)$"
 
 register_pattern("cargo", cargo_pattern)
 
@@ -633,9 +627,7 @@ def build_bitbucket_purl(url):
     qualifiers = {}
     if matches:
         qualifiers["download_url"] = url
-        return PackageURL(
-            type="bitbucket", namespace=namespace, name=name, qualifiers=qualifiers
-        )
+        return PackageURL(type="bitbucket", namespace=namespace, name=name, qualifiers=qualifiers)
 
     version = None
     subpath = None
