@@ -24,6 +24,8 @@
 # Visit https://github.com/package-url/packageurl-python for support and
 # download.
 
+import requests
+
 from packageurl import PackageURL
 from packageurl.contrib.route import NoRouteAvailable
 from packageurl.contrib.route import Router
@@ -412,3 +414,38 @@ def get_repo_download_url(purl):
     return get_repo_download_url_by_package_type(
         type=type, namespace=namespace, name=name, version=version
     )
+
+
+@download_router.route("pkg:pypi/.*")
+def build_pypi_download_url(purl):
+    """
+    Return a pypi download URL from the `purl` string.  If there's a source
+    (e.g., .tar.gz) download URL, it will be tagged `"packagetype": "sdist"`,
+    and a .whl download URL  will be tagged `"packagetype": "bdist_wheel"`.
+
+    TODO: Consider whether we want the download_url value type to be a list so
+    we can return multiple download file types like .tar.gz and .whl.  Or might
+    we want to modify get_inferred_urls() somehow to include (in this example)
+    both .tar.gz and .whl?
+    """
+    purl_data = PackageURL.from_string(purl)
+    name = purl_data.name
+    version = purl_data.version
+
+    if name and version:
+        base_path = "https://pypi.org/pypi"
+        api_url = f"{base_path}/{name}/json"
+        pypi_metadata = get_response(api_url)
+        download_url = ""
+        for rel in pypi_metadata.get("releases").get(version):
+            if rel.get("packagetype") == "sdist":
+                download_url = rel.get("url")
+                return download_url
+
+
+def get_response(url):
+    resp = requests.get(url)
+    if resp.status_code == 200:
+        return resp.json()
+
+    raise Exception(f"Failed to fetch: {url}")

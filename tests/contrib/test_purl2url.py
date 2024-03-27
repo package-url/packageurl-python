@@ -84,19 +84,20 @@ def test_purl2url_get_download_url():
         "pkg:gitlab/tg1999/firebase@1a122122": "https://gitlab.com/tg1999/firebase/-/archive/1a122122/firebase-1a122122.tar.gz",
         "pkg:gitlab/tg1999/firebase@1a122122?version_prefix=v": "https://gitlab.com/tg1999/firebase/-/archive/v1a122122/firebase-v1a122122.tar.gz",
         "pkg:gitlab/hoppr/hoppr@v1.11.1-dev.2": "https://gitlab.com/hoppr/hoppr/-/archive/v1.11.1-dev.2/hoppr-v1.11.1-dev.2.tar.gz",
+        "pkg:pypi/sortedcontainers@2.4.0": "https://files.pythonhosted.org/packages/e8/c4/ba2f8066cceb6f23394729afe52f3bf7adec04bf9ed2c820b39e19299111/sortedcontainers-2.4.0.tar.gz",
         # From `download_url` qualifier
         "pkg:github/yarnpkg/yarn@1.3.2?download_url=https://github.com/yarnpkg/yarn/releases/download/v1.3.2/yarn-v1.3.2.tar.gz&version_prefix=v": "https://github.com/yarnpkg/yarn/releases/download/v1.3.2/yarn-v1.3.2.tar.gz",
         "pkg:generic/lxc-master.tar.gz?download_url=https://salsa.debian.org/lxc-team/lxc/-/archive/master/lxc-master.tar.gz": "https://salsa.debian.org/lxc-team/lxc/-/archive/master/lxc-master.tar.gz",
         "pkg:generic/code.google.com/android-notifier?download_url=https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/android-notifier/android-notifier-desktop-0.5.1-1.i386.rpm": "https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/android-notifier/android-notifier-desktop-0.5.1-1.i386.rpm",
         "pkg:bitbucket/robeden/trove?download_url=https://bitbucket.org/robeden/trove/downloads/trove-3.0.3.zip": "https://bitbucket.org/robeden/trove/downloads/trove-3.0.3.zip",
         "pkg:sourceforge/zclasspath?download_url=http://master.dl.sourceforge.net/project/zclasspath/maven2/org/zclasspath/zclasspath/1.5/zclasspath-1.5.jar": "http://master.dl.sourceforge.net/project/zclasspath/maven2/org/zclasspath/zclasspath/1.5/zclasspath-1.5.jar",
-        "pkg:pypi/aboutcode-toolkit@3.4.0rc1?download_url=https://files.pythonhosted.org/packages/87/44/0fa8e9d0cccb8eb86fc1b5170208229dc6d6e9fd6e57ea1fe19cbeea68f5/aboutcode_toolkit-3.4.0rc1-py2.py3-none-any.whl": "https://files.pythonhosted.org/packages/87/44/0fa8e9d0cccb8eb86fc1b5170208229dc6d6e9fd6e57ea1fe19cbeea68f5/aboutcode_toolkit-3.4.0rc1-py2.py3-none-any.whl",
+        "pkg:pypi/aboutcode-toolkit@3.4.0rc1?download_url=https://files.pythonhosted.org/packages/87/44/0fa8e9d0cccb8eb86fc1b5170208229dc6d6e9fd6e57ea1fe19cbeea68f5/aboutcode_toolkit-3.4.0rc1-py2.py3-none-any.whl": "https://files.pythonhosted.org/packages/6a/16/9191e46344d6a5e98afa74730340bc5f82f2c9ac7922ac4a16e58885a652/aboutcode-toolkit-3.4.0rc1.tar.gz",
+        "pkg:pypi/aboutcode-toolkit@3.4.0rc1?download_url=https://files.pythonhosted.org/packages/6a/16/9191e46344d6a5e98afa74730340bc5f82f2c9ac7922ac4a16e58885a652/aboutcode-toolkit-3.4.0rc1.tar.gz": "https://files.pythonhosted.org/packages/6a/16/9191e46344d6a5e98afa74730340bc5f82f2c9ac7922ac4a16e58885a652/aboutcode-toolkit-3.4.0rc1.tar.gz",
         # Not-supported
         "pkg:github/tg1999/fetchcode": None,
         "pkg:cargo/abc": None,
         "pkg:rubygems/package-name": None,
         "pkg:bitbucket/birkenfeld": None,
-        "pkg:pypi/sortedcontainers@2.4.0": None,
         "pkg:composer/psr/log@1.1.3": None,
         "pkg:golang/xorm.io/xorm@v0.8.2": None,
         "pkg:golang/gopkg.in/ldap.v3@v3.1.0": None,
@@ -134,7 +135,10 @@ def test_purl2url_get_inferred_urls():
             "https://gitlab.com/tg1999/firebase",
             "https://gitlab.com/tg1999/firebase/-/archive/1a122122/firebase-1a122122.tar.gz",
         ],
-        "pkg:pypi/sortedcontainers@2.4.0": ["https://pypi.org/project/sortedcontainers/2.4.0/"],
+        "pkg:pypi/sortedcontainers@2.4.0": [
+            "https://pypi.org/project/sortedcontainers/2.4.0/",
+            "https://files.pythonhosted.org/packages/e8/c4/ba2f8066cceb6f23394729afe52f3bf7adec04bf9ed2c820b39e19299111/sortedcontainers-2.4.0.tar.gz",
+        ],
         "pkg:composer/psr/log@1.1.3": ["https://packagist.org/packages/psr/log#1.1.3"],
         "pkg:rubygems/package-name": ["https://rubygems.org/gems/package-name"],
         "pkg:bitbucket/birkenfeld": [],
@@ -142,6 +146,18 @@ def test_purl2url_get_inferred_urls():
 
     for purl, url in purls_url.items():
         assert url == purl2url.get_inferred_urls(purl)
+
+
+def test_purl2url_get_repo_download_url():
+    purls_url = {
+        "pkg:pypi/aboutcode-toolkit@3.4.0rc1?download_url=https://files.pythonhosted.org/packages/87/44/0fa8e9d0cccb8eb86fc1b5170208229dc6d6e9fd6e57ea1fe19cbeea68f5/aboutcode_toolkit-3.4.0rc1-py2.py3-none-any.whl": "https://files.pythonhosted.org/packages/87/44/0fa8e9d0cccb8eb86fc1b5170208229dc6d6e9fd6e57ea1fe19cbeea68f5/aboutcode_toolkit-3.4.0rc1-py2.py3-none-any.whl",
+        "pkg:pypi/aboutcode-toolkit@3.4.0rc1?download_url=https://files.pythonhosted.org/packages/6a/16/9191e46344d6a5e98afa74730340bc5f82f2c9ac7922ac4a16e58885a652/aboutcode-toolkit-3.4.0rc1.tar.gz": "https://files.pythonhosted.org/packages/6a/16/9191e46344d6a5e98afa74730340bc5f82f2c9ac7922ac4a16e58885a652/aboutcode-toolkit-3.4.0rc1.tar.gz",
+        "pkg:pypi/setuptools@0.6c11?download_url=https://pypi.python.org/packages/any/s/setuptools/setuptools-0.6c11-1.src.rpm": "https://pypi.python.org/packages/any/s/setuptools/setuptools-0.6c11-1.src.rpm",
+        "pkg:pypi/setuptools@0.6c11-1.src.rpm?download_url=https://pypi.python.org/packages/any/s/setuptools/setuptools-0.6c11-1.src.rpm": "https://pypi.python.org/packages/any/s/setuptools/setuptools-0.6c11-1.src.rpm",
+    }
+
+    for purl, url in purls_url.items():
+        assert url == purl2url.get_repo_download_url(purl)
 
 
 def test_purl2url_get_repo_url_with_invalid_purls():
