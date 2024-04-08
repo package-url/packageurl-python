@@ -304,6 +304,20 @@ def build_golang_repo_url(purl):
         return f"https://pkg.go.dev/{namespace}/{name}"
 
 
+@repo_router.route("pkg:cocoapods/.*")
+def build_cocoapods_repo_url(purl):
+    """
+    Return a CocoaPods repo URL from the `purl` string.
+    """
+    purl_data = PackageURL.from_string(purl)
+    name = purl_data.name
+
+    if name:
+        repository_homepage_url = f"https://cocoapods.org/pods/{name}"
+
+    return repository_homepage_url
+
+
 # Download URLs:
 
 
