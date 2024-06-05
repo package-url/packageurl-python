@@ -21,8 +21,6 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-# Visit https://github.com/package-url/packageurl-python for support and
-# download.
 
 import pytest
 
@@ -66,7 +64,6 @@ def test_purl2url_get_repo_url():
         "pkg:golang/gopkg.in/ldap.v3@v3.1.0": "https://pkg.go.dev/gopkg.in/ldap.v3@v3.1.0",
         "pkg:cocoapods/AFNetworking@4.0.1": "https://cocoapods.org/pods/AFNetworking",
         "pkg:cocoapods/MapsIndoors@3.24.0": "https://cocoapods.org/pods/MapsIndoors",
-        "pkg:cocoapods/": None,
     }
 
     for purl, url in purls_url.items():
@@ -141,7 +138,6 @@ def test_purl2url_get_inferred_urls():
             "https://pypi.org/project/sortedcontainers/2.4.0/"
         ],
         "pkg:cocoapods/AFNetworking@4.0.1": ["https://cocoapods.org/pods/AFNetworking"],
-        "pkg:cocoapods/": [],
         "pkg:composer/psr/log@1.1.3": ["https://packagist.org/packages/psr/log#1.1.3"],
         "pkg:rubygems/package-name": ["https://rubygems.org/gems/package-name"],
         "pkg:bitbucket/birkenfeld": [],

@@ -21,9 +21,6 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-# Visit https://github.com/package-url/packageurl-python for support and
-# download.
-
 
 from packageurl import PackageURL
 from packageurl.contrib.route import NoRouteAvailable
@@ -76,12 +73,7 @@ def get_download_url(purl):
         return download_url
 
     # Fallback on the `download_url` qualifier when available.
-    purl_data = None
-    try:
-        purl_data = PackageURL.from_string(purl)
-    except Exception as e:
-        print(f"An error occurred in get_download_url(): {e}")
-        return
+    purl_data = PackageURL.from_string(purl)
     return purl_data.qualifiers.get("download_url", None)
 
 
@@ -315,18 +307,9 @@ def build_cocoapods_repo_url(purl):
     """
     Return a CocoaPods repo URL from the `purl` string.
     """
-    purl_data = None
-    name = None
-    try:
-        purl_data = PackageURL.from_string(purl)
-        name = purl_data.name
-    except Exception as e:
-        print(f"An error occurred in build_cocoapods_repo_url(): {e}")
-        return
-
-    if not name:
-        return
-    return f"https://cocoapods.org/pods/{name}"
+    purl_data = PackageURL.from_string(purl)
+    name = purl_data.name
+    return name and f"https://cocoapods.org/pods/{name}"
 
 
 # Download URLs:
