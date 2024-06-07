@@ -21,6 +21,8 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+# Visit https://github.com/package-url/packageurl-python for support and
+# download.
 
 from packageurl import PackageURL
 from packageurl.contrib.route import NoRouteAvailable
