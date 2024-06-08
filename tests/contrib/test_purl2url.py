@@ -136,9 +136,7 @@ def test_purl2url_get_inferred_urls():
             "https://gitlab.com/tg1999/firebase",
             "https://gitlab.com/tg1999/firebase/-/archive/1a122122/firebase-1a122122.tar.gz",
         ],
-        "pkg:pypi/sortedcontainers@2.4.0": [
-            "https://pypi.org/project/sortedcontainers/2.4.0/"
-        ],
+        "pkg:pypi/sortedcontainers@2.4.0": ["https://pypi.org/project/sortedcontainers/2.4.0/"],
         "pkg:cocoapods/AFNetworking@4.0.1": ["https://cocoapods.org/pods/AFNetworking"],
         "pkg:composer/psr/log@1.1.3": ["https://packagist.org/packages/psr/log#1.1.3"],
         "pkg:rubygems/package-name": ["https://rubygems.org/gems/package-name"],
