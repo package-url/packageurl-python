@@ -58,6 +58,22 @@ def test_purl_to_lookups_with_encode():
     }
 
 
+def test_purl_to_lookups_include_empty_fields():
+    purl_str = "pkg:alpine/openssl"
+    assert purl_to_lookups(purl_str) == {
+        "type": "alpine",
+        "name": "openssl",
+    }
+    assert purl_to_lookups(purl_str, include_empty_fields=True) == {
+        "type": "alpine",
+        "namespace": "",
+        "name": "openssl",
+        "version": "",
+        "qualifiers": "",
+        "subpath": "",
+    }
+
+
 def test_get_golang_purl():
     assert None == get_golang_purl(None)
     golang_purl_1 = get_golang_purl(
