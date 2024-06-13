@@ -37,12 +37,18 @@ class PackageURLQuerySetMixin:
     Add Package URL filtering methods to a django.db.models.QuerySet.
     """
 
-    def for_package_url(self, purl_str, encode=True):
+    def for_package_url(self, purl_str, encode=True, exact_match=False):
         """
-        Filter the QuerySet with the provided Package URL string.
-        The purl string is validated and transformed into filtering lookups.
+        Filter the QuerySet based on a Package URL (purl) string with an option for
+        exact match filtering.
+
+        When `exact_match` is False (default), the method will match any purl with the
+        same base fields as `purl_str` and allow variations in other fields.
+        When `exact_match` is True, only the identical purl will be returned.
         """
-        lookups = purl_to_lookups(purl_str=purl_str, encode=encode)
+        lookups = purl_to_lookups(
+            purl_str=purl_str, encode=encode, include_empty_fields=exact_match
+        )
         if lookups:
             return self.filter(**lookups)
         return self.none()

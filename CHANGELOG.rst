@@ -7,6 +7,10 @@ Changelog
 - Add support for Composer in ``purl2url`` and ``url2purl``.
   https://github.com/package-url/packageurl-python/pull/144
 
+- Add an option for ``exact_match`` purl QuerySet lookups in the
+  ``PackageURLQuerySetMixin.for_package_url``method.
+  https://github.com/package-url/packageurl-python/issues/118
+
 0.15.0 (2024-03-12)
 -------------------
 
