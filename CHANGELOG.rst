@@ -4,6 +4,9 @@ Changelog
 0.16.0 (unreleased)
 -------------------
 
+0.15.1 (2024-06-13)
+-------------------
+
 - Add support for Composer in ``purl2url`` and ``url2purl``.
   https://github.com/package-url/packageurl-python/pull/144
 
