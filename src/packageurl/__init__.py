@@ -306,7 +306,12 @@ def normalize(
     subpath: Optional[AnyStr],
     encode: Optional[bool] = ...,
 ) -> Tuple[
-    str, Optional[str], str, Optional[str], Union[str, Dict[str, str], None], Optional[str]
+    str,
+    Optional[str],
+    str,
+    Optional[str],
+    Union[str, Dict[str, str], None],
+    Optional[str],
 ]: ...
 
 
@@ -335,7 +340,14 @@ def normalize(
     version_norm = normalize_version(version, encode)
     qualifiers_norm = normalize_qualifiers(qualifiers, encode)
     subpath_norm = normalize_subpath(subpath, encode)
-    return type_norm, namespace_norm, name_norm, version_norm, qualifiers_norm, subpath_norm
+    return (
+        type_norm,
+        namespace_norm,
+        name_norm,
+        version_norm,
+        qualifiers_norm,
+        subpath_norm,
+    )
 
 
 class PackageURL(
