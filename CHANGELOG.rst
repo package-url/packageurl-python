@@ -4,6 +4,12 @@ Changelog
 0.16.0 (unreleased)
 -------------------
 
+0.15.2 (2024-07-04)
+-------------------
+
+- Update GitHub generated Download URL for maximum compatibility.
+  https://github.com/package-url/packageurl-python/issues/157
+
 0.15.1 (2024-06-13)
 -------------------
 
