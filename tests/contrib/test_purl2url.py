@@ -56,7 +56,8 @@ def test_purl2url_get_repo_url():
         "pkg:composer/psr/log": "https://packagist.org/packages/psr/log",
         "pkg:composer/psr/log@1.1.3": "https://packagist.org/packages/psr/log#1.1.3",
         "pkg:npm/is-npm": "https://www.npmjs.com/package/is-npm",
-        "pkg:npm/is-npm@1.0.0": "https://www.npmjs.com/package/is-npm/v/1.0.0",
+        "pkg:npm/@clayui/tooltip@3.1.0": "https://www.npmjs.com/package/@clayui/tooltip/v/3.1.0",
+        "pkg:npm/%40clayui/tooltip@3.1.0": "https://www.npmjs.com/package/@clayui/tooltip/v/3.1.0",
         "pkg:nuget/System.Text.Json": "https://www.nuget.org/packages/System.Text.Json",
         "pkg:nuget/System.Text.Json@6.0.6": "https://www.nuget.org/packages/System.Text.Json/6.0.6",
         "pkg:hackage/cli-extras": "https://hackage.haskell.org/package/cli-extras",
@@ -75,7 +76,9 @@ def test_purl2url_get_download_url():
         # Generated
         "pkg:cargo/rand@0.7.2": "https://crates.io/api/v1/crates/rand/0.7.2/download",
         "pkg:gem/bundler@2.3.23": "https://rubygems.org/downloads/bundler-2.3.23.gem",
-        "pkg:npm/is-npm@1.0.0": "http://registry.npmjs.org/is-npm/-/is-npm-1.0.0.tgz",
+        "pkg:npm/is-npm@1.0.0": "https://registry.npmjs.org/is-npm/-/is-npm-1.0.0.tgz",
+        "pkg:npm/@clayui/tooltip@3.1.0": "https://registry.npmjs.org/@clayui/tooltip/-/tooltip-3.1.0.tgz",
+        "pkg:npm/%40clayui/tooltip@3.1.0": "https://registry.npmjs.org/@clayui/tooltip/-/tooltip-3.1.0.tgz",
         "pkg:hackage/cli-extras@0.2.0.0": "https://hackage.haskell.org/package/cli-extras-0.2.0.0/cli-extras-0.2.0.0.tar.gz",
         "pkg:nuget/System.Text.Json@6.0.6": "https://www.nuget.org/api/v2/package/System.Text.Json/6.0.6",
         "pkg:github/nexb/scancode-toolkit@3.1.1?version_prefix=v": "https://github.com/nexb/scancode-toolkit/archive/v3.1.1.tar.gz",
@@ -119,7 +122,11 @@ def test_purl2url_get_inferred_urls():
         ],
         "pkg:npm/is-npm@1.0.0": [
             "https://www.npmjs.com/package/is-npm/v/1.0.0",
-            "http://registry.npmjs.org/is-npm/-/is-npm-1.0.0.tgz",
+            "https://registry.npmjs.org/is-npm/-/is-npm-1.0.0.tgz",
+        ],
+        "pkg:npm/%40clayui/tooltip@3.1.0": [
+            "https://www.npmjs.com/package/@clayui/tooltip/v/3.1.0",
+            "https://registry.npmjs.org/@clayui/tooltip/-/tooltip-3.1.0.tgz",
         ],
         "pkg:hackage/cli-extras@0.2.0.0": [
             "https://hackage.haskell.org/package/cli-extras-0.2.0.0",
