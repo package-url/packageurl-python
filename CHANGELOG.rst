@@ -4,6 +4,11 @@ Changelog
 0.16.0 (unreleased)
 -------------------
 
+0.15.3 (2024-07-09)
+-------------------
+
+- Add support for namespace in ``build_npm_download_url``.
+
 0.15.2 (2024-07-04)
 -------------------
 

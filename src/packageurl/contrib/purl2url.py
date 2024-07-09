@@ -342,11 +342,17 @@ def build_npm_download_url(purl):
     """
     purl_data = PackageURL.from_string(purl)
 
+    namespace = purl_data.namespace
     name = purl_data.name
     version = purl_data.version
 
+    base_url = "https://registry.npmjs.org"
+
+    if namespace:
+        base_url += f"/{namespace}"
+
     if name and version:
-        return f"http://registry.npmjs.org/{name}/-/{name}-{version}.tgz"
+        return f"{base_url}/{name}/-/{name}-{version}.tgz"
 
 
 @download_router.route("pkg:hackage/.*")
