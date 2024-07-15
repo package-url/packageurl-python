@@ -32,6 +32,9 @@ from packageurl import PackageURL
 from packageurl.contrib.django.utils import purl_to_lookups
 
 
+PACKAGE_URL_FIELDS = ("type", "namespace", "name", "version", "qualifiers", "subpath")
+
+
 class PackageURLQuerySetMixin:
     """
     Add Package URL filtering methods to a django.db.models.QuerySet.
@@ -53,11 +56,21 @@ class PackageURLQuerySetMixin:
             return self.filter(**lookups)
         return self.none()
 
-    def empty_package_url(self):
-        """
-        Return objects with empty Package URL.
-        """
+    def with_package_url(self):
+        """Return objects with Package URL defined."""
+        return self.filter(~models.Q(type="") & ~models.Q(name=""))
+
+    def without_package_url(self):
+        """Return objects with empty Package URL."""
         return self.filter(models.Q(type="") | models.Q(name=""))
+
+    def empty_package_url(self):
+        """Return objects with empty Package URL. Alias of without_package_url."""
+        return self.without_package_url()
+
+    def order_by_package_url(self):
+        """Order by Package URL fields."""
+        return self.order_by(*PACKAGE_URL_FIELDS)
 
 
 class PackageURLQuerySet(PackageURLQuerySetMixin, models.QuerySet):
