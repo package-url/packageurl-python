@@ -4,6 +4,9 @@ Changelog
 0.16.0 (unreleased)
 -------------------
 
+0.15.4 (2024-07-15)
+-------------------
+
 - Add ``with_package_url``, ``without_package_url``, and ``order_by_package_url`` to the
   ``PackageURLQuerySetMixin`` contrib class.
 
