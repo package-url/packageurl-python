@@ -490,7 +490,7 @@ def build_github_api_purl(url):
 github_codeload_pattern = (
     r"https?://codeload.github.com/(?P<namespace>.+)/(?P<name>.+)/"
     r"(zip|tar.gz|tar.bz2|tgz)/(.*/)*"
-    r"(?P<version_prefix>v|V?)(?P<version>.+)$"
+    r"(?P<version>.+)$"
 )
 
 register_pattern("github", github_codeload_pattern)
@@ -507,20 +507,20 @@ def build_github_purl(url):
         r"https?://github.com/(?P<namespace>.+)/(?P<name>.+)"
         r"/archive/(.*/)*"
         r"((?P=name)(-|_|@))?"
-        r"(?P<version_prefix>v|V?)(?P<version>.+).(zip|tar.gz|tar.bz2|.tgz)"
+        r"(?P<version>.+).(zip|tar.gz|tar.bz2|.tgz)"
     )
 
     # https://github.com/downloads/mozilla/rhino/rhino1_7R4.zip
     download_pattern = (
         r"https?://github.com/downloads/(?P<namespace>.+)/(?P<name>.+)/"
         r"((?P=name)(-|@)?)?"
-        r"(?P<version_prefix>v|V?)(?P<version>.+).(zip|tar.gz|tar.bz2|.tgz)"
+        r"(?P<version>.+).(zip|tar.gz|tar.bz2|.tgz)"
     )
 
     # https://github.com/pypa/get-virtualenv/raw/20.0.31/public/virtualenv.pyz
     raw_pattern = (
         r"https?://github.com/(?P<namespace>.+)/(?P<name>.+)"
-        r"/raw/(?P<version_prefix>v|V?)(?P<version>[^/]+)/(?P<subpath>.*)$"
+        r"/raw/(?P<version>[^/]+)/(?P<subpath>.*)$"
     )
 
     # https://github.com/fanf2/unifdef/blob/master/unifdef.c
@@ -531,7 +531,7 @@ def build_github_purl(url):
 
     releases_download_pattern = (
         r"https?://github.com/(?P<namespace>.+)/(?P<name>.+)"
-        r"/releases/download/(?P<version_prefix>v|V?)(?P<version>[^/]+)/.*$"
+        r"/releases/download/(?P<version>[^/]+)/.*$"
     )
 
     # https://github.com/pombredanne/schematics.git
