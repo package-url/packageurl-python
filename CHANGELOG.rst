@@ -4,6 +4,11 @@ Changelog
 0.16.0 (unreleased)
 -------------------
 
+- Capture the whole git tag as the version for GutHub URL in ``url2purl`` instead of
+  adding a version_prefix qualifier.
+  Note that the version_prefix qualifier is still supported in ``purl2url`` for
+  backward compatibility.
+
 0.15.4 (2024-07-15)
 -------------------
 
