@@ -31,7 +31,6 @@ from django.utils.translation import gettext_lazy as _
 from packageurl import PackageURL
 from packageurl.contrib.django.utils import purl_to_lookups
 
-
 PACKAGE_URL_FIELDS = ("type", "namespace", "name", "version", "qualifiers", "subpath")
 
 
