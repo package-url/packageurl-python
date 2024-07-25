@@ -32,15 +32,13 @@ jobs:
     timeout-minutes: 10
     strategy:
       matrix:
-        # Forcing macos-13 as Python3.7 is not supported anymore on macos-latest
-        os: [ubuntu-latest, windows-latest, macos-13]
+        os: [ubuntu-latest, windows-latest, macos-latest]
         python-version:
           - "3.12"
           - "3.11"
           - "3.10"
           - "3.9"
           - "3.8"
-          - "3.7"
 
     steps:
       - name: Checkout
