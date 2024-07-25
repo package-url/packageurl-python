@@ -502,6 +502,13 @@ def build_github_purl(url):
     Return a PackageURL object from GitHub `url`.
     """
 
+    # https://github.com/apache/nifi/archive/refs/tags/rel/nifi-2.0.0-M3.tar.gz
+    archive_tags_pattern = (
+        r"https?://github.com/(?P<namespace>.+)/(?P<name>.+)"
+        r"/archive/refs/tags/"
+        r"(?P<version>.+).(zip|tar.gz|tar.bz2|.tgz)"
+    )
+
     # https://github.com/nexB/scancode-toolkit/archive/v3.1.1.zip
     archive_pattern = (
         r"https?://github.com/(?P<namespace>.+)/(?P<name>.+)"
@@ -538,6 +545,7 @@ def build_github_purl(url):
     git_pattern = r"https?://github.com/(?P<namespace>.+)/(?P<name>.+).(git)"
 
     patterns = (
+        archive_tags_pattern,
         archive_pattern,
         raw_pattern,
         blob_pattern,
