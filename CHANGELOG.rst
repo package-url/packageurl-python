@@ -4,6 +4,10 @@ Changelog
 0.16.0 (unreleased)
 -------------------
 
+- Refine support for GitHub /archive/refs/tags/ URLs in ``url2purl``.
+  The whole tag is now captured as the version.
+  This allows to properly reconstruct valid URLs in ``purl2url``.
+
 0.15.5 (2024-07-24)
 -------------------
 

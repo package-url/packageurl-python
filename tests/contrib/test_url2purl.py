@@ -61,7 +61,7 @@ def python_safe(s):
 
 def get_url2purl_test_method(test_url, expected_purl):
     def test_method(self):
-        self.assertEqual(expected_purl, get_purl(test_url))
+        self.assertEqual(expected_purl, get_purl(test_url), msg=test_url)
 
     return test_method
 
