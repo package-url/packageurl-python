@@ -102,7 +102,7 @@ Install test dependencies::
 
 Run tests::
 
-    bin/py.test tests
+    bin/pytest tests
 
 Make a new release
 ==================
