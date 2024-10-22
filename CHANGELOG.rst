@@ -7,6 +7,9 @@ Changelog
 - Drop support for Python 3.7.
   https://github.com/package-url/packageurl-python/issues/160
 
+- Improve support for 3 path segments NPM URLs in ``url2purl``.
+  https://github.com/package-url/packageurl-python/issues/167
+
 0.15.6 (2024-07-25)
 -------------------
 
