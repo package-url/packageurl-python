@@ -4,6 +4,8 @@ Changelog
 0.16.0 (unreleased)
 -------------------
 
+- Add support for Python 3.13.
+
 - Drop support for Python 3.7.
   https://github.com/package-url/packageurl-python/issues/160
 
