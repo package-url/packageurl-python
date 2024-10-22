@@ -348,7 +348,7 @@ class PackageURL(
 
     name: str
     namespace: Optional[str]
-    qualifiers: Union[str, Dict[str, str], None]
+    qualifiers: Dict[str, str]
     subpath: Optional[str]
     type: str
     version: Optional[str]
