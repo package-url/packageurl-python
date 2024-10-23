@@ -43,12 +43,13 @@ if TYPE_CHECKING:
     from collections.abc import Iterable
 
     from typing_extensions import Literal
+    from typing_extensions import Self
 
 # Python 3
 basestring = (
     bytes,
     str,
-)  # NOQA
+)
 
 """
 A purl (aka. Package URL) implementation as specified at:
@@ -105,22 +106,22 @@ def get_quoter(
         return lambda x: x
 
 
-def normalize_type(type: Optional[AnyStr], encode: Optional[bool] = True) -> Optional[str]:  # NOQA
+def normalize_type(type: Optional[AnyStr], encode: Optional[bool] = True) -> Optional[str]:
     if not type:
         return None
     if not isinstance(type, str):
-        type_str = type.decode("utf-8")  # NOQA
+        type_str = type.decode("utf-8")
     else:
         type_str = type
 
     quoter = get_quoter(encode)
-    type_str = quoter(type_str)  # NOQA
+    type_str = quoter(type_str)
     return type_str.strip().lower() or None
 
 
 def normalize_namespace(
     namespace: Optional[AnyStr], ptype: Optional[str], encode: Optional[bool] = True
-) -> Optional[str]:  # NOQA
+) -> Optional[str]:
     if not namespace:
         return None
     if not isinstance(namespace, str):
@@ -138,7 +139,7 @@ def normalize_namespace(
 
 def normalize_name(
     name: Optional[AnyStr], ptype: Optional[str], encode: Optional[bool] = True
-) -> Optional[str]:  # NOQA
+) -> Optional[str]:
     if not name:
         return None
     if not isinstance(name, str):
@@ -156,9 +157,7 @@ def normalize_name(
     return name_str or None
 
 
-def normalize_version(
-    version: Optional[AnyStr], encode: Optional[bool] = True
-) -> Optional[str]:  # NOQA
+def normalize_version(version: Optional[AnyStr], encode: Optional[bool] = True) -> Optional[str]:
     if not version:
         return None
     if not isinstance(version, str):
@@ -173,25 +172,25 @@ def normalize_version(
 
 @overload
 def normalize_qualifiers(
-    qualifiers: Union[AnyStr, Dict[str, str], None], encode: "Literal[True]" = ...
+    qualifiers: Optional[Union[AnyStr, Dict[str, str]]], encode: "Literal[True]" = ...
 ) -> Optional[str]: ...
 
 
 @overload
 def normalize_qualifiers(
-    qualifiers: Union[AnyStr, Dict[str, str], None], encode: "Optional[Literal[False]]"
-) -> Optional[Dict[str, str]]: ...
+    qualifiers: Optional[Union[AnyStr, Dict[str, str]]], encode: "Optional[Literal[False]]"
+) -> Dict[str, str]: ...
 
 
 @overload
 def normalize_qualifiers(
-    qualifiers: Union[AnyStr, Dict[str, str], None], encode: Optional[bool] = ...
-) -> Union[str, Dict[str, str], None]: ...
+    qualifiers: Optional[Union[AnyStr, Dict[str, str]]], encode: Optional[bool] = ...
+) -> Optional[Union[str, Dict[str, str]]]: ...
 
 
 def normalize_qualifiers(
-    qualifiers: Union[AnyStr, Dict[str, str], None], encode: Optional[bool] = True
-) -> Union[str, Dict[str, str], None]:  # NOQA
+    qualifiers: Optional[Union[AnyStr, Dict[str, str]]], encode: Optional[bool] = True
+) -> Optional[Union[str, Dict[str, str]]]:
     """
     Return normalized `qualifiers` as a mapping (or as a string if `encode` is
     True). The `qualifiers` arg is either a mapping or a string.
@@ -255,9 +254,7 @@ def normalize_qualifiers(
         return qualifiers_map
 
 
-def normalize_subpath(
-    subpath: Optional[AnyStr], encode: Optional[bool] = True
-) -> Optional[str]:  # NOQA
+def normalize_subpath(subpath: Optional[AnyStr], encode: Optional[bool] = True) -> Optional[str]:
     if not subpath:
         return None
     if not isinstance(subpath, str):
@@ -278,7 +275,7 @@ def normalize(
     namespace: Optional[AnyStr],
     name: Optional[AnyStr],
     version: Optional[AnyStr],
-    qualifiers: Union[AnyStr, Dict[str, str], None],
+    qualifiers: Optional[Union[AnyStr, Dict[str, str]]],
     subpath: Optional[AnyStr],
     encode: "Literal[True]" = ...,
 ) -> Tuple[str, Optional[str], str, Optional[str], Optional[str], Optional[str]]: ...
@@ -290,10 +287,10 @@ def normalize(
     namespace: Optional[AnyStr],
     name: Optional[AnyStr],
     version: Optional[AnyStr],
-    qualifiers: Union[AnyStr, Dict[str, str], None],
+    qualifiers: Optional[Union[AnyStr, Dict[str, str]]],
     subpath: Optional[AnyStr],
     encode: "Optional[Literal[False]]",
-) -> Tuple[str, Optional[str], str, Optional[str], Optional[Dict[str, str]], Optional[str]]: ...
+) -> Tuple[str, Optional[str], str, Optional[str], Dict[str, str], Optional[str]]: ...
 
 
 @overload
@@ -302,11 +299,11 @@ def normalize(
     namespace: Optional[AnyStr],
     name: Optional[AnyStr],
     version: Optional[AnyStr],
-    qualifiers: Union[AnyStr, Dict[str, str], None],
+    qualifiers: Optional[Union[AnyStr, Dict[str, str]]],
     subpath: Optional[AnyStr],
     encode: Optional[bool] = ...,
 ) -> Tuple[
-    str, Optional[str], str, Optional[str], Union[str, Dict[str, str], None], Optional[str]
+    str, Optional[str], str, Optional[str], Optional[Union[str, Dict[str, str]]], Optional[str]
 ]: ...
 
 
@@ -315,7 +312,7 @@ def normalize(
     namespace: Optional[AnyStr],
     name: Optional[AnyStr],
     version: Optional[AnyStr],
-    qualifiers: Union[AnyStr, Dict[str, str], None],
+    qualifiers: Optional[Union[AnyStr, Dict[str, str]]],
     subpath: Optional[AnyStr],
     encode: Optional[bool] = True,
 ) -> Tuple[
@@ -323,13 +320,13 @@ def normalize(
     Optional[str],
     Optional[str],
     Optional[str],
-    Union[str, Dict[str, str], None],
+    Optional[Union[str, Dict[str, str]]],
     Optional[str],
-]:  # NOQA
+]:
     """
     Return normalized purl components
     """
-    type_norm = normalize_type(type, encode)  # NOQA
+    type_norm = normalize_type(type, encode)
     namespace_norm = normalize_namespace(namespace, type_norm, encode)
     name_norm = normalize_name(name, type_norm, encode)
     version_norm = normalize_version(version, encode)
@@ -346,27 +343,25 @@ class PackageURL(
     https://github.com/package-url/purl-spec
     """
 
-    name: str
+    type: str
     namespace: Optional[str]
+    name: str
+    version: Optional[str]
     qualifiers: Dict[str, str]
     subpath: Optional[str]
-    type: str
-    version: Optional[str]
 
     def __new__(
-        self,
+        cls,
         type: Optional[AnyStr] = None,
         namespace: Optional[AnyStr] = None,
-        name: Optional[AnyStr] = None,  # NOQA
+        name: Optional[AnyStr] = None,
         version: Optional[AnyStr] = None,
-        qualifiers: Union[AnyStr, Dict[str, str], None] = None,
+        qualifiers: Optional[Union[AnyStr, Dict[str, str]]] = None,
         subpath: Optional[AnyStr] = None,
-    ) -> "PackageURL":  # this should be 'Self' https://github.com/python/mypy/pull/13133
-        required = dict(type=type, name=name)
-        for key, value in required.items():
-            if value:
-                continue
-            raise ValueError(f"Invalid purl: {key} is a required argument.")
+    ) -> "Self":
+        for arg in type, name:
+            if not arg:
+                raise ValueError(f"Invalid purl: {arg} is a required argument.")
 
         strings = dict(
             type=type,
@@ -399,12 +394,10 @@ class PackageURL(
             version_norm,
             qualifiers_norm,
             subpath_norm,
-        ) = normalize(  # NOQA
-            type, namespace, name, version, qualifiers, subpath, encode=None
-        )
+        ) = normalize(type, namespace, name, version, qualifiers, subpath, encode=None)
 
         return super().__new__(
-            PackageURL,
+            cls,
             type=type_norm,
             namespace=namespace_norm,
             name=name_norm,
@@ -439,7 +432,7 @@ class PackageURL(
         """
         Return a purl string built from components.
         """
-        type, namespace, name, version, qualifiers, subpath = normalize(  # NOQA
+        type, namespace, name, version, qualifiers, subpath = normalize(
             self.type,
             self.namespace,
             self.name,
@@ -472,7 +465,7 @@ class PackageURL(
         return "".join(purl)
 
     @classmethod
-    def from_string(cls, purl: str) -> "PackageURL":
+    def from_string(cls, purl: str) -> "Self":
         """
         Return a PackageURL object parsed from a string.
         Raise ValueError on errors.
@@ -490,7 +483,7 @@ class PackageURL(
         version: Optional[str]  # this line is just for type hinting
         subpath: Optional[str]  # this line is just for type hinting
 
-        type, sep, remainder = remainder.partition("/")  # NOQA
+        type, sep, remainder = remainder.partition("/")
         if not type or not sep:
             raise ValueError(f"purl is missing the required type component: {repr(purl)}.")
 
@@ -536,7 +529,7 @@ class PackageURL(
         if not name:
             raise ValueError(f"purl is missing the required name component: {repr(purl)}")
 
-        type, namespace, name, version, qualifiers, subpath = normalize(  # NOQA
+        type, namespace, name, version, qualifiers, subpath = normalize(
             type,
             namespace,
             name,
@@ -546,4 +539,4 @@ class PackageURL(
             encode=False,
         )
 
-        return PackageURL(type, namespace, name, version, qualifiers, subpath)
+        return cls(type, namespace, name, version, qualifiers, subpath)  # type: ignore[arg-type]
