@@ -30,7 +30,6 @@ import string
 from collections import namedtuple
 from typing import TYPE_CHECKING
 from typing import Any
-from typing import AnyStr
 from typing import Dict
 from typing import Optional
 from typing import Tuple
@@ -46,6 +45,8 @@ if TYPE_CHECKING:
 
     from typing_extensions import Literal
     from typing_extensions import Self
+
+    AnyStr = Union[str, bytes]
 
 # Python 3
 basestring = (
@@ -541,4 +542,4 @@ class PackageURL(
             encode=False,
         )
 
-        return cls(type, namespace, name, version, qualifiers, subpath)  # type: ignore[arg-type]
+        return cls(type, namespace, name, version, qualifiers, subpath)
