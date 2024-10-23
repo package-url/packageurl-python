@@ -24,6 +24,8 @@
 # Visit https://github.com/package-url/packageurl-python for support and
 # download.
 
+from __future__ import annotations
+
 import string
 from collections import namedtuple
 from typing import TYPE_CHECKING
@@ -85,16 +87,16 @@ def unquote(s: AnyStr) -> str:
 
 
 @overload
-def get_quoter(encode: bool = True) -> "Callable[[AnyStr], str]": ...
+def get_quoter(encode: bool = True) -> Callable[[AnyStr], str]: ...
 
 
 @overload
-def get_quoter(encode: None) -> "Callable[[str], str]": ...
+def get_quoter(encode: None) -> Callable[[str], str]: ...
 
 
 def get_quoter(
     encode: Optional[bool] = True,
-) -> "Union[Callable[[AnyStr], str], Callable[[str], str]]":
+) -> Union[Callable[[AnyStr], str], Callable[[str], str]]:
     """
     Return quoting callable given an `encode` tri-boolean (True, False or None)
     """
@@ -172,13 +174,13 @@ def normalize_version(version: Optional[AnyStr], encode: Optional[bool] = True) 
 
 @overload
 def normalize_qualifiers(
-    qualifiers: Optional[Union[AnyStr, Dict[str, str]]], encode: "Literal[True]" = ...
+    qualifiers: Optional[Union[AnyStr, Dict[str, str]]], encode: Literal[True] = ...
 ) -> Optional[str]: ...
 
 
 @overload
 def normalize_qualifiers(
-    qualifiers: Optional[Union[AnyStr, Dict[str, str]]], encode: "Optional[Literal[False]]"
+    qualifiers: Optional[Union[AnyStr, Dict[str, str]]], encode: Optional[Literal[False]]
 ) -> Dict[str, str]: ...
 
 
@@ -212,7 +214,7 @@ def normalize_qualifiers(
                 f"Invalid qualifier. Must be a string of key=value pairs:{repr(qualifiers_list)}"
             )
         qualifiers_parts = [kv.partition("=") for kv in qualifiers_list]
-        qualifiers_pairs: "Iterable[Tuple[str, str]]" = [(k, v) for k, _, v in qualifiers_parts]
+        qualifiers_pairs: Iterable[Tuple[str, str]] = [(k, v) for k, _, v in qualifiers_parts]
     elif isinstance(qualifiers, dict):
         qualifiers_pairs = qualifiers.items()
     else:
@@ -277,7 +279,7 @@ def normalize(
     version: Optional[AnyStr],
     qualifiers: Optional[Union[AnyStr, Dict[str, str]]],
     subpath: Optional[AnyStr],
-    encode: "Literal[True]" = ...,
+    encode: Literal[True] = ...,
 ) -> Tuple[str, Optional[str], str, Optional[str], Optional[str], Optional[str]]: ...
 
 
@@ -289,7 +291,7 @@ def normalize(
     version: Optional[AnyStr],
     qualifiers: Optional[Union[AnyStr, Dict[str, str]]],
     subpath: Optional[AnyStr],
-    encode: "Optional[Literal[False]]",
+    encode: Optional[Literal[False]],
 ) -> Tuple[str, Optional[str], str, Optional[str], Dict[str, str], Optional[str]]: ...
 
 
@@ -358,7 +360,7 @@ class PackageURL(
         version: Optional[AnyStr] = None,
         qualifiers: Optional[Union[AnyStr, Dict[str, str]]] = None,
         subpath: Optional[AnyStr] = None,
-    ) -> "Self":
+    ) -> Self:
         for arg in type, name:
             if not arg:
                 raise ValueError(f"Invalid purl: {arg} is a required argument.")
@@ -465,7 +467,7 @@ class PackageURL(
         return "".join(purl)
 
     @classmethod
-    def from_string(cls, purl: str) -> "Self":
+    def from_string(cls, purl: str) -> Self:
         """
         Return a PackageURL object parsed from a string.
         Raise ValueError on errors.
