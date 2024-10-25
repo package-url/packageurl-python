@@ -362,9 +362,11 @@ class PackageURL(
         qualifiers: Optional[Union[AnyStr, Dict[str, str]]] = None,
         subpath: Optional[AnyStr] = None,
     ) -> Self:
-        for arg in type, name:
-            if not arg:
-                raise ValueError(f"Invalid purl: {arg} is a required argument.")
+        required = dict(type=type, name=name)
+        for key, value in required.items():
+            if value:
+                continue
+            raise ValueError(f"Invalid purl: {key} is a required argument.")
 
         strings = dict(
             type=type,
