@@ -68,6 +68,7 @@ def test_purl2url_get_repo_url():
         "pkg:golang/gopkg.in/ldap.v3@v3.1.0": "https://pkg.go.dev/gopkg.in/ldap.v3@v3.1.0",
         "pkg:cocoapods/AFNetworking@4.0.1": "https://cocoapods.org/pods/AFNetworking",
         "pkg:cocoapods/MapsIndoors@3.24.0": "https://cocoapods.org/pods/MapsIndoors",
+        "pkg:github/facebook/sapling@0.2.20240718-145624%20f4e9df48": "https://github.com/facebook/sapling/tree/0.2.20240718-145624+f4e9df48"
     }
 
     for purl, url in purls_url.items():

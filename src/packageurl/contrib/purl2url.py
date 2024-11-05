@@ -153,6 +153,8 @@ def build_github_repo_url(purl):
         version_prefix = qualifiers.get("version_prefix", "")
         repo_url = f"{repo_url}/tree/{version_prefix}{version}"
 
+    repo_url = repo_url.replace(" ", "+")
+
     return repo_url
 
 
