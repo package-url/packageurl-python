@@ -40,9 +40,9 @@ def get_repo_download_url_by_package_type(
         raise ValueError("Only zip and tar.gz extensions are supported")
 
     download_url_by_type = {
-        "github": f"https://github.com/{namespace}/{name}/archive/{version}.{archive_extension}",
-        "bitbucket": f"https://bitbucket.org/{namespace}/{name}/get/{version}.{archive_extension}",
-        "gitlab": f"https://gitlab.com/{namespace}/{name}/-/archive/{version}/{name}-{version}.{archive_extension}",
+        "github": f"https://github.com/{namespace}/{name}/archive/{version}.{archive_extension}".replace(" ", "+"),
+        "bitbucket": f"https://bitbucket.org/{namespace}/{name}/get/{version}.{archive_extension}".replace(" ", "+"),
+        "gitlab": f"https://gitlab.com/{namespace}/{name}/-/archive/{version}/{name}-{version}.{archive_extension}".replace(" ", "+"),
     }
     return download_url_by_type.get(type)
 
