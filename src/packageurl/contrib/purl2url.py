@@ -314,6 +314,22 @@ def build_cocoapods_repo_url(purl):
     return name and f"https://cocoapods.org/pods/{name}"
 
 
+@repo_router.route("pkg:maven/.*")
+def build_maven_repo_url(purl):
+    """
+    Return a Maven repo URL from the `purl` string.
+    """
+    purl_data = PackageURL.from_string(purl)
+    namespace = purl_data.namespace
+    name = purl_data.name
+    version = purl_data.version
+
+    base_url = "https://repo1.maven.org/maven2"
+
+    if namespace and name and version:
+        return f"{base_url}/{namespace.replace(".", "/")}/{name}/{version}"
+
+
 # Download URLs:
 
 
@@ -363,6 +379,23 @@ def build_npm_download_url(purl):
 
     if name and version:
         return f"{base_url}/{name}/-/{name}-{version}.tgz"
+
+
+@download_router.route("pkg:maven/.*")
+def build_maven_download_url(purl):
+    """
+    Return a maven download URL from the `purl` string.
+    """
+    purl_data = PackageURL.from_string(purl)
+
+    namespace = purl_data.namespace
+    name = purl_data.name
+    version = purl_data.version
+
+    base_url = "https://repo1.maven.org/maven2"
+
+    if namespace and name and version:
+        return f"{base_url}/{namespace.replace(".", "/")}/{name}/{version}/{name}-{version}.jar"
 
 
 @download_router.route("pkg:hackage/.*")
