@@ -77,11 +77,13 @@ def unquote(s: AnyStr) -> str:
 
 
 @overload
-def get_quoter(encode: bool = True) -> Callable[[AnyStr], str]: ...
+def get_quoter(encode: bool = True) -> Callable[[AnyStr], str]:
+    ...
 
 
 @overload
-def get_quoter(encode: None) -> Callable[[str], str]: ...
+def get_quoter(encode: None) -> Callable[[str], str]:
+    ...
 
 
 def get_quoter(encode: bool | None = True) -> Callable[[AnyStr], str] | Callable[[str], str]:
@@ -151,19 +153,22 @@ def normalize_version(version: AnyStr | None, encode: bool | None = True) -> str
 @overload
 def normalize_qualifiers(
     qualifiers: AnyStr | dict[str, str] | None, encode: Literal[True] = ...
-) -> str | None: ...
+) -> str | None:
+    ...
 
 
 @overload
 def normalize_qualifiers(
     qualifiers: AnyStr | dict[str, str] | None, encode: Literal[False] | None
-) -> dict[str, str]: ...
+) -> dict[str, str]:
+    ...
 
 
 @overload
 def normalize_qualifiers(
     qualifiers: AnyStr | dict[str, str] | None, encode: bool | None = ...
-) -> str | dict[str, str] | None: ...
+) -> str | dict[str, str] | None:
+    ...
 
 
 def normalize_qualifiers(
@@ -251,7 +256,8 @@ def normalize(
     qualifiers: AnyStr | dict[str, str] | None,
     subpath: AnyStr | None,
     encode: Literal[True] = ...,
-) -> tuple[str, str | None, str, str | None, str | None, str | None]: ...
+) -> tuple[str, str | None, str, str | None, str | None, str | None]:
+    ...
 
 
 @overload
@@ -263,7 +269,8 @@ def normalize(
     qualifiers: AnyStr | dict[str, str] | None,
     subpath: AnyStr | None,
     encode: Literal[False] | None,
-) -> tuple[str, str | None, str, str | None, dict[str, str], str | None]: ...
+) -> tuple[str, str | None, str, str | None, dict[str, str], str | None]:
+    ...
 
 
 @overload
@@ -275,7 +282,8 @@ def normalize(
     qualifiers: AnyStr | dict[str, str] | None,
     subpath: AnyStr | None,
     encode: bool | None = ...,
-) -> tuple[str, str | None, str, str | None, str | dict[str, str] | None, str | None]: ...
+) -> tuple[str, str | None, str, str | None, str | dict[str, str] | None, str | None]:
+    ...
 
 
 def normalize(
@@ -459,12 +467,17 @@ class PackageURL(
             url=remainder, scheme="", allow_fragments=True
         )
 
-        if scheme or authority:
-            msg = (
-                f'Invalid purl {purl!r} cannot contain a "user:pass@host:port" '
-                f"URL Authority component: {authority!r}."
-            )
-            raise ValueError(msg)
+        # The spec (seems) to allow colons in the name and namespace.
+        # urllib.urlsplit splits on : considers them parts of scheme
+        # and authority.
+        # Other libraries do not care about this.
+        # See https://github.com/package-url/packageurl-python/issues/152#issuecomment-2637692538
+        # We do + ":" + to put the colon back that urlsplit removed.
+        if authority:
+            path = authority + ":" + path
+
+        if scheme:
+            path = scheme + ":" + path
 
         path = path.lstrip("/")
 
