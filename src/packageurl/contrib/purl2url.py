@@ -327,7 +327,8 @@ def build_maven_repo_url(purl):
     base_url = "https://repo1.maven.org/maven2"
 
     if namespace and name and version:
-        return f"{base_url}/{namespace.replace(".", "/")}/{name}/{version}"
+        maven_namespace = namespace.replace(".", "/")
+        return f"{base_url}/{maven_namespace}/{name}/{version}"
 
 
 # Download URLs:
@@ -395,7 +396,8 @@ def build_maven_download_url(purl):
     base_url = "https://repo1.maven.org/maven2"
 
     if namespace and name and version:
-        return f"{base_url}/{namespace.replace(".", "/")}/{name}/{version}/{name}-{version}.jar"
+        maven_namespace = namespace.replace(".", "/")
+        return f"{base_url}/{maven_namespace}/{name}/{version}/{name}-{version}.jar"
 
 
 @download_router.route("pkg:hackage/.*")
