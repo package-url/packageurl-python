@@ -28,6 +28,7 @@ from packageurl import PackageURL
 from packageurl.contrib.route import NoRouteAvailable
 from packageurl.contrib.route import Router
 
+default_maven_repository = "https://repo.maven.apache.org/maven2"
 
 def get_repo_download_url_by_package_type(
     type, namespace, name, version, archive_extension="tar.gz"
@@ -324,7 +325,7 @@ def build_maven_repo_url(purl):
     name = purl_data.name
     version = purl_data.version
 
-    base_url = "https://repo1.maven.org/maven2"
+    base_url = default_maven_repository
 
     if namespace and name and version:
         maven_namespace = namespace.replace(".", "/")
@@ -393,7 +394,7 @@ def build_maven_download_url(purl):
     name = purl_data.name
     version = purl_data.version
 
-    base_url = "https://repo1.maven.org/maven2"
+    base_url = default_maven_repository
 
     if namespace and name and version:
         maven_namespace = namespace.replace(".", "/")
