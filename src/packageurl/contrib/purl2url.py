@@ -402,9 +402,13 @@ def build_maven_download_url(purl):
     if purl_data.qualifiers and "repository_url" in purl_data.qualifiers:
        base_url = purl_data.qualifiers["repository_url"]
 
+    maven_type = "jar" # default to jar
+    if purl_data.qualifiers and "type" in purl_data.qualifiers:
+       maven_type = purl_data.qualifiers["type"]
+
     if namespace and name and version:
         maven_namespace = namespace.replace(".", "/")
-        return f"{base_url}/{maven_namespace}/{name}/{version}/{name}-{version}.jar"
+        return f"{base_url}/{maven_namespace}/{name}/{version}/{name}-{version}.{maven_type}"
 
 
 @download_router.route("pkg:hackage/.*")
