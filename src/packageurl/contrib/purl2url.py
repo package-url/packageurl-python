@@ -406,8 +406,14 @@ def build_maven_download_url(purl):
     if purl_data.qualifiers and "type" in purl_data.qualifiers:
        maven_type = purl_data.qualifiers["type"]
 
+    classifier = None
+    if purl_data.qualifiers and "classifier" in purl_data.qualifiers:
+        classifier = purl_data.qualifiers["classifier"]
+
     if namespace and name and version:
         maven_namespace = namespace.replace(".", "/")
+        if classifier:
+            return f"{base_url}/{maven_namespace}/{name}/{version}/{name}-{version}-{classifier}.{maven_type}"
         return f"{base_url}/{maven_namespace}/{name}/{version}/{name}-{version}.{maven_type}"
 
 

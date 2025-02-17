@@ -96,6 +96,7 @@ def test_purl2url_get_download_url():
         "pkg:maven/org.apache.commons/commons-io@1.3.2": "https://repo.maven.apache.org/maven2/org/apache/commons/commons-io/1.3.2/commons-io-1.3.2.jar",
         "pkg:maven/org.apache.commons/commons-io@1.3.2?repository_url=https://repo1.maven.org/maven2": "https://repo1.maven.org/maven2/org/apache/commons/commons-io/1.3.2/commons-io-1.3.2.jar",
         "pkg:maven/org.apache.commons/commons-io@1.3.2?type=pom": "https://repo.maven.apache.org/maven2/org/apache/commons/commons-io/1.3.2/commons-io-1.3.2.pom",
+        "pkg:maven/org.apache.commons/commons-io@1.3.2?classifier=arbitrary": "https://repo.maven.apache.org/maven2/org/apache/commons/commons-io/1.3.2/commons-io-1.3.2-arbitrary.jar",
         # From `download_url` qualifier
         "pkg:github/yarnpkg/yarn@1.3.2?download_url=https://github.com/yarnpkg/yarn/releases/download/v1.3.2/yarn-v1.3.2.tar.gz&version_prefix=v": "https://github.com/yarnpkg/yarn/releases/download/v1.3.2/yarn-v1.3.2.tar.gz",
         "pkg:generic/lxc-master.tar.gz?download_url=https://salsa.debian.org/lxc-team/lxc/-/archive/master/lxc-master.tar.gz": "https://salsa.debian.org/lxc-team/lxc/-/archive/master/lxc-master.tar.gz",
