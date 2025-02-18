@@ -342,7 +342,7 @@ def test_colons_in_name_are_handled_correctly() -> None:
     assert p.name == "libiconv: character set conversion library"
     assert p.version == "1.9"
     assert p.qualifiers == {"package-id": "e11a609df352e292"}
-    assert p.subpath == None
+    assert p.subpath is None
 
     assert PackageURL.from_string(p.to_string()).to_string() == p.to_string()
 
@@ -357,7 +357,7 @@ def test_colons_in_namespace_are_handled_correctly() -> None:
     assert p.name == "libiconv: character set conversion library"
     assert p.version == "1.9"
     assert p.qualifiers == {"package-id": "e11a609df352e292"}
-    assert p.subpath == None
+    assert p.subpath is None
 
     assert PackageURL.from_string(p.to_string()).to_string() == p.to_string()
 
