@@ -313,6 +313,7 @@ class PackageURL(
     A purl is a package URL as defined at
     https://github.com/package-url/purl-spec
     """
+    SCHEME: str = "pkg"
 
     type: str
     namespace: str | None
@@ -409,7 +410,7 @@ class PackageURL(
             encode=True,
         )
 
-        purl = ["pkg:", type, "/"]
+        purl = [f"{self.SCHEME}:", type, "/"]
 
         if namespace:
             purl.extend((namespace, "/"))
@@ -440,8 +441,10 @@ class PackageURL(
             raise ValueError("A purl string argument is required.")
 
         scheme, sep, remainder = purl.partition(":")
-        if not sep or scheme != "pkg":
-            raise ValueError(f'purl is missing the required "pkg" scheme component: {purl!r}.')
+        if not sep or scheme != cls.SCHEME:
+            raise ValueError(
+                f'purl is missing the required "{cls.SCHEME}" scheme component: {purl!r}.'
+            )
 
         # this strip '/, // and /// as possible in :// or :///
         remainder = remainder.strip().lstrip("/")
