@@ -43,6 +43,8 @@ if TYPE_CHECKING:
 
     AnyStr = Union[str, bytes]
 
+from univers.version_range import VersionRange
+
 # Python 3
 basestring = (bytes, str)
 
@@ -220,6 +222,9 @@ def normalize_qualifiers(
 
         if key[0] in string.digits:
             raise ValueError(f"A qualifier key cannot start with a number: {key!r}")
+
+    if vers := qualifiers_map.get("vers"):
+        VersionRange.from_string(vers, validate=True)
 
     qualifiers_map = dict(sorted(qualifiers_map.items()))
 
