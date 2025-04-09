@@ -459,12 +459,17 @@ class PackageURL(
             url=remainder, scheme="", allow_fragments=True
         )
 
-        if scheme or authority:
-            msg = (
-                f'Invalid purl {purl!r} cannot contain a "user:pass@host:port" '
-                f"URL Authority component: {authority!r}."
-            )
-            raise ValueError(msg)
+        # The spec (seems) to allow colons in the name and namespace.
+        # urllib.urlsplit splits on : considers them parts of scheme
+        # and authority.
+        # Other libraries do not care about this.
+        # See https://github.com/package-url/packageurl-python/issues/152#issuecomment-2637692538
+        # We do + ":" + to put the colon back that urlsplit removed.
+        if authority:
+            path = authority + ":" + path
+
+        if scheme:
+            path = scheme + ":" + path
 
         path = path.lstrip("/")
 
