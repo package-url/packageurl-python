@@ -68,6 +68,7 @@ def test_purl2url_get_repo_url():
         "pkg:golang/gopkg.in/ldap.v3@v3.1.0": "https://pkg.go.dev/gopkg.in/ldap.v3@v3.1.0",
         "pkg:cocoapods/AFNetworking@4.0.1": "https://cocoapods.org/pods/AFNetworking",
         "pkg:cocoapods/MapsIndoors@3.24.0": "https://cocoapods.org/pods/MapsIndoors",
+        "pkg:github/facebook/sapling@0.2.20240718-145624%20f4e9df48": "https://github.com/facebook/sapling/tree/0.2.20240718-145624+f4e9df48"
     }
 
     for purl, url in purls_url.items():
@@ -99,6 +100,7 @@ def test_purl2url_get_download_url():
         "pkg:bitbucket/robeden/trove?download_url=https://bitbucket.org/robeden/trove/downloads/trove-3.0.3.zip": "https://bitbucket.org/robeden/trove/downloads/trove-3.0.3.zip",
         "pkg:sourceforge/zclasspath?download_url=http://master.dl.sourceforge.net/project/zclasspath/maven2/org/zclasspath/zclasspath/1.5/zclasspath-1.5.jar": "http://master.dl.sourceforge.net/project/zclasspath/maven2/org/zclasspath/zclasspath/1.5/zclasspath-1.5.jar",
         "pkg:pypi/aboutcode-toolkit@3.4.0rc1?download_url=https://files.pythonhosted.org/packages/87/44/0fa8e9d0cccb8eb86fc1b5170208229dc6d6e9fd6e57ea1fe19cbeea68f5/aboutcode_toolkit-3.4.0rc1-py2.py3-none-any.whl": "https://files.pythonhosted.org/packages/87/44/0fa8e9d0cccb8eb86fc1b5170208229dc6d6e9fd6e57ea1fe19cbeea68f5/aboutcode_toolkit-3.4.0rc1-py2.py3-none-any.whl",
+        "pkg:github/facebook/sapling@0.2.20240718-145624%20f4e9df48": "https://github.com/facebook/sapling/archive/0.2.20240718-145624+f4e9df48.tar.gz",
         # Not-supported
         "pkg:github/tg1999/fetchcode": None,
         "pkg:cargo/abc": None,
