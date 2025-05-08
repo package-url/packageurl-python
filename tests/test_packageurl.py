@@ -29,6 +29,8 @@ import os
 import re
 import unittest
 
+import pytest
+
 from packageurl import PackageURL
 from packageurl import normalize
 from packageurl import normalize_qualifiers
@@ -330,3 +332,13 @@ class NormalizePurlTest(unittest.TestCase):
 def test_purl_is_hashable():
     s = {PackageURL(name="hashable", type="pypi")}
     assert len(s) == 1
+
+
+def test_vers_validation_ok():
+    url = PackageURL.from_string("pkg:pypi/requests?vers=vers:pypi/>=2.0")
+    assert url.qualifiers["vers"] == "vers:pypi/>=2.0"
+
+
+def test_vers_validation_fails():
+    with pytest.raises(ValueError, match="must start with the 'vers:' URI scheme."):
+        PackageURL.from_string("pkg:pypi/requests?vers=>=2.0")
