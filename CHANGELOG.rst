@@ -1,6 +1,14 @@
 Changelog
 =========
 
+0.16.1 (unreleased)
+-------------------
+
+- Add ``PURL_TYPES`` constant to the ``packageurl`` module.
+  Enforce validation of PackageURL types.
+  https://github.com/package-url/packageurl-python/issues/181
+  https://github.com/package-url/packageurl-python/pull/188
+
 0.16.0 (2024-10-22)
 -------------------
 

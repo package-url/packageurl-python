@@ -52,6 +52,99 @@ https://github.com/package-url/purl-spec
 """
 
 
+PURL_TYPES: set[str] = {
+    "alpine",
+    "alpm",
+    "android",
+    "apache",
+    "apk",
+    "bitbucket",
+    "bitnami",
+    "bower",
+    "buildroot",
+    "cargo",
+    "carthage",
+    "chef",
+    "chocolatey",
+    "clojars",
+    "cocoapods",
+    "composer",
+    "conan",
+    "conda",
+    "coreos",
+    "cpan",
+    "cran",
+    "crystal",
+    "ctan",
+    "deb",
+    "docker",
+    "drupal",
+    "dtype",
+    "dub",
+    "ebuild",
+    "eclipse",
+    "elm",
+    "gem",
+    "generic",
+    "gitea",
+    "github",
+    "gitlab",
+    "golang",
+    "gradle",
+    "guix",
+    "hackage",
+    "haxe",
+    "helm",
+    "hex",
+    "huggingface",
+    "julia",
+    "luarocks",
+    "maven",
+    "melpa",
+    "meteor",
+    "mlflow",
+    "nim",
+    "nix",
+    "npm",
+    "nuget",
+    "oci",
+    "opam",
+    "openwrt",
+    "osgi",
+    "p2",
+    "pear",
+    "pecl",
+    "perl6",
+    "platformio",
+    "pub",
+    "puppet",
+    "pypi",
+    "qpkg",
+    "rpm",
+    "rubygems",
+    "sourceforge",
+    "sublime",
+    "swid",
+    "terraform",
+    "vagrant",
+    "vim",
+    "wordpress",
+    "yocto",
+}
+"""List of recognized pURL types.
+
+.. warning::
+
+    There is no official list of ``pkg:<type>/...`` prefixes defined in the pURL
+    specification.
+
+    The only source we found lying around in the pURL literature is this `list of
+    diverse aliases, examples and libraries
+    <https://github.com/package-url/purl-spec/blob/master/PURL-TYPES.rst>`_. This
+    list is based on this document.
+"""
+
+
 def quote(s: AnyStr) -> str:
     """
     Return a percent-encoded unicode string, except for colon :, given an `s`
@@ -102,8 +195,15 @@ def normalize_type(type: AnyStr | None, encode: bool | None = True) -> str | Non
 
     type_str = type if isinstance(type, str) else type.decode("utf-8")
     quoter = get_quoter(encode)
-    type_str = quoter(type_str)
-    return type_str.strip().lower() or None
+    type_str = quoter(type_str).strip().lower()
+    if not type_str:
+        return None
+    if type_str not in PURL_TYPES:
+        raise ValueError(
+            f"Invalid purl type: {type_str!r}. "
+            f"Must be one of: {', '.join(sorted(PURL_TYPES))}."
+        )
+    return type_str
 
 
 def normalize_namespace(
