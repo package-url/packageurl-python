@@ -412,7 +412,7 @@ class PackageURL(
             encode=True,
         )
 
-        purl = [f"{self.SCHEME}:", type, "/"]
+        purl = [self.SCHEME, ":", type, "/"]
 
         if namespace:
             purl.extend((namespace, "/"))
