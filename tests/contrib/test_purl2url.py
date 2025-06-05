@@ -68,6 +68,8 @@ def test_purl2url_get_repo_url():
         "pkg:golang/gopkg.in/ldap.v3@v3.1.0": "https://pkg.go.dev/gopkg.in/ldap.v3@v3.1.0",
         "pkg:cocoapods/AFNetworking@4.0.1": "https://cocoapods.org/pods/AFNetworking",
         "pkg:cocoapods/MapsIndoors@3.24.0": "https://cocoapods.org/pods/MapsIndoors",
+        "pkg:maven/org.apache.commons/commons-io@1.3.2": "https://repo.maven.apache.org/maven2/org/apache/commons/commons-io/1.3.2",
+        "pkg:maven/org.apache.commons/commons-io@1.3.2?repository_url=https://repo1.maven.org/maven2": "https://repo1.maven.org/maven2/org/apache/commons/commons-io/1.3.2",
     }
 
     for purl, url in purls_url.items():
@@ -92,6 +94,10 @@ def test_purl2url_get_download_url():
         "pkg:gitlab/tg1999/firebase@1a122122": "https://gitlab.com/tg1999/firebase/-/archive/1a122122/firebase-1a122122.tar.gz",
         "pkg:gitlab/tg1999/firebase@1a122122?version_prefix=v": "https://gitlab.com/tg1999/firebase/-/archive/v1a122122/firebase-v1a122122.tar.gz",
         "pkg:gitlab/hoppr/hoppr@v1.11.1-dev.2": "https://gitlab.com/hoppr/hoppr/-/archive/v1.11.1-dev.2/hoppr-v1.11.1-dev.2.tar.gz",
+        "pkg:maven/org.apache.commons/commons-io@1.3.2": "https://repo.maven.apache.org/maven2/org/apache/commons/commons-io/1.3.2/commons-io-1.3.2.jar",
+        "pkg:maven/org.apache.commons/commons-io@1.3.2?repository_url=https://repo1.maven.org/maven2": "https://repo1.maven.org/maven2/org/apache/commons/commons-io/1.3.2/commons-io-1.3.2.jar",
+        "pkg:maven/org.apache.commons/commons-io@1.3.2?type=pom": "https://repo.maven.apache.org/maven2/org/apache/commons/commons-io/1.3.2/commons-io-1.3.2.pom",
+        "pkg:maven/org.apache.commons/commons-math3@3.6.1?classifier=sources": "https://repo.maven.apache.org/maven2/org/apache/commons/commons-math3/3.6.1/commons-math3-3.6.1-sources.jar",
         # From `download_url` qualifier
         "pkg:github/yarnpkg/yarn@1.3.2?download_url=https://github.com/yarnpkg/yarn/releases/download/v1.3.2/yarn-v1.3.2.tar.gz&version_prefix=v": "https://github.com/yarnpkg/yarn/releases/download/v1.3.2/yarn-v1.3.2.tar.gz",
         "pkg:generic/lxc-master.tar.gz?download_url=https://salsa.debian.org/lxc-team/lxc/-/archive/master/lxc-master.tar.gz": "https://salsa.debian.org/lxc-team/lxc/-/archive/master/lxc-master.tar.gz",
@@ -150,6 +156,10 @@ def test_purl2url_get_inferred_urls():
         "pkg:cocoapods/AFNetworking@4.0.1": ["https://cocoapods.org/pods/AFNetworking"],
         "pkg:composer/psr/log@1.1.3": ["https://packagist.org/packages/psr/log#1.1.3"],
         "pkg:rubygems/package-name": ["https://rubygems.org/gems/package-name"],
+        "pkg:maven/org.apache.commons/commons-io@1.3.2": [
+            "https://repo.maven.apache.org/maven2/org/apache/commons/commons-io/1.3.2",
+            "https://repo.maven.apache.org/maven2/org/apache/commons/commons-io/1.3.2/commons-io-1.3.2.jar",
+        ],
         "pkg:bitbucket/birkenfeld": [],
     }
 
