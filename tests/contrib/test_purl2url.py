@@ -69,6 +69,7 @@ def test_purl2url_get_repo_url():
         "pkg:cocoapods/AFNetworking@4.0.1": "https://cocoapods.org/pods/AFNetworking",
         "pkg:cocoapods/MapsIndoors@3.24.0": "https://cocoapods.org/pods/MapsIndoors",
         "pkg:maven/org.apache.commons/commons-io@1.3.2": "https://repo.maven.apache.org/maven2/org/apache/commons/commons-io/1.3.2",
+        "pkg:maven/org.apache.commons/commons-io@1.3.2?repository_url=https://repo1.maven.org/maven2": "https://repo1.maven.org/maven2/org/apache/commons/commons-io/1.3.2",
     }
 
     for purl, url in purls_url.items():
@@ -96,7 +97,7 @@ def test_purl2url_get_download_url():
         "pkg:maven/org.apache.commons/commons-io@1.3.2": "https://repo.maven.apache.org/maven2/org/apache/commons/commons-io/1.3.2/commons-io-1.3.2.jar",
         "pkg:maven/org.apache.commons/commons-io@1.3.2?repository_url=https://repo1.maven.org/maven2": "https://repo1.maven.org/maven2/org/apache/commons/commons-io/1.3.2/commons-io-1.3.2.jar",
         "pkg:maven/org.apache.commons/commons-io@1.3.2?type=pom": "https://repo.maven.apache.org/maven2/org/apache/commons/commons-io/1.3.2/commons-io-1.3.2.pom",
-        "pkg:maven/org.apache.commons/commons-io@1.3.2?classifier=arbitrary": "https://repo.maven.apache.org/maven2/org/apache/commons/commons-io/1.3.2/commons-io-1.3.2-arbitrary.jar",
+        "pkg:maven/org.apache.commons/commons-math3@3.6.1?classifier=sources": "https://repo.maven.apache.org/maven2/org/apache/commons/commons-math3/3.6.1/commons-math3-3.6.1-sources.jar",
         # From `download_url` qualifier
         "pkg:github/yarnpkg/yarn@1.3.2?download_url=https://github.com/yarnpkg/yarn/releases/download/v1.3.2/yarn-v1.3.2.tar.gz&version_prefix=v": "https://github.com/yarnpkg/yarn/releases/download/v1.3.2/yarn-v1.3.2.tar.gz",
         "pkg:generic/lxc-master.tar.gz?download_url=https://salsa.debian.org/lxc-team/lxc/-/archive/master/lxc-master.tar.gz": "https://salsa.debian.org/lxc-team/lxc/-/archive/master/lxc-master.tar.gz",
