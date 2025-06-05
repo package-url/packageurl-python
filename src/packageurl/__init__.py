@@ -37,6 +37,7 @@ from urllib.parse import urlsplit as _urlsplit
 if TYPE_CHECKING:
     from collections.abc import Callable
     from collections.abc import Iterable
+    from typing import ClassVar
 
     from typing_extensions import Literal
     from typing_extensions import Self
@@ -314,7 +315,7 @@ class PackageURL(
     https://github.com/package-url/purl-spec
     """
 
-    SCHEME: str = "pkg"
+    SCHEME: ClassVar[str] = "pkg"
 
     type: str
     namespace: str | None
