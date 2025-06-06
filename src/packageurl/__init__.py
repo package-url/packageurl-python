@@ -37,6 +37,7 @@ from urllib.parse import urlsplit as _urlsplit
 if TYPE_CHECKING:
     from collections.abc import Callable
     from collections.abc import Iterable
+    from typing import ClassVar
 
     from typing_extensions import Literal
     from typing_extensions import Self
@@ -314,6 +315,8 @@ class PackageURL(
     https://github.com/package-url/purl-spec
     """
 
+    SCHEME: ClassVar[str] = "pkg"
+
     type: str
     namespace: str | None
     name: str
@@ -409,7 +412,7 @@ class PackageURL(
             encode=True,
         )
 
-        purl = ["pkg:", type, "/"]
+        purl = [self.SCHEME, ":", type, "/"]
 
         if namespace:
             purl.extend((namespace, "/"))
@@ -440,8 +443,10 @@ class PackageURL(
             raise ValueError("A purl string argument is required.")
 
         scheme, sep, remainder = purl.partition(":")
-        if not sep or scheme != "pkg":
-            raise ValueError(f'purl is missing the required "pkg" scheme component: {purl!r}.')
+        if not sep or scheme != cls.SCHEME:
+            raise ValueError(
+                f'purl is missing the required "{cls.SCHEME}" scheme component: {purl!r}.'
+            )
 
         # this strip '/, // and /// as possible in :// or :///
         remainder = remainder.strip().lstrip("/")
