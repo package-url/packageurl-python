@@ -398,7 +398,7 @@ class PackageURL(
 
         return data
 
-    def to_string(self) -> str:
+    def to_string(self, encode: bool | None = True) -> str:
         """
         Return a purl string built from components.
         """
@@ -409,7 +409,7 @@ class PackageURL(
             self.version,
             self.qualifiers,
             self.subpath,
-            encode=True,
+            encode=encode,
         )
 
         purl = [self.SCHEME, ":", type, "/"]
