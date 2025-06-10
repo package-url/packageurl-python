@@ -374,3 +374,17 @@ def test_encoding_stuff_with_colons_correctly() -> None:
         p.to_string()
         == "pkg:nuget/an:odd:space/libiconv:%20character%20set%20conversion%20library@1.9?package-id=e11a609df352e292"
     )
+
+
+def test_no_encoding_to_string():
+    p = PackageURL(
+        type="nuget",
+        namespace="an:odd:space",
+        name="libiconv: character set conversion library",
+        version="1.9",
+        qualifiers={"package-id": "e11a609df352e292"},
+    )
+    assert (
+        p.to_string(encode=False)
+        == "pkg:nuget/an:odd:space/libiconv: character set conversion library@1.9?package-id=e11a609df352e292"
+    )
