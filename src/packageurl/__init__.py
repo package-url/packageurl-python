@@ -226,8 +226,11 @@ def normalize_qualifiers(
 
     if not encode:
         return qualifiers_map
+    return _qualifier_map_to_string(qualifiers_map)
 
-    qualifiers_list = [f"{key}={value}" for key, value in qualifiers_map.items()]
+
+def _qualifier_map_to_string(qualifiers: dict[str, str]) -> str:
+    qualifiers_list = [f"{key}={value}" for key, value in qualifiers.items()]
     return "&".join(qualifiers_list) or None
 
 
@@ -425,12 +428,15 @@ class PackageURL(
 
         if qualifiers:
             purl.append("?")
+            if not encode:
+                qualifiers = _qualifier_map_to_string(qualifiers)
             purl.append(qualifiers)
 
         if subpath:
             purl.append("#")
             purl.append(subpath)
 
+        print(purl)
         return "".join(purl)
 
     @classmethod
