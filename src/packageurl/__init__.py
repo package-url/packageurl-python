@@ -47,6 +47,90 @@ if TYPE_CHECKING:
 # Python 3
 basestring = (bytes, str)
 
+# These are the (78) known purl types listed in the purl-spec as on
+# 2025-06-11
+# https://github.com/package-url/purl-spec/blob/main/PURL-TYPES.rst
+known_purl_type = [
+    "alpm",
+    "android",
+    "apache",
+    "apk",
+    "atom",
+    "bitbucket",
+    "bitnami",
+    "bower",
+    "brew",
+    "buildroot",
+    "cargo",
+    "carthage",
+    "chef",
+    "chocolatey",
+    "clojars",
+    "cocoapods",
+    "composer",
+    "conan",
+    "conda",
+    "coreos",
+    "cpan",
+    "cran",
+    "crystal",
+    "ctan",
+    "deb",
+    "docker",
+    "drupal",
+    "dtype",
+    "dub",
+    "ebuild",
+    "eclipse",
+    "elm",
+    "gem",
+    "generic",
+    "gitea",
+    "github",
+    "gitlab",
+    "golang",
+    "gradle",
+    "guix",
+    "hackage",
+    "haxe",
+    "helm",
+    "hex",
+    "huggingface",
+    "julia",
+    "luarocks",
+    "maven",
+    "melpa",
+    "meteor",
+    "mlflow",
+    "nim",
+    "nix",
+    "npm",
+    "nuget",
+    "oci",
+    "opam",
+    "openwrt",
+    "osgi",
+    "p2",
+    "pear",
+    "pecl",
+    "perl6",
+    "platformio",
+    "pub",
+    "puppet",
+    "pypi",
+    "qpkg",
+    "rpm",
+    "sourceforge",
+    "sublime",
+    "swid",
+    "swift",
+    "terraform",
+    "vagrant",
+    "vim",
+    "wordpress",
+    "yocto",
+]
+
 """
 A purl (aka. Package URL) implementation as specified at:
 https://github.com/package-url/purl-spec
@@ -348,6 +432,8 @@ class PackageURL(
         )
 
         for key, value in strings.items():
+            if key == "type" and value not in known_purl_type:
+                raise ValueError(f"Invalid purl: unkown package type: {value!r}.")
             if value and isinstance(value, basestring) or not value:
                 continue
             raise ValueError(f"Invalid purl: {key} argument must be a string: {value!r}.")
