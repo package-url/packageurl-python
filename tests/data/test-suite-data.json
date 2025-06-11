@@ -382,5 +382,17 @@
     "qualifiers": null,
     "subpath": "googleapis/api/annotations",
     "is_invalid": false
+  },
+  {
+    "description": "invalid purl type",
+    "purl": "pkg:111_^5/example",
+    "canonical_purl": null,
+    "type": "111_^5",
+    "namespace": null,
+    "name": "example",
+    "version": null,
+    "qualifiers": null,
+    "subpath": null,
+    "is_invalid": true
   }
 ]
