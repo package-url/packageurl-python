@@ -374,3 +374,18 @@ def test_encoding_stuff_with_colons_correctly() -> None:
         p.to_string()
         == "pkg:nuget/an:odd:space/libiconv:%20character%20set%20conversion%20library@1.9?package-id=e11a609df352e292"
     )
+
+
+def test_version_prefix_never_strip() -> None:
+    p = PackageURL.from_string(
+        "pkg:maven/org.apache.commons/io@v1.3.4"
+    )
+
+    assert p.type == "maven"
+    assert p.namespace == "org.apache.commons"
+    assert p.name == "io"
+    assert p.version == "v1.3.4"
+    assert p.qualifiers == {}
+    assert p.subpath is None
+
+    assert PackageURL.from_string(p.to_string()).to_string() == p.to_string()
