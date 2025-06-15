@@ -26,6 +26,7 @@ from __future__ import annotations
 
 import string
 from collections import namedtuple
+from collections.abc import Mapping
 from typing import TYPE_CHECKING
 from typing import Any
 from typing import Union
@@ -226,12 +227,12 @@ def normalize_qualifiers(
 
     if not encode:
         return qualifiers_map
-    return _qualifier_map_to_string(qualifiers_map)
+    return _qualifier_map_to_string(qualifiers_map) or None
 
 
 def _qualifier_map_to_string(qualifiers: dict[str, str]) -> str:
     qualifiers_list = [f"{key}={value}" for key, value in qualifiers.items()]
-    return "&".join(qualifiers_list) or None
+    return "&".join(qualifiers_list)
 
 
 def normalize_subpath(subpath: AnyStr | None, encode: bool | None = True) -> str | None:
@@ -428,7 +429,7 @@ class PackageURL(
 
         if qualifiers:
             purl.append("?")
-            if not encode:
+            if isinstance(qualifiers, Mapping):
                 qualifiers = _qualifier_map_to_string(qualifiers)
             purl.append(qualifiers)
 
@@ -436,7 +437,6 @@ class PackageURL(
             purl.append("#")
             purl.append(subpath)
 
-        print(purl)
         return "".join(purl)
 
     @classmethod
