@@ -1,6 +1,24 @@
 Changelog
 =========
 
+0.17.1 (2025-06-06)
+-------------------
+
+- Define "pkg" as a PackageURL ``SCHEME`` class attribute.
+  https://github.com/package-url/packageurl-python/issues/184
+
+- Add support for Maven in ``purl2url``.
+  https://github.com/package-url/packageurl-python/issues/177
+
+0.17.0 (2025-06-04)
+-------------------
+
+- Fix qualifiers type annotations.
+  https://github.com/package-url/packageurl-python/issues/169
+
+- Fix parsing of names and namespaces with colons.
+  https://github.com/package-url/packageurl-python/issues/152
+
 0.16.0 (2024-10-22)
 -------------------
 

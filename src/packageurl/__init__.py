@@ -26,6 +26,7 @@ from __future__ import annotations
 
 import string
 from collections import namedtuple
+from collections.abc import Mapping
 from typing import TYPE_CHECKING
 from typing import Any
 from typing import Union
@@ -37,6 +38,7 @@ from urllib.parse import urlsplit as _urlsplit
 if TYPE_CHECKING:
     from collections.abc import Callable
     from collections.abc import Iterable
+    from typing import ClassVar
 
     from typing_extensions import Literal
     from typing_extensions import Self
@@ -230,9 +232,12 @@ def normalize_qualifiers(
 
     if not encode:
         return qualifiers_map
+    return _qualifier_map_to_string(qualifiers_map) or None
 
-    qualifiers_list = [f"{key}={value}" for key, value in qualifiers_map.items()]
-    return "&".join(qualifiers_list) or None
+
+def _qualifier_map_to_string(qualifiers: dict[str, str]) -> str:
+    qualifiers_list = [f"{key}={value}" for key, value in qualifiers.items()]
+    return "&".join(qualifiers_list)
 
 
 def normalize_subpath(subpath: AnyStr | None, encode: bool | None = True) -> str | None:
@@ -319,6 +324,8 @@ class PackageURL(
     https://github.com/package-url/purl-spec
     """
 
+    SCHEME: ClassVar[str] = "pkg"
+
     type: str
     namespace: str | None
     name: str
@@ -400,7 +407,7 @@ class PackageURL(
 
         return data
 
-    def to_string(self) -> str:
+    def to_string(self, encode: bool | None = True) -> str:
         """
         Return a purl string built from components.
         """
@@ -411,10 +418,10 @@ class PackageURL(
             self.version,
             self.qualifiers,
             self.subpath,
-            encode=True,
+            encode=encode,
         )
 
-        purl = ["pkg:", type, "/"]
+        purl = [self.SCHEME, ":", type, "/"]
 
         if namespace:
             purl.extend((namespace, "/"))
@@ -427,6 +434,8 @@ class PackageURL(
 
         if qualifiers:
             purl.append("?")
+            if isinstance(qualifiers, Mapping):
+                qualifiers = _qualifier_map_to_string(qualifiers)
             purl.append(qualifiers)
 
         if subpath:
@@ -445,8 +454,10 @@ class PackageURL(
             raise ValueError("A purl string argument is required.")
 
         scheme, sep, remainder = purl.partition(":")
-        if not sep or scheme != "pkg":
-            raise ValueError(f'purl is missing the required "pkg" scheme component: {purl!r}.')
+        if not sep or scheme != cls.SCHEME:
+            raise ValueError(
+                f'purl is missing the required "{cls.SCHEME}" scheme component: {purl!r}.'
+            )
 
         # this strip '/, // and /// as possible in :// or :///
         remainder = remainder.strip().lstrip("/")

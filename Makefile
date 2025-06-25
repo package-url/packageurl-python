@@ -66,7 +66,6 @@ valid:
 
 test:
 	@echo "-> Run the test suite"
-	${MANAGE} test --noinput
 	bin/py.test tests
 
 .PHONY: virtualenv conf dev clean isort black mypy valid test
