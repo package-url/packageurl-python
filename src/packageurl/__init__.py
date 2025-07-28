@@ -72,7 +72,7 @@ def unquote(s: AnyStr) -> str:
     Return a percent-decoded unicode string, given an `s` byte or unicode
     string.
     """
-    unquoted = _percent_unquote(s)  # type:ignore[arg-type]  # typeshed is incorrect here
+    unquoted = _percent_unquote(s)
     if not isinstance(unquoted, str):
         unquoted = unquoted.decode("utf-8")
     return unquoted
