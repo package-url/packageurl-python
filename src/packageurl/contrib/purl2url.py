@@ -443,6 +443,72 @@ def build_repo_download_url(purl):
     return get_repo_download_url(purl)
 
 
+@download_router.route("pkg:hex/.*")
+def build_hex_download_url(purl):
+    """
+    Return a hex download URL from the `purl` string.
+    """
+    purl_data = PackageURL.from_string(purl)
+
+    name = purl_data.name
+    version = purl_data.version
+
+    if name and version:
+        return f"https://repo.hex.pm/tarballs/{name}-{version}.tar"
+
+
+@download_router.route("pkg:golang/.*")
+def build_golang_download_url(purl):
+    """
+    Return a golang download URL from the `purl` string.
+    """
+    purl_data = PackageURL.from_string(purl)
+
+    namespace = purl_data.namespace
+    name = purl_data.name
+    version = purl_data.version
+
+    if not name:
+        return
+
+    if namespace:
+        name = f"{namespace}/{name}"
+
+    if name and version:
+        return f"https://proxy.golang.org/{name}/@v/{version}.zip"
+
+
+@download_router.route("pkg:pub/.*")
+def build_pub_download_url(purl):
+    """
+    Return a pub download URL from the `purl` string.
+    """
+    purl_data = PackageURL.from_string(purl)
+
+    name = purl_data.name
+    version = purl_data.version
+
+    if name and version:
+        return f"https://pub.dev/api/archives/{name}-{version}.tar.gz"
+
+
+@download_router.route("pkg:swift/.*")
+def build_swift_download_url(purl):
+    """
+    Return a Swift Package download URL from the `purl` string.
+    """
+    purl_data = PackageURL.from_string(purl)
+
+    name = purl_data.name
+    version = purl_data.version
+    namespace = purl_data.namespace
+
+    if not (namespace or name or version):
+        return
+
+    return f"https://{namespace}/{name}/archive/{version}.zip"
+
+
 def get_repo_download_url(purl):
     """
     Return ``download_url`` if present in ``purl`` qualifiers or
