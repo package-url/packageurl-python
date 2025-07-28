@@ -101,6 +101,7 @@ def test_purl2url_get_download_url():
         "pkg:hex/plug@1.11.1": "https://repo.hex.pm/tarballs/plug-1.11.1.tar",
         "pkg:golang/xorm.io/xorm@v0.8.2": "https://proxy.golang.org/xorm.io/xorm/@v/v0.8.2.zip",
         "pkg:golang/gopkg.in/ldap.v3@v3.1.0": "https://proxy.golang.org/gopkg.in/ldap.v3/@v/v3.1.0.zip",
+        "pkg:golang/example.com/M.v3@v3.1.0": "https://proxy.golang.org/example.com/!m.v3/@v/v3.1.0.zip",
         "pkg:pub/http@0.13.3": "https://pub.dev/api/archives/http-0.13.3.tar.gz",
         "pkg:swift/github.com/Alamofire/Alamofire@5.4.3": "https://github.com/Alamofire/Alamofire/archive/5.4.3.zip",
         "pkg:swift/github.com/RxSwiftCommunity/RxFlow@2.12.4": "https://github.com/RxSwiftCommunity/RxFlow/archive/2.12.4.zip",

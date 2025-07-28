@@ -474,8 +474,11 @@ def build_golang_download_url(purl):
     if namespace:
         name = f"{namespace}/{name}"
 
+    ename = escape_path(name)
+    eversion = escape_path(version)
+
     if name and version:
-        return f"https://proxy.golang.org/{name}/@v/{version}.zip"
+        return f"https://proxy.golang.org/{ename}/@v/{eversion}.zip"
 
 
 @download_router.route("pkg:pub/.*")
@@ -536,3 +539,24 @@ def get_repo_download_url(purl):
     return get_repo_download_url_by_package_type(
         type=type, namespace=namespace, name=name, version=version
     )
+
+
+# TODO: https://github.com/package-url/packageurl-python/issues/196
+def escape_path(path: str) -> str:
+    """
+    Return an case-encoded module path or version name.
+
+    This is done by replacing every uppercase letter with an exclamation mark followed by the
+    corresponding lower-case letter, in order to avoid ambiguity when serving from case-insensitive
+    file systems.
+
+    See https://golang.org/ref/mod#goproxy-protocol.
+    """
+    escaped_path = ""
+    for c in path:
+        if c >= "A" and c <= "Z":
+            # replace uppercase with !lowercase
+            escaped_path += "!" + chr(ord(c) + ord("a") - ord("A"))
+        else:
+            escaped_path += c
+    return escaped_path
