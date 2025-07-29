@@ -475,8 +475,8 @@ def build_golang_download_url(purl):
     if namespace:
         name = f"{namespace}/{name}"
 
-    ename = escape_path(name)
-    eversion = escape_path(version)
+    ename = escape_golang_path(name)
+    eversion = escape_golang_path(version)
 
     if name and version:
         return f"https://proxy.golang.org/{ename}/@v/{eversion}.zip"
@@ -543,7 +543,7 @@ def get_repo_download_url(purl):
 
 
 # TODO: https://github.com/package-url/packageurl-python/issues/196
-def escape_path(path: str) -> str:
+def escape_golang_path(path: str) -> str:
     """
     Return an case-encoded module path or version name.
 
