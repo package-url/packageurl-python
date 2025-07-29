@@ -1,6 +1,12 @@
 Changelog
 =========
 
+0.17.2 (2025-07-29)
+-------------------
+
+- Add support for getting download URL for Golang, Hex, Pub and Swift in ``purl2url``.
+  https://github.com/package-url/packageurl-python/pull/195
+
 0.17.1 (2025-06-06)
 -------------------
 
