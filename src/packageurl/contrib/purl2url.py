@@ -471,6 +471,7 @@ def build_golang_download_url(purl):
     if not name:
         return
 
+    # TODO: https://github.com/package-url/packageurl-python/issues/197
     if namespace:
         name = f"{namespace}/{name}"
 
