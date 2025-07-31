@@ -105,6 +105,8 @@ def test_purl2url_get_download_url():
         "pkg:pub/http@0.13.3": "https://pub.dev/api/archives/http-0.13.3.tar.gz",
         "pkg:swift/github.com/Alamofire/Alamofire@5.4.3": "https://github.com/Alamofire/Alamofire/archive/5.4.3.zip",
         "pkg:swift/github.com/RxSwiftCommunity/RxFlow@2.12.4": "https://github.com/RxSwiftCommunity/RxFlow/archive/2.12.4.zip",
+        "pkg:luarocks/luasocket@3.1.0-1": "https://luarocks.org/luasocket-3.1.0-1.src.rock",
+        "pkg:luarocks/hisham/luafilesystem@1.8.0-1": "https://luarocks.org/luafilesystem-1.8.0-1.src.rock",
         # From `download_url` qualifier
         "pkg:github/yarnpkg/yarn@1.3.2?download_url=https://github.com/yarnpkg/yarn/releases/download/v1.3.2/yarn-v1.3.2.tar.gz&version_prefix=v": "https://github.com/yarnpkg/yarn/releases/download/v1.3.2/yarn-v1.3.2.tar.gz",
         "pkg:generic/lxc-master.tar.gz?download_url=https://salsa.debian.org/lxc-team/lxc/-/archive/master/lxc-master.tar.gz": "https://salsa.debian.org/lxc-team/lxc/-/archive/master/lxc-master.tar.gz",

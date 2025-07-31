@@ -513,6 +513,20 @@ def build_swift_download_url(purl):
     return f"https://{namespace}/{name}/archive/{version}.zip"
 
 
+@download_router.route("pkg:luarocks/.*")
+def build_luarocks_download_url(purl):
+    """
+    Return a LuaRocks download URL from the `purl` string.
+    """
+    purl_data = PackageURL.from_string(purl)
+
+    name = purl_data.name
+    version = purl_data.version
+
+    if name and version:
+        return f"https://luarocks.org/{name}-{version}.src.rock"
+
+
 def get_repo_download_url(purl):
     """
     Return ``download_url`` if present in ``purl`` qualifiers or
