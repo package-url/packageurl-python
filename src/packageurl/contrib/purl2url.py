@@ -520,11 +520,15 @@ def build_luarocks_download_url(purl):
     """
     purl_data = PackageURL.from_string(purl)
 
+    qualifiers = purl_data.qualifiers or {}
+
+    repository_url = qualifiers.get("repository_url", "https://luarocks.org")
+
     name = purl_data.name
     version = purl_data.version
 
     if name and version:
-        return f"https://luarocks.org/{name}-{version}.src.rock"
+        return f"{repository_url}/{name}-{version}.src.rock"
 
 
 @download_router.route("pkg:conda/.*")
