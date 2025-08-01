@@ -1,6 +1,14 @@
 Changelog
 =========
 
+0.17.3 (2025-08-01)
+-------------------
+
+- Add support for getting download URL for Luarocks, Conda, Alpm in ``purl2url``.
+  https://github.com/package-url/packageurl-python/pull/199
+- Fix Incorrect download url from build_golang_download_url()
+  https://github.com/package-url/packageurl-python/issues/198
+
 0.17.2 (2025-07-29)
 -------------------
 
