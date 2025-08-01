@@ -478,6 +478,9 @@ def build_golang_download_url(purl):
     ename = escape_golang_path(name)
     eversion = escape_golang_path(version)
 
+    if not eversion.startswith("v"):
+        eversion = "v" + eversion
+
     if name and version:
         return f"https://proxy.golang.org/{ename}/@v/{eversion}.zip"
 
