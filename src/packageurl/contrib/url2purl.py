@@ -728,3 +728,34 @@ def build_generic_google_code_archive_purl(uri):
                 name=name,
                 qualifiers={"download_url": uri},
             )
+
+@purl_router.route(
+    "oci://.*"
+)
+def build_oci_purl(uri):
+    digest = None
+    version_tag = None
+    uri = uri.split("oci://")[1]
+    uri_digest_split = uri.split("@")
+    if len(uri_digest_split) > 1:
+        digest = uri_digest_split[-1]
+        uri = uri_digest_split[0]
+    uri_version_split = uri.split(":")
+    if len(uri_version_split) > 1:
+        version_tag = uri_version_split[-1]
+        if "/" in version_tag:
+            # colon was used to identify port in URL
+            version_tag = None
+        else:
+            uri = uri.split(":" + version_tag)[0]
+    name_repo_split = get_path_segments(uri)
+    name = name_repo_split[-1]
+    repo = uri.split("/" + name)[0]
+    return PackageURL(
+        type="oci",
+        namespace="",
+        name=name,
+        qualifiers={"repository_url": repo, "tag": version_tag},
+        version=digest,
+        subpath="",
+    )
