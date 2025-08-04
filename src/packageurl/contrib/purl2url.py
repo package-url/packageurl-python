@@ -593,6 +593,57 @@ def build_alpm_download_url(purl_str):
     return url
 
 
+def normalize_version(version: str) -> str:
+    """
+    Remove the epoch (if any) from a Debian version.
+    E.g., "1:2.4.47-2" becomes "2.4.47-2"
+    """
+    if ":" in version:
+        _, v = version.split(":", 1)
+        return v
+    return version
+
+
+@download_router.route("pkg:deb/.*")
+def build_deb_download_url(purl_str: str) -> str:
+    """
+    Construct a download URL for a Debian or Ubuntu package PURL.
+    Supports optional 'repository_url' in qualifiers.
+    """
+    p = PackageURL.from_string(purl_str)
+
+    name = p.name
+    version = p.version
+    qualifiers = p.qualifiers or {}
+    arch = qualifiers.get("arch")
+    repository_url = qualifiers.get("repository_url")
+
+    # Use repository_url if provided, otherwise fall back to distro-specific default
+    if repository_url:
+        base_url = repository_url.rstrip("/")
+    else:
+        namespace = (p.namespace or "debian").lower()
+        if namespace == "debian":
+            base_url = "https://deb.debian.org/debian"
+        elif namespace == "ubuntu":
+            base_url = "http://archive.ubuntu.com/ubuntu"
+        else:
+            raise NotImplementedError(f"Unsupported distro namespace: {namespace}")
+
+    # Normalize version (e.g., remove epoch)
+    norm_version = normalize_version(version)
+
+    # Build filename
+    if arch == "source":
+        filename = f"{name}_{norm_version}.dsc"
+    else:
+        filename = f"{name}_{norm_version}_{arch}.deb"
+
+    pool_path = f"/pool/main/{name[0].lower()}/{name}"
+
+    return f"{base_url}{pool_path}/{filename}"
+
+
 def get_repo_download_url(purl):
     """
     Return ``download_url`` if present in ``purl`` qualifiers or

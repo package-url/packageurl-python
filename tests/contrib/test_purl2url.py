@@ -110,6 +110,8 @@ def test_purl2url_get_download_url():
         "pkg:luarocks/hisham/luafilesystem@1.8.0-1": "https://luarocks.org/luafilesystem-1.8.0-1.src.rock",
         "pkg:conda/absl-py@0.4.1?build=py36h06a4308_0&channel=main&subdir=linux-64&type=tar.bz2": "https://repo.anaconda.com/pkgs/main/linux-64/absl-py-0.4.1-py36h06a4308_0.tar.bz2",
         "pkg:alpm/arch/pacman@6.0.1-1?arch=x86_64": "https://archive.archlinux.org/packages/p/pacman/pacman-6.0.1-1-x86_64.pkg.tar.zst",
+        "pkg:deb/debian/attr@1:2.4.48-6?arch=amd64": "https://deb.debian.org/debian/pool/main/a/attr/attr_2.4.48-6_amd64.deb",
+        "pkg:deb/debian/attr@1:2.4.48-6?arch=amd64&repository_url=http://archive.debian.org/debian": "http://archive.debian.org/debian/pool/main/a/attr/attr_2.4.48-6_amd64.deb",
         # From `download_url` qualifier
         "pkg:github/yarnpkg/yarn@1.3.2?download_url=https://github.com/yarnpkg/yarn/releases/download/v1.3.2/yarn-v1.3.2.tar.gz&version_prefix=v": "https://github.com/yarnpkg/yarn/releases/download/v1.3.2/yarn-v1.3.2.tar.gz",
         "pkg:generic/lxc-master.tar.gz?download_url=https://salsa.debian.org/lxc-team/lxc/-/archive/master/lxc-master.tar.gz": "https://salsa.debian.org/lxc-team/lxc/-/archive/master/lxc-master.tar.gz",
