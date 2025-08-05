@@ -1,6 +1,12 @@
 Changelog
 =========
 
+0.17.4 (2025-08-05)
+-------------------
+
+- Add support for getting download URL for debian, apk, qpkg in ``purl2url``.
+  https://github.com/package-url/packageurl-python/pull/201
+
 0.17.3 (2025-08-01)
 -------------------
 
