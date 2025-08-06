@@ -647,21 +647,6 @@ def build_deb_download_url(purl_str: str) -> str:
     return f"{base_url}{pool_path}/{filename}"
 
 
-@download_router.route("pkg:qpkg/.*")
-def build_qpkg_download_url(purl: str) -> str:
-    purl = PackageURL.from_string(purl)
-    repo_url = purl.qualifiers.get("repo_url")
-
-    if not repo_url:
-        raise ValueError("repository_url qualifier is required for qpkg purl resolution")
-
-    if not purl.namespace or not purl.name or not purl.version:
-        raise ValueError("namespace, name, and version must be present in qpkg purl")
-
-    path = f"{purl.namespace}/{purl.name}/{purl.version}.qpkg"
-    return f"{repo_url.rstrip('/')}/{path}"
-
-
 @download_router.route("pkg:apk/.*")
 def build_apk_download_url(purl):
     """
