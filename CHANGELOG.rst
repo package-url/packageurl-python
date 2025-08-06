@@ -1,6 +1,12 @@
 Changelog
 =========
 
+0.17.5 (2025-08-06)
+-------------------
+
+- Remove support for getting download URL for qpkg in ``purl2url``.
+  https://github.com/package-url/packageurl-python/pull/202
+
 0.17.4 (2025-08-05)
 -------------------
 
