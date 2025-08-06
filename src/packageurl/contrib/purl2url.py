@@ -614,15 +614,20 @@ def build_deb_download_url(purl_str: str) -> str:
 
     name = p.name
     version = p.version
+    namespace = p.namespace
     qualifiers = p.qualifiers or {}
     arch = qualifiers.get("arch")
     repository_url = qualifiers.get("repository_url")
 
-    # Use repository_url if provided, otherwise fall back to distro-specific default
+    if not name or not version:
+        raise ValueError("Both name and version must be present in deb purl")
+
+    if not arch:
+        arch = "source"
+
     if repository_url:
         base_url = repository_url.rstrip("/")
     else:
-        namespace = (p.namespace or "debian").lower()
         if namespace == "debian":
             base_url = "https://deb.debian.org/debian"
         elif namespace == "ubuntu":
@@ -630,10 +635,8 @@ def build_deb_download_url(purl_str: str) -> str:
         else:
             raise NotImplementedError(f"Unsupported distro namespace: {namespace}")
 
-    # Normalize version (e.g., remove epoch)
     norm_version = normalize_version(version)
 
-    # Build filename
     if arch == "source":
         filename = f"{name}_{norm_version}.dsc"
     else:
