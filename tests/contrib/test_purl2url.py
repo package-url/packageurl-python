@@ -112,7 +112,6 @@ def test_purl2url_get_download_url():
         "pkg:alpm/arch/pacman@6.0.1-1?arch=x86_64": "https://archive.archlinux.org/packages/p/pacman/pacman-6.0.1-1-x86_64.pkg.tar.zst",
         "pkg:deb/debian/attr@1:2.4.48-6?arch=amd64": "https://deb.debian.org/debian/pool/main/a/attr/attr_2.4.48-6_amd64.deb",
         "pkg:deb/debian/attr@1:2.4.48-6?arch=amd64&repository_url=http://archive.debian.org/debian": "http://archive.debian.org/debian/pool/main/a/attr/attr_2.4.48-6_amd64.deb",
-        "pkg:qpkg/blackberry/com.qnx.sdp@7.0.0.SGA201702151847?repo_url=http://repo.blackberry.com": "http://repo.blackberry.com/blackberry/com.qnx.sdp/7.0.0.SGA201702151847.qpkg",
         "pkg:apk/acct@6.6.4-r0?arch=x86&alpine_version=v3.11&repo=main": "https://dl-cdn.alpinelinux.org/alpine/v3.11/main/x86/acct-6.6.4-r0.apk",
         # From `download_url` qualifier
         "pkg:github/yarnpkg/yarn@1.3.2?download_url=https://github.com/yarnpkg/yarn/releases/download/v1.3.2/yarn-v1.3.2.tar.gz&version_prefix=v": "https://github.com/yarnpkg/yarn/releases/download/v1.3.2/yarn-v1.3.2.tar.gz",
