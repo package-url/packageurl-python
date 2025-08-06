@@ -593,6 +593,100 @@ def build_alpm_download_url(purl_str):
     return url
 
 
+def normalize_version(version: str) -> str:
+    """
+    Remove the epoch (if any) from a Debian version.
+    E.g., "1:2.4.47-2" becomes "2.4.47-2"
+    """
+    if ":" in version:
+        _, v = version.split(":", 1)
+        return v
+    return version
+
+
+@download_router.route("pkg:deb/.*")
+def build_deb_download_url(purl_str: str) -> str:
+    """
+    Construct a download URL for a Debian or Ubuntu package PURL.
+    Supports optional 'repository_url' in qualifiers.
+    """
+    p = PackageURL.from_string(purl_str)
+
+    name = p.name
+    version = p.version
+    namespace = p.namespace
+    qualifiers = p.qualifiers or {}
+    arch = qualifiers.get("arch")
+    repository_url = qualifiers.get("repository_url")
+
+    if not name or not version:
+        raise ValueError("Both name and version must be present in deb purl")
+
+    if not arch:
+        arch = "source"
+
+    if repository_url:
+        base_url = repository_url.rstrip("/")
+    else:
+        if namespace == "debian":
+            base_url = "https://deb.debian.org/debian"
+        elif namespace == "ubuntu":
+            base_url = "http://archive.ubuntu.com/ubuntu"
+        else:
+            raise NotImplementedError(f"Unsupported distro namespace: {namespace}")
+
+    norm_version = normalize_version(version)
+
+    if arch == "source":
+        filename = f"{name}_{norm_version}.dsc"
+    else:
+        filename = f"{name}_{norm_version}_{arch}.deb"
+
+    pool_path = f"/pool/main/{name[0].lower()}/{name}"
+
+    return f"{base_url}{pool_path}/{filename}"
+
+
+@download_router.route("pkg:qpkg/.*")
+def build_qpkg_download_url(purl: str) -> str:
+    purl = PackageURL.from_string(purl)
+    repo_url = purl.qualifiers.get("repo_url")
+
+    if not repo_url:
+        raise ValueError("repository_url qualifier is required for qpkg purl resolution")
+
+    if not purl.namespace or not purl.name or not purl.version:
+        raise ValueError("namespace, name, and version must be present in qpkg purl")
+
+    path = f"{purl.namespace}/{purl.name}/{purl.version}.qpkg"
+    return f"{repo_url.rstrip('/')}/{path}"
+
+
+@download_router.route("pkg:apk/.*")
+def build_apk_download_url(purl):
+    """
+    Return a download URL for a fully qualified Alpine Linux package PURL.
+
+    Example:
+    pkg:apk/acct@6.6.4-r0?arch=x86&alpine_version=v3.11&repo=main
+    """
+    purl = PackageURL.from_string(purl)
+    name = purl.name
+    version = purl.version
+    arch = purl.qualifiers.get("arch")
+    repo = purl.qualifiers.get("repo")
+    alpine_version = purl.qualifiers.get("alpine_version")
+
+    if not name or not version or not arch or not repo or not alpine_version:
+        raise ValueError(
+            "All qualifiers (arch, repo, alpine_version) and name/version must be present in apk purl"
+        )
+
+    return (
+        f"https://dl-cdn.alpinelinux.org/alpine/{alpine_version}/{repo}/{arch}/{name}-{version}.apk"
+    )
+
+
 def get_repo_download_url(purl):
     """
     Return ``download_url`` if present in ``purl`` qualifiers or
