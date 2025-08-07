@@ -60,7 +60,7 @@ jobs:
           pip install -e .[build]
 
       - name: Test
-        run: py.test -vvs /tests
+        run: py.test -vvs --ignore=spec/
 
       - name: Build
         run: python setup.py build sdist bdist_wheel
