@@ -25,7 +25,7 @@ jobs:
       - name: Validate
         run: |
           isort --check-only src/ tests/
-          black --check --line-length 100 .
+          black --check --line-length 100 src/ tests/
           mypy
 
   build-and-test:
