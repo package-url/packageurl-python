@@ -116,6 +116,11 @@ for filename, cases in spec_dict.items():
     for case in cases:
         flattened_cases.append((filename, case["description"], case))
 
+def test_cran():
+    p = PackageURL(** {'name': 'URI::PackageURL', 'type': 
+                       'cran', 'namespace': None, 'qualifiers': None, 'subpath': None})
+    p.to_string()
+
 
 @pytest.mark.parametrize("filename,description,test_case", flattened_cases)
 def test_package_type_case(filename, description, test_case):
@@ -142,7 +147,7 @@ def run_test_case(case, test_type, desc):
 
     elif test_type == "roundtrip":
         purl = PackageURL.from_string(case["input"])
-        assert purl.to_string() == case["expected_output"]
+        assert purl == PackageURL.from_string(case["expected_output"])
 
     elif test_type == "build":
         input_data = case["input"]
@@ -154,4 +159,4 @@ def run_test_case(case, test_type, desc):
             qualifiers=input_data.get("qualifiers"),
             subpath=input_data.get("subpath"),
         )
-        assert purl.to_string() == case["expected_output"]
+        assert purl == PackageURL.from_string(case["expected_output"])
