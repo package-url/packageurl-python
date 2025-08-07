@@ -47,10 +47,14 @@ tests = test_cases["tests"]
 parse_tests = [t for t in tests if t["test_type"] == "parse"]
 build_tests = [t for t in tests if t["test_type"] == "build"]
 
-@pytest.mark.parametrize("description, input_str, expected_output, expected_failure", [
-    (t["description"], t["input"], t["expected_output"], t["expected_failure"])
-    for t in parse_tests
-])
+
+@pytest.mark.parametrize(
+    "description, input_str, expected_output, expected_failure",
+    [
+        (t["description"], t["input"], t["expected_output"], t["expected_failure"])
+        for t in parse_tests
+    ],
+)
 def test_parse(description, input_str, expected_output, expected_failure):
     if expected_failure:
         with pytest.raises(Exception):
@@ -61,10 +65,13 @@ def test_parse(description, input_str, expected_output, expected_failure):
         assert result.to_string() == expected_output
 
 
-@pytest.mark.parametrize("description, input_dict, expected_output, expected_failure", [
-    (t["description"], t["input"], t["expected_output"], t["expected_failure"])
-    for t in build_tests
-])
+@pytest.mark.parametrize(
+    "description, input_dict, expected_output, expected_failure",
+    [
+        (t["description"], t["input"], t["expected_output"], t["expected_failure"])
+        for t in build_tests
+    ],
+)
 def test_build(description, input_dict, expected_output, expected_failure):
     kwargs = {
         "type": input_dict.get("type"),
@@ -92,7 +99,7 @@ def load_spec_files(spec_dir):
     for filename in os.listdir(spec_dir):
         if filename.endswith("-test.json"):
             filepath = os.path.join(spec_dir, filename)
-            with open(filepath, 'r', encoding='utf-8') as f:
+            with open(filepath, "r", encoding="utf-8") as f:
                 try:
                     data = json.load(f)
                     spec_data[filename] = data["tests"]
@@ -101,7 +108,7 @@ def load_spec_files(spec_dir):
     return spec_data
 
 
-SPEC_DIR = os.path.join(os.path.dirname(__file__), '..', 'spec', 'tests', 'types')
+SPEC_DIR = os.path.join(os.path.dirname(__file__), "..", "spec", "tests", "types")
 spec_dict = load_spec_files(SPEC_DIR)
 
 flattened_cases = []
