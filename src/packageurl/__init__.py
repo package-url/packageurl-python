@@ -178,7 +178,7 @@ def normalize_qualifiers(
     Raise ValueError on errors.
     """
     if not qualifiers:
-        return None if encode else {}
+        return None
 
     if isinstance(qualifiers, basestring):
         qualifiers_str = qualifiers if isinstance(qualifiers, str) else qualifiers.decode("utf-8")
