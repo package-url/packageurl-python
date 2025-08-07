@@ -463,8 +463,15 @@ class PackageURL(
         type_, sep, remainder = remainder.partition("/")
         if not type_ or not sep:
             raise ValueError(f"purl is missing the required type component: {purl!r}.")
-        
-        # check if type starts with a number
+
+        if not all(c in string.ascii_letters + string.digits + "-._" for c in type_):
+            raise ValueError(
+                f"purl type must be composed only of ASCII letters and numbers, period, dash and underscore: {type_!r}."
+            )
+
+        if ":" in type_:
+            raise ValueError(f"purl type cannot contain a colon: {type_!r}.")
+
         if type_[0] in string.digits:
             raise ValueError(f"purl type cannot start with a number: {type_!r}.")
 

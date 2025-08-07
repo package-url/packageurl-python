@@ -31,6 +31,7 @@ def test_parse(description, input_str, expected_output, expected_failure):
     if expected_failure:
         with pytest.raises(Exception):
             PackageURL.from_string(input_str)
+        # assert None ==PackageURL.from_string(input_str)
     else:
         result = PackageURL.from_string(input_str)
         assert result.to_string() == expected_output
