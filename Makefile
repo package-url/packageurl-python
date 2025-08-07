@@ -26,7 +26,7 @@
 PYTHON_EXE?=python3
 ACTIVATE?=. bin/activate;
 VIRTUALENV_PYZ=thirdparty/virtualenv.pyz
-BLACK_ARGS=--exclude=".cache|lib|bin|var" --line-length 100
+BLACK_ARGS=--exclude=".cache|lib|bin|var|^spec/" --line-length 100
 
 virtualenv:
 	@echo "-> Bootstrap the virtualenv with PYTHON_EXE=${PYTHON_EXE}"
