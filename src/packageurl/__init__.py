@@ -133,7 +133,7 @@ def normalize_name(
     quoter = get_quoter(encode)
     name_str = quoter(name_str)
     name_str = name_str.strip().strip("/")
-    if ptype in ("bitbucket", "github", "pypi", "gitlab"):
+    if ptype in ("bitbucket", "github", "pypi", "gitlab", "huggingface"):
         name_str = name_str.lower()
     if ptype == "pypi":
         name_str = name_str.replace("_", "-")
@@ -178,7 +178,7 @@ def normalize_qualifiers(
     Raise ValueError on errors.
     """
     if not qualifiers:
-        return None if encode else {}
+        return None
 
     if isinstance(qualifiers, basestring):
         qualifiers_str = qualifiers if isinstance(qualifiers, str) else qualifiers.decode("utf-8")
@@ -463,6 +463,17 @@ class PackageURL(
         type_, sep, remainder = remainder.partition("/")
         if not type_ or not sep:
             raise ValueError(f"purl is missing the required type component: {purl!r}.")
+
+        if not all(c in string.ascii_letters + string.digits + "-._" for c in type_):
+            raise ValueError(
+                f"purl type must be composed only of ASCII letters and numbers, period, dash and underscore: {type_!r}."
+            )
+
+        if ":" in type_:
+            raise ValueError(f"purl type cannot contain a colon: {type_!r}.")
+
+        if type_[0] in string.digits:
+            raise ValueError(f"purl type cannot start with a number: {type_!r}.")
 
         type_ = type_.lower()
 
