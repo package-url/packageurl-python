@@ -78,7 +78,8 @@ def get_download_url(purl):
 
     # Fallback on the `download_url` qualifier when available.
     purl_data = PackageURL.from_string(purl)
-    return purl_data.qualifiers.get("download_url", None)
+    if purl_data.qualifiers:
+        return purl_data.qualifiers.get("download_url", None)
 
 
 def get_inferred_urls(purl):
