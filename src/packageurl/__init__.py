@@ -116,7 +116,7 @@ def normalize_namespace(
 
     namespace_str = namespace if isinstance(namespace, str) else namespace.decode("utf-8")
     namespace_str = namespace_str.strip().strip("/")
-    if ptype in ("bitbucket", "github", "pypi", "gitlab"):
+    if ptype in ("bitbucket", "github", "pypi", "gitlab", "composer"):
         namespace_str = namespace_str.lower()
     segments = [seg for seg in namespace_str.split("/") if seg.strip()]
     segments_quoted = map(get_quoter(encode), segments)
@@ -124,7 +124,10 @@ def normalize_namespace(
 
 
 def normalize_name(
-    name: AnyStr | None, ptype: str | None, encode: bool | None = True
+    name: AnyStr | None,
+    qualifiers: str | dict | None,
+    ptype: str | None,
+    encode: bool | None = True,
 ) -> str | None:
     if not name:
         return None
@@ -133,20 +136,38 @@ def normalize_name(
     quoter = get_quoter(encode)
     name_str = quoter(name_str)
     name_str = name_str.strip().strip("/")
-    if ptype in ("bitbucket", "github", "pypi", "gitlab", "huggingface"):
+    if ptype and ptype in ("mlflow"):
+        # MLflow purl names are case-sensitive for Azure ML, it is case sensitive and must be kept as-is in the package URL
+        # For Databricks, it is case insensitive and must be lowercased in the package URL
+        if isinstance(qualifiers, dict):
+            repo_url = qualifiers.get("repository_url")
+            if repo_url and "azureml" in repo_url.lower():
+                return name_str
+            if repo_url and "databricks" in repo_url.lower():
+                return name_str.lower()
+        if isinstance(qualifiers, str):
+            if "azureml" in qualifiers.lower():
+                return name_str
+            if "databricks" in qualifiers.lower():
+                return name_str.lower()
+    if ptype in ("bitbucket", "github", "pypi", "gitlab", "composer"):
         name_str = name_str.lower()
     if ptype == "pypi":
         name_str = name_str.replace("_", "-")
     return name_str or None
 
 
-def normalize_version(version: AnyStr | None, encode: bool | None = True) -> str | None:
+def normalize_version(
+    version: AnyStr | None, ptype: str | None, encode: bool | None = True
+) -> str | None:
     if not version:
         return None
 
     version_str = version if isinstance(version, str) else version.decode("utf-8")
     quoter = get_quoter(encode)
     version_str = quoter(version_str.strip())
+    if ptype and ptype in ("huggingface"):
+        return version_str.lower()
     return version_str or None
 
 
@@ -304,8 +325,8 @@ def normalize(
     """
     type_norm = normalize_type(type, encode)
     namespace_norm = normalize_namespace(namespace, type_norm, encode)
-    name_norm = normalize_name(name, type_norm, encode)
-    version_norm = normalize_version(version, encode)
+    name_norm = normalize_name(name, qualifiers, type_norm, encode)
+    version_norm = normalize_version(version, type, encode)
     qualifiers_norm = normalize_qualifiers(qualifiers, encode)
     subpath_norm = normalize_subpath(subpath, encode)
     return type_norm, namespace_norm, name_norm, version_norm, qualifiers_norm, subpath_norm

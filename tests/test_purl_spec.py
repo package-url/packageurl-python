@@ -138,7 +138,10 @@ def run_test_case(case, test_type, desc):
         assert purl.namespace == expected["namespace"]
         assert purl.name == expected["name"]
         assert purl.version == expected["version"]
-        assert purl.qualifiers == expected["qualifiers"]
+        if expected["qualifiers"]:
+            assert purl.qualifiers == expected["qualifiers"]
+        else:
+            assert not purl.qualifiers
         assert purl.subpath == expected["subpath"]
 
     elif test_type == "roundtrip":
