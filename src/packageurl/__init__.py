@@ -29,6 +29,7 @@ from collections import namedtuple
 from collections.abc import Mapping
 from typing import TYPE_CHECKING
 from typing import Any
+from typing import Optional
 from typing import Union
 from typing import overload
 from urllib.parse import quote as _percent_quote
@@ -125,7 +126,7 @@ def normalize_namespace(
 
 def normalize_name(
     name: AnyStr | None,
-    qualifiers: str | dict | None,
+    qualifiers: Union[Union[str, bytes], dict[str, str], None],
     ptype: str | None,
     encode: bool | None = True,
 ) -> str | None:
@@ -158,7 +159,7 @@ def normalize_name(
 
 
 def normalize_version(
-    version: AnyStr | None, ptype: str | None, encode: bool | None = True
+    version: AnyStr | None, ptype: Optional[Union[str, bytes]], encode: bool | None = True
 ) -> str | None:
     if not version:
         return None
@@ -166,7 +167,7 @@ def normalize_version(
     version_str = version if isinstance(version, str) else version.decode("utf-8")
     quoter = get_quoter(encode)
     version_str = quoter(version_str.strip())
-    if ptype and ptype in ("huggingface"):
+    if ptype and isinstance(ptype, str) and ptype in ("huggingface"):
         return version_str.lower()
     return version_str or None
 
@@ -498,6 +499,8 @@ class PackageURL(
 
         type_ = type_.lower()
 
+        original_remainder = remainder
+
         scheme, authority, path, qualifiers_str, subpath = _urlsplit(
             url=remainder, scheme="", allow_fragments=True
         )
@@ -512,7 +515,9 @@ class PackageURL(
             path = authority + ":" + path
 
         if scheme:
-            path = scheme + ":" + path
+            # This is a way to preserve the casing of the original scheme
+            original_scheme = original_remainder.split(":", 1)[0]
+            path = original_scheme + ":" + path
 
         path = path.lstrip("/")
 
