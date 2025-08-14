@@ -26,7 +26,7 @@
 PYTHON_EXE?=python3
 ACTIVATE?=. bin/activate;
 VIRTUALENV_PYZ=thirdparty/virtualenv.pyz
-BLACK_ARGS=--exclude=".cache|lib|bin|var" --line-length 100
+BLACK_ARGS=src/ --exclude="\.cache|lib|bin|var" --line-length 100
 
 virtualenv:
 	@echo "-> Bootstrap the virtualenv with PYTHON_EXE=${PYTHON_EXE}"
@@ -52,7 +52,7 @@ isort:
 
 black:
 	@echo "-> Apply black code formatter"
-	@${ACTIVATE} black ${BLACK_ARGS} .
+	@${ACTIVATE} black ${BLACK_ARGS}
 
 mypy:
 	@echo "-> Type check the Python code."
