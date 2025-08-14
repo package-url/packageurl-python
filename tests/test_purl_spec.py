@@ -117,7 +117,6 @@ for filename, cases in spec_dict.items():
         flattened_cases.append((filename, case["description"], case))
 
 
-
 @pytest.mark.parametrize("filename,description,test_case", flattened_cases)
 def test_package_type_case(filename, description, test_case):
     test_type = test_case["test_type"]

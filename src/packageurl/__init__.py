@@ -80,11 +80,13 @@ def unquote(s: AnyStr) -> str:
 
 
 @overload
-def get_quoter(encode: bool = True) -> Callable[[AnyStr], str]: ...
+def get_quoter(encode: bool = True) -> Callable[[AnyStr], str]:
+    ...
 
 
 @overload
-def get_quoter(encode: None) -> Callable[[str], str]: ...
+def get_quoter(encode: None) -> Callable[[str], str]:
+    ...
 
 
 def get_quoter(encode: bool | None = True) -> Callable[[AnyStr], str] | Callable[[str], str]:
@@ -175,19 +177,22 @@ def normalize_version(
 @overload
 def normalize_qualifiers(
     qualifiers: AnyStr | dict[str, str] | None, encode: Literal[True] = ...
-) -> str | None: ...
+) -> str | None:
+    ...
 
 
 @overload
 def normalize_qualifiers(
     qualifiers: AnyStr | dict[str, str] | None, encode: Literal[False] | None
-) -> dict[str, str]: ...
+) -> dict[str, str]:
+    ...
 
 
 @overload
 def normalize_qualifiers(
     qualifiers: AnyStr | dict[str, str] | None, encode: bool | None = ...
-) -> str | dict[str, str] | None: ...
+) -> str | dict[str, str] | None:
+    ...
 
 
 def normalize_qualifiers(
@@ -278,7 +283,8 @@ def normalize(
     qualifiers: AnyStr | dict[str, str] | None,
     subpath: AnyStr | None,
     encode: Literal[True] = ...,
-) -> tuple[str, str | None, str, str | None, str | None, str | None]: ...
+) -> tuple[str, str | None, str, str | None, str | None, str | None]:
+    ...
 
 
 @overload
@@ -290,7 +296,8 @@ def normalize(
     qualifiers: AnyStr | dict[str, str] | None,
     subpath: AnyStr | None,
     encode: Literal[False] | None,
-) -> tuple[str, str | None, str, str | None, dict[str, str], str | None]: ...
+) -> tuple[str, str | None, str, str | None, dict[str, str], str | None]:
+    ...
 
 
 @overload
@@ -302,7 +309,8 @@ def normalize(
     qualifiers: AnyStr | dict[str, str] | None,
     subpath: AnyStr | None,
     encode: bool | None = ...,
-) -> tuple[str, str | None, str, str | None, str | dict[str, str] | None, str | None]: ...
+) -> tuple[str, str | None, str, str | None, str | dict[str, str] | None, str | None]:
+    ...
 
 
 def normalize(
