@@ -124,12 +124,32 @@ def normalize_namespace(
     return "/".join(segments_quoted) or None
 
 
+def normalize_mlflow_name(
+    name_str: str,
+    qualifiers: Union[str, bytes, dict[str, str], None],
+) -> Optional[str]:
+    """MLflow purl names are case-sensitive for Azure ML, it is case sensitive and must be kept as-is in the package URL
+    For Databricks, it is case insensitive and must be lowercased in the package URL"""
+    if isinstance(qualifiers, dict):
+        repo_url = qualifiers.get("repository_url")
+        if repo_url and "azureml" in repo_url.lower():
+            return name_str
+        if repo_url and "databricks" in repo_url.lower():
+            return name_str.lower()
+    if isinstance(qualifiers, str):
+        if "azureml" in qualifiers.lower():
+            return name_str
+        if "databricks" in qualifiers.lower():
+            return name_str.lower()
+    return name_str
+
+
 def normalize_name(
     name: AnyStr | None,
     qualifiers: Union[Union[str, bytes], dict[str, str], None],
     ptype: str | None,
     encode: bool | None = True,
-) -> str | None:
+) -> Optional[str]:
     if not name:
         return None
 
@@ -138,19 +158,7 @@ def normalize_name(
     name_str = quoter(name_str)
     name_str = name_str.strip().strip("/")
     if ptype and ptype in ("mlflow"):
-        # MLflow purl names are case-sensitive for Azure ML, it is case sensitive and must be kept as-is in the package URL
-        # For Databricks, it is case insensitive and must be lowercased in the package URL
-        if isinstance(qualifiers, dict):
-            repo_url = qualifiers.get("repository_url")
-            if repo_url and "azureml" in repo_url.lower():
-                return name_str
-            if repo_url and "databricks" in repo_url.lower():
-                return name_str.lower()
-        if isinstance(qualifiers, str):
-            if "azureml" in qualifiers.lower():
-                return name_str
-            if "databricks" in qualifiers.lower():
-                return name_str.lower()
+        return normalize_mlflow_name(name_str, qualifiers)
     if ptype in ("bitbucket", "github", "pypi", "gitlab", "composer"):
         name_str = name_str.lower()
     if ptype == "pypi":
@@ -486,13 +494,11 @@ class PackageURL(
         if not type_ or not sep:
             raise ValueError(f"purl is missing the required type component: {purl!r}.")
 
-        if not all(c in string.ascii_letters + string.digits + "-._" for c in type_):
+        valid_chars = string.ascii_letters + string.digits + ".-_"
+        if not all(c in valid_chars for c in type_):
             raise ValueError(
                 f"purl type must be composed only of ASCII letters and numbers, period, dash and underscore: {type_!r}."
             )
-
-        if ":" in type_:
-            raise ValueError(f"purl type cannot contain a colon: {type_!r}.")
 
         if type_[0] in string.digits:
             raise ValueError(f"purl type cannot start with a number: {type_!r}.")

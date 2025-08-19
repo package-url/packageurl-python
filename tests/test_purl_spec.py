@@ -33,19 +33,40 @@ current_dir = os.path.dirname(__file__)
 root_dir = os.path.abspath(os.path.join(current_dir, ".."))
 spec_file_path = os.path.join(root_dir, "spec", "tests", "spec", "specification-test.json")
 
-valid_purl_types_file = os.path.join(root_dir, "spec", "purl-types-index.json")
-
-
 with open(spec_file_path, "r", encoding="utf-8") as f:
     test_cases = json.load(f)
-
-with open(valid_purl_types_file, "r", encoding="utf-8") as f:
-    valid_purl_types = json.load(f)
 
 tests = test_cases["tests"]
 
 parse_tests = [t for t in tests if t["test_type"] == "parse"]
 build_tests = [t for t in tests if t["test_type"] == "build"]
+
+
+def load_spec_files(spec_dir):
+    """
+    Load all JSON files from the given directory into a dictionary.
+    Key = filename, Value = parsed JSON content
+    """
+    spec_data = {}
+    for filename in os.listdir(spec_dir):
+        if filename.endswith("-test.json"):
+            filepath = os.path.join(spec_dir, filename)
+            with open(filepath, "r", encoding="utf-8") as f:
+                try:
+                    data = json.load(f)
+                    spec_data[filename] = data["tests"]
+                except json.JSONDecodeError as e:
+                    print(f"Error parsing {filename}: {e}")
+    return spec_data
+
+
+SPEC_DIR = os.path.join(os.path.dirname(__file__), "..", "spec", "tests", "types")
+spec_dict = load_spec_files(SPEC_DIR)
+
+flattened_cases = []
+for filename, cases in spec_dict.items():
+    for case in cases:
+        flattened_cases.append((filename, case["description"], case))
 
 
 @pytest.mark.parametrize(
@@ -59,7 +80,6 @@ def test_parse(description, input_str, expected_output, expected_failure):
     if expected_failure:
         with pytest.raises(Exception):
             PackageURL.from_string(input_str)
-        # assert None ==PackageURL.from_string(input_str)
     else:
         result = PackageURL.from_string(input_str)
         assert result.to_string() == expected_output
@@ -88,33 +108,6 @@ def test_build(description, input_dict, expected_output, expected_failure):
     else:
         purl = PackageURL(**kwargs)
         assert purl.to_string() == expected_output
-
-
-def load_spec_files(spec_dir):
-    """
-    Load all JSON files from the given directory into a dictionary.
-    Key = filename, Value = parsed JSON content
-    """
-    spec_data = {}
-    for filename in os.listdir(spec_dir):
-        if filename.endswith("-test.json"):
-            filepath = os.path.join(spec_dir, filename)
-            with open(filepath, "r", encoding="utf-8") as f:
-                try:
-                    data = json.load(f)
-                    spec_data[filename] = data["tests"]
-                except json.JSONDecodeError as e:
-                    print(f"Error parsing {filename}: {e}")
-    return spec_data
-
-
-SPEC_DIR = os.path.join(os.path.dirname(__file__), "..", "spec", "tests", "types")
-spec_dict = load_spec_files(SPEC_DIR)
-
-flattened_cases = []
-for filename, cases in spec_dict.items():
-    for case in cases:
-        flattened_cases.append((filename, case["description"], case))
 
 
 @pytest.mark.parametrize("filename,description,test_case", flattened_cases)
