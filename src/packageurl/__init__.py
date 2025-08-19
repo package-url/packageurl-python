@@ -29,6 +29,7 @@ from collections import namedtuple
 from collections.abc import Mapping
 from typing import TYPE_CHECKING
 from typing import Any
+from typing import Optional
 from typing import Union
 from typing import overload
 from urllib.parse import quote as _percent_quote
@@ -116,16 +117,39 @@ def normalize_namespace(
 
     namespace_str = namespace if isinstance(namespace, str) else namespace.decode("utf-8")
     namespace_str = namespace_str.strip().strip("/")
-    if ptype in ("bitbucket", "github", "pypi", "gitlab"):
+    if ptype in ("bitbucket", "github", "pypi", "gitlab", "composer"):
         namespace_str = namespace_str.lower()
     segments = [seg for seg in namespace_str.split("/") if seg.strip()]
     segments_quoted = map(get_quoter(encode), segments)
     return "/".join(segments_quoted) or None
 
 
+def normalize_mlflow_name(
+    name_str: str,
+    qualifiers: Union[str, bytes, dict[str, str], None],
+) -> Optional[str]:
+    """MLflow purl names are case-sensitive for Azure ML, it is case sensitive and must be kept as-is in the package URL
+    For Databricks, it is case insensitive and must be lowercased in the package URL"""
+    if isinstance(qualifiers, dict):
+        repo_url = qualifiers.get("repository_url")
+        if repo_url and "azureml" in repo_url.lower():
+            return name_str
+        if repo_url and "databricks" in repo_url.lower():
+            return name_str.lower()
+    if isinstance(qualifiers, str):
+        if "azureml" in qualifiers.lower():
+            return name_str
+        if "databricks" in qualifiers.lower():
+            return name_str.lower()
+    return name_str
+
+
 def normalize_name(
-    name: AnyStr | None, ptype: str | None, encode: bool | None = True
-) -> str | None:
+    name: AnyStr | None,
+    qualifiers: Union[Union[str, bytes], dict[str, str], None],
+    ptype: str | None,
+    encode: bool | None = True,
+) -> Optional[str]:
     if not name:
         return None
 
@@ -133,20 +157,26 @@ def normalize_name(
     quoter = get_quoter(encode)
     name_str = quoter(name_str)
     name_str = name_str.strip().strip("/")
-    if ptype in ("bitbucket", "github", "pypi", "gitlab"):
+    if ptype and ptype in ("mlflow"):
+        return normalize_mlflow_name(name_str, qualifiers)
+    if ptype in ("bitbucket", "github", "pypi", "gitlab", "composer"):
         name_str = name_str.lower()
     if ptype == "pypi":
         name_str = name_str.replace("_", "-")
     return name_str or None
 
 
-def normalize_version(version: AnyStr | None, encode: bool | None = True) -> str | None:
+def normalize_version(
+    version: AnyStr | None, ptype: Optional[Union[str, bytes]], encode: bool | None = True
+) -> str | None:
     if not version:
         return None
 
     version_str = version if isinstance(version, str) else version.decode("utf-8")
     quoter = get_quoter(encode)
     version_str = quoter(version_str.strip())
+    if ptype and isinstance(ptype, str) and ptype in ("huggingface"):
+        return version_str.lower()
     return version_str or None
 
 
@@ -304,8 +334,8 @@ def normalize(
     """
     type_norm = normalize_type(type, encode)
     namespace_norm = normalize_namespace(namespace, type_norm, encode)
-    name_norm = normalize_name(name, type_norm, encode)
-    version_norm = normalize_version(version, encode)
+    name_norm = normalize_name(name, qualifiers, type_norm, encode)
+    version_norm = normalize_version(version, type, encode)
     qualifiers_norm = normalize_qualifiers(qualifiers, encode)
     subpath_norm = normalize_subpath(subpath, encode)
     return type_norm, namespace_norm, name_norm, version_norm, qualifiers_norm, subpath_norm
@@ -464,7 +494,18 @@ class PackageURL(
         if not type_ or not sep:
             raise ValueError(f"purl is missing the required type component: {purl!r}.")
 
+        valid_chars = string.ascii_letters + string.digits + ".-_"
+        if not all(c in valid_chars for c in type_):
+            raise ValueError(
+                f"purl type must be composed only of ASCII letters and numbers, period, dash and underscore: {type_!r}."
+            )
+
+        if type_[0] in string.digits:
+            raise ValueError(f"purl type cannot start with a number: {type_!r}.")
+
         type_ = type_.lower()
+
+        original_remainder = remainder
 
         scheme, authority, path, qualifiers_str, subpath = _urlsplit(
             url=remainder, scheme="", allow_fragments=True
@@ -480,7 +521,9 @@ class PackageURL(
             path = authority + ":" + path
 
         if scheme:
-            path = scheme + ":" + path
+            # This is a way to preserve the casing of the original scheme
+            original_scheme = original_remainder.split(":", 1)[0]
+            path = original_scheme + ":" + path
 
         path = path.lstrip("/")
 
