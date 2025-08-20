@@ -24,6 +24,7 @@
 
 from __future__ import annotations
 
+import re
 import string
 from collections import namedtuple
 from collections.abc import Mapping
@@ -468,6 +469,40 @@ class PackageURL(
             purl.append(subpath)
 
         return "".join(purl)
+
+
+    @classmethod
+    def validate_alpm(cls):
+        """Type-specific validation for ALPM PURLs."""
+        if cls.namespace.lower() != cls.namespace:
+            return False, "Namespace must be lowercase."
+        if cls.name.lower() != cls.name:
+            return False, "Package name must be lowercase."
+        if not re.match(r"^[0-9]*:?[\w\.\+\-]+$", cls.version):
+            return False, f"Invalid version format '{cls.version}'."
+
+        if cls.qualifiers:
+            for key in cls.qualifiers:
+                if key != "arch":
+                    return False, f"Unknown qualifier '{key}', only 'arch' is allowed."
+                if not cls.qualifiers[key]:
+                    return False, "Qualifier 'arch' cannot be empty."
+
+
+    @classmethod
+    def validate(cls):
+        """
+        Main validation function.
+        Runs basic validation first, then dispatches to type-specific validators.
+        Yields error messages only.
+        """
+        yield from cls.validate_basic()
+
+        validator_by_type: dict[str, Callable[[str], Iterable[str]]] = {
+            "alpm": cls.validate_alpm,
+        }
+
+        yield from validator_by_type()
 
     @classmethod
     def from_string(cls, purl: str) -> Self:
