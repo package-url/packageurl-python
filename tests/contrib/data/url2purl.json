@@ -274,5 +274,8 @@
   "": null,
   "https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/android-notifier/android-notifier-desktop-0.5.1-1.i386.rpm": "pkg:generic/code.google.com/android-notifier?download_url=https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/android-notifier/android-notifier-desktop-0.5.1-1.i386.rpm",
   "https://cran.r-project.org/src/contrib/jsonlite_1.8.8.tar.gz": "pkg:cran/jsonlite@1.8.8",
-  "https://packagemanager.rstudio.com/cran/2022-06-23/src/contrib/curl_4.3.2.tar.gz": "pkg:cran/curl@4.3.2?download_url=https://packagemanager.rstudio.com/cran/2022-06-23/src/contrib/curl_4.3.2.tar.gz"
+  "https://packagemanager.rstudio.com/cran/2022-06-23/src/contrib/curl_4.3.2.tar.gz": "pkg:cran/curl@4.3.2?download_url=https://packagemanager.rstudio.com/cran/2022-06-23/src/contrib/curl_4.3.2.tar.gz",
+  "oci://localhost:5000/helm-charts/mychart": "pkg:oci/mychart?repository_url=localhost:5000/helm-charts",
+  "oci://registry.relizahub.com/library/rearm-helm:0.0.11": "pkg:oci/rearm-helm?repository_url=registry.relizahub.com/library&tag=0.0.11",
+  "oci://registry.relizahub.com/library/rearm-helm:0.0.11@sha256:0b2de98e6bbd26066fbc1730aa7f8ec8b2cc433235139e4c3bbe0acd8737db4b": "pkg:oci/rearm-helm@sha256:0b2de98e6bbd26066fbc1730aa7f8ec8b2cc433235139e4c3bbe0acd8737db4b?repository_url=registry.relizahub.com/library&tag=0.0.11"
 }
