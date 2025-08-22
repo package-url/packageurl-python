@@ -32,10 +32,11 @@ from packageurl.utils import get_golang_purl
 
 def test_purl_to_lookups_without_encode():
     assert purl_to_lookups(
-        purl_str="pkg:alpine/openssl@0?arch=aarch64&distroversion=edge&reponame=main",
+        purl_str="pkg:apk/alpine/openssl@0?arch=aarch64&distroversion=edge&reponame=main",
         encode=False,
     ) == {
-        "type": "alpine",
+        "type": "apk",
+        "namespace": "alpine",
         "name": "openssl",
         "version": "0",
         "qualifiers": {
@@ -48,10 +49,11 @@ def test_purl_to_lookups_without_encode():
 
 def test_purl_to_lookups_with_encode():
     assert purl_to_lookups(
-        purl_str="pkg:alpine/openssl@0?arch=aarch64&distroversion=edge&reponame=main",
+        purl_str="pkg:apk/alpine/openssl@0?arch=aarch64&distroversion=edge&reponame=main",
         encode=True,
     ) == {
-        "type": "alpine",
+        "type": "apk",
+        "namespace": "alpine",
         "name": "openssl",
         "version": "0",
         "qualifiers": "arch=aarch64&distroversion=edge&reponame=main",
@@ -59,14 +61,15 @@ def test_purl_to_lookups_with_encode():
 
 
 def test_purl_to_lookups_include_empty_fields():
-    purl_str = "pkg:alpine/openssl"
+    purl_str = "pkg:apk/alpine/openssl"
     assert purl_to_lookups(purl_str) == {
-        "type": "alpine",
+        "type": "apk",
+        "namespace": "alpine",
         "name": "openssl",
     }
     assert purl_to_lookups(purl_str, include_empty_fields=True) == {
-        "type": "alpine",
-        "namespace": "",
+        "type": "apk",
+        "namespace": "alpine",
         "name": "openssl",
         "version": "",
         "qualifiers": "",
