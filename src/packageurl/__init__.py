@@ -37,6 +37,9 @@ from urllib.parse import quote as _percent_quote
 from urllib.parse import unquote as _percent_unquote
 from urllib.parse import urlsplit as _urlsplit
 
+from packageurl.contrib.route import NoRouteAvailable
+from packageurl.validate import validate_router
+
 if TYPE_CHECKING:
     from collections.abc import Callable
     from collections.abc import Iterable
@@ -470,39 +473,16 @@ class PackageURL(
 
         return "".join(purl)
 
-
-    @classmethod
-    def validate_alpm(cls):
-        """Type-specific validation for ALPM PURLs."""
-        if cls.namespace.lower() != cls.namespace:
-            return False, "Namespace must be lowercase."
-        if cls.name.lower() != cls.name:
-            return False, "Package name must be lowercase."
-        if not re.match(r"^[0-9]*:?[\w\.\+\-]+$", cls.version):
-            return False, f"Invalid version format '{cls.version}'."
-
-        if cls.qualifiers:
-            for key in cls.qualifiers:
-                if key != "arch":
-                    return False, f"Unknown qualifier '{key}', only 'arch' is allowed."
-                if not cls.qualifiers[key]:
-                    return False, "Qualifier 'arch' cannot be empty."
-
-
-    @classmethod
-    def validate(cls):
+    def validate(self) -> list[str]:
         """
-        Main validation function.
-        Runs basic validation first, then dispatches to type-specific validators.
-        Yields error messages only.
+        Validate this PackageURL object and return a list of validation error messages.
         """
-        yield from cls.validate_basic()
-
-        validator_by_type: dict[str, Callable[[str], Iterable[str]]] = {
-            "alpm": cls.validate_alpm,
-        }
-
-        yield from validator_by_type()
+        if self:
+            try:
+                messages = list(validate_router.process(self))
+                return messages
+            except NoRouteAvailable:
+                return [f"Given type: {self.type} can not be validated"]
 
     @classmethod
     def from_string(cls, purl: str) -> Self:
