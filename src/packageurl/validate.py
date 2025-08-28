@@ -22,94 +22,84 @@
 # Visit https://github.com/package-url/packageurl-python for support and
 # download.
 
-from packageurl import PackageURL
-from packageurl import normalize
 from packageurl.contrib.route import Router
 
 """
 Validate each type according to the PURL spec type definitions
 """
 
+
 class TypeValidator:
     @classmethod
-    def validate(cls, purl: PackageURL, strict=False):
+    def validate(cls, purl, strict=False):
         if not strict:
             purl = cls.normalize(purl)
 
         if cls.namespace_requirement == "prohibited" and purl.namespace:
             yield f"Namespace is prohibited for purl type: {cls.type!r}"
-        
-        if not cls.namespace_case_sensitive and purl.namespace and purl.namespace.lower() != purl.name:
+
+        elif cls.namespace_requirement == "required" and not purl.namespace:
+            yield f"Namespace is required for purl type: {cls.type!r}"
+
+        if (
+            cls.namespace_case_sensitive
+            and purl.namespace
+            and purl.namespace.lower() != purl.namespace
+        ):
             yield f"Namespace is not lowercased for purl type: {cls.type!r}"
-        
-        if not cls.name_case_sensitive and purl.name and purl.name.lower() != purl.name:
+
+        if cls.name_case_sensitive and purl.name and purl.name.lower() != purl.name:
             yield f"Name is not lowercased for purl type: {cls.type!r}"
 
         if not cls.version_case_sensitive and purl.version and purl.version.lower() != purl.version:
             yield f"Version is not lowercased for purl type: {cls.type!r}"
-        
-        yield from cls.validate_type(purl)
-    
-    @classmethod
-    def normalize_type(cls, type: str):
-        return type
-     
-    @classmethod
-    def normalize_namespace(cls, namespace: str):
-        return namespace
-    
-    @classmethod
-    def normalize_name(cls, name: str):
-        return name
+
+        yield from cls.validate_type(purl, strict=strict)
 
     @classmethod
-    def normalize_version(cls, version: str):
-        return version
-    
-    @classmethod
-    def normalize_qualifiers(cls, qualifiers: dict):
-        return qualifiers
-    
-    @classmethod
-    def normalize_subpath(cls, subpath: str):
-        return subpath
+    def normalize(cls, purl):
+        from packageurl import PackageURL
+        from packageurl import normalize
 
-    @classmethod
-    def normalize(cls, purl: PackageURL):
-        type_norm, namespace_norm, name_norm, version_norm, qualifiers_norm, subpath_norm = normalize(purl.type, 
-            purl.namespace, 
-            purl.name, 
-            purl.version, 
-            purl.qualifiers, 
-            purl.subpath,
-            encode=False,
+        type_norm, namespace_norm, name_norm, version_norm, qualifiers_norm, subpath_norm = (
+            normalize(
+                purl.type,
+                purl.namespace,
+                purl.name,
+                purl.version,
+                purl.qualifiers,
+                purl.subpath,
+                encode=False,
+            )
         )
 
         return PackageURL(
-            type = type_norm,
-            namespace = namespace_norm,
-            name = name_norm,
-            version = version_norm,
-            qualifiers = qualifiers_norm,
-            subpath = subpath_norm,
+            type=type_norm,
+            namespace=namespace_norm,
+            name=name_norm,
+            version=version_norm,
+            qualifiers=qualifiers_norm,
+            subpath=subpath_norm,
         )
 
     @classmethod
-    def validate_type(cls, purl: PackageURL):
-        yield from cls.validate_qualifiers(purl=purl)
-        
+    def validate_type(cls, purl, strict=False):
+        if strict:
+            yield from cls.validate_qualifiers(purl=purl)
+
     @classmethod
-    def validate_qualifiers(cls, purl: PackageURL):
+    def validate_qualifiers(cls, purl):
         if not purl.qualifiers:
             return
-    
+
         purl_qualifiers_keys = set(purl.qualifiers.keys())
         allowed_qualifiers_set = cls.allowed_qualifiers
 
         disallowed = purl_qualifiers_keys - allowed_qualifiers_set
-        
+
         if disallowed:
-            yield (f"Invalid qualifiers found: {', '.join(disallowed)}. "
+            yield (
+                f"Invalid qualifiers found: {', '.join(disallowed)}. "
                 f"Allowed qualifiers are: {', '.join(allowed_qualifiers_set)}"
             )
 
@@ -117,11 +107,11 @@ class TypeValidator:
 class AlpmTypeValidator(TypeValidator):
     type = "alpm"
     type_name = "Arch Linux package"
-    description = '''Arch Linux packages and other users of the libalpm/pacman package manager.'''
+    description = """Arch Linux packages and other users of the libalpm/pacman package manager."""
     use_repository = True
     default_repository_url = ""
     namespace_requirement = "required"
-    allowed_qualifiers = {'arch', 'repository_url'}
+    allowed_qualifiers = {"arch", "repository_url"}
     namespace_case_sensitive = False
     name_case_sensitive = False
     version_case_sensitive = True
@@ -131,11 +121,11 @@ class AlpmTypeValidator(TypeValidator):
 class ApkTypeValidator(TypeValidator):
     type = "apk"
     type_name = "APK-based packages"
-    description = '''Alpine Linux APK-based packages'''
+    description = """Alpine Linux APK-based packages"""
     use_repository = True
     default_repository_url = ""
     namespace_requirement = "required"
-    allowed_qualifiers = {'arch', 'repository_url'}
+    allowed_qualifiers = {"arch", "repository_url"}
     namespace_case_sensitive = False
     name_case_sensitive = False
     version_case_sensitive = False
@@ -145,11 +135,11 @@ class ApkTypeValidator(TypeValidator):
 class BitbucketTypeValidator(TypeValidator):
     type = "bitbucket"
     type_name = "Bitbucket"
-    description = '''Bitbucket-based packages'''
+    description = """Bitbucket-based packages"""
     use_repository = True
     default_repository_url = "https://bitbucket.org"
     namespace_requirement = "required"
-    allowed_qualifiers = {'repository_url'}
+    allowed_qualifiers = {"repository_url"}
     namespace_case_sensitive = False
     name_case_sensitive = False
     version_case_sensitive = False
@@ -159,11 +149,11 @@ class BitbucketTypeValidator(TypeValidator):
 class BitnamiTypeValidator(TypeValidator):
     type = "bitnami"
     type_name = "Bitnami"
-    description = '''Bitnami-based packages'''
+    description = """Bitnami-based packages"""
     use_repository = True
     default_repository_url = "https://downloads.bitnami.com/files/stacksmith"
     namespace_requirement = "prohibited"
-    allowed_qualifiers = {'distro', 'arch', 'repository_url'}
+    allowed_qualifiers = {"arch", "repository_url", "distro"}
     namespace_case_sensitive = False
     name_case_sensitive = False
     version_case_sensitive = False
@@ -173,11 +163,11 @@ class BitnamiTypeValidator(TypeValidator):
 class CargoTypeValidator(TypeValidator):
     type = "cargo"
     type_name = "Cargo"
-    description = '''Cargo packages for Rust'''
+    description = """Cargo packages for Rust"""
     use_repository = True
     default_repository_url = "https://crates.io/"
     namespace_requirement = "prohibited"
-    allowed_qualifiers = {'repository_url'}
+    allowed_qualifiers = {"repository_url"}
     namespace_case_sensitive = False
     name_case_sensitive = False
     version_case_sensitive = False
@@ -187,11 +177,11 @@ class CargoTypeValidator(TypeValidator):
 class CocoapodsTypeValidator(TypeValidator):
     type = "cocoapods"
     type_name = "CocoaPods"
-    description = '''CocoaPods pods'''
+    description = """CocoaPods pods"""
     use_repository = True
     default_repository_url = "https://cdn.cocoapods.org/"
     namespace_requirement = "prohibited"
-    allowed_qualifiers = {'repository_url'}
+    allowed_qualifiers = {"repository_url"}
     namespace_case_sensitive = False
     name_case_sensitive = True
     version_case_sensitive = False
@@ -201,11 +191,11 @@ class CocoapodsTypeValidator(TypeValidator):
 class ComposerTypeValidator(TypeValidator):
     type = "composer"
     type_name = "Composer"
-    description = '''Composer PHP packages'''
+    description = """Composer PHP packages"""
     use_repository = True
     default_repository_url = "https://packagist.org"
     namespace_requirement = "required"
-    allowed_qualifiers = {'repository_url'}
+    allowed_qualifiers = {"repository_url"}
     namespace_case_sensitive = False
     name_case_sensitive = False
     version_case_sensitive = False
@@ -215,11 +205,11 @@ class ComposerTypeValidator(TypeValidator):
 class ConanTypeValidator(TypeValidator):
     type = "conan"
     type_name = "Conan C/C++ packages"
-    description = '''Conan C/C++ packages. The purl is designed to closely resemble the Conan-native <package-name>/<package-version>@<user>/<channel> syntax for package references as specified in https://docs.conan.io/en/1.46/cheatsheet.html#package-terminology'''
+    description = """Conan C/C++ packages. The purl is designed to closely resemble the Conan-native <package-name>/<package-version>@<user>/<channel> syntax for package references as specified in https://docs.conan.io/en/1.46/cheatsheet.html#package-terminology"""
     use_repository = True
     default_repository_url = "https://center.conan.io"
     namespace_requirement = "optional"
-    allowed_qualifiers = {'channel', 'rrev', 'prev', 'user', 'repository_url'}
+    allowed_qualifiers = {"rrev", "channel", "prev", "user", "repository_url"}
     namespace_case_sensitive = False
     name_case_sensitive = False
     version_case_sensitive = False
@@ -229,11 +219,11 @@ class ConanTypeValidator(TypeValidator):
 class CondaTypeValidator(TypeValidator):
     type = "conda"
     type_name = "Conda"
-    description = '''conda is for Conda packages'''
+    description = """conda is for Conda packages"""
     use_repository = True
     default_repository_url = "https://repo.anaconda.com"
     namespace_requirement = "prohibited"
-    allowed_qualifiers = {'channel', 'build', 'subdir', 'type', 'repository_url'}
+    allowed_qualifiers = {"type", "build", "subdir", "channel", "repository_url"}
     namespace_case_sensitive = False
     name_case_sensitive = False
     version_case_sensitive = False
@@ -243,11 +233,11 @@ class CondaTypeValidator(TypeValidator):
 class CpanTypeValidator(TypeValidator):
     type = "cpan"
     type_name = "CPAN"
-    description = '''CPAN Perl packages'''
+    description = """CPAN Perl packages"""
     use_repository = True
     default_repository_url = "https://www.cpan.org/"
     namespace_requirement = "optional"
-    allowed_qualifiers = {'vcs_url', 'ext', 'download_url', 'repository_url'}
+    allowed_qualifiers = {"vcs_url", "ext", "repository_url", "download_url"}
     namespace_case_sensitive = False
     name_case_sensitive = True
     version_case_sensitive = False
@@ -257,11 +247,11 @@ class CpanTypeValidator(TypeValidator):
 class CranTypeValidator(TypeValidator):
     type = "cran"
     type_name = "CRAN"
-    description = '''CRAN R packages'''
+    description = """CRAN R packages"""
     use_repository = True
     default_repository_url = "https://cran.r-project.org"
     namespace_requirement = "prohibited"
-    allowed_qualifiers = {'repository_url'}
+    allowed_qualifiers = {"repository_url"}
     namespace_case_sensitive = False
     name_case_sensitive = False
     version_case_sensitive = False
@@ -271,11 +261,11 @@ class CranTypeValidator(TypeValidator):
 class DebTypeValidator(TypeValidator):
     type = "deb"
     type_name = "Debian package"
-    description = '''Debian packages, Debian derivatives, and Ubuntu packages'''
+    description = """Debian packages, Debian derivatives, and Ubuntu packages"""
     use_repository = True
     default_repository_url = ""
     namespace_requirement = "required"
-    allowed_qualifiers = {'arch', 'repository_url'}
+    allowed_qualifiers = {"arch", "repository_url"}
     namespace_case_sensitive = False
     name_case_sensitive = False
     version_case_sensitive = False
@@ -285,11 +275,11 @@ class DebTypeValidator(TypeValidator):
 class DockerTypeValidator(TypeValidator):
     type = "docker"
     type_name = "Docker image"
-    description = '''for Docker images'''
+    description = """for Docker images"""
     use_repository = True
     default_repository_url = "https://hub.docker.com"
     namespace_requirement = "optional"
-    allowed_qualifiers = {'repository_url'}
+    allowed_qualifiers = {"repository_url"}
     namespace_case_sensitive = False
     name_case_sensitive = False
     version_case_sensitive = False
@@ -299,11 +289,11 @@ class DockerTypeValidator(TypeValidator):
 class GemTypeValidator(TypeValidator):
     type = "gem"
     type_name = "RubyGems"
-    description = '''RubyGems'''
+    description = """RubyGems"""
     use_repository = True
     default_repository_url = "https://rubygems.org"
     namespace_requirement = "prohibited"
-    allowed_qualifiers = {'platform', 'repository_url'}
+    allowed_qualifiers = {"repository_url", "platform"}
     namespace_case_sensitive = False
     name_case_sensitive = False
     version_case_sensitive = False
@@ -313,11 +303,11 @@ class GemTypeValidator(TypeValidator):
 class GenericTypeValidator(TypeValidator):
     type = "generic"
     type_name = "Generic Package"
-    description = '''The generic type is for plain, generic packages that do not fit anywhere else such as for "upstream-from-distro" packages. In particular this is handy for a plain version control repository such as a bare git repo in combination with a vcs_url.'''
+    description = """The generic type is for plain, generic packages that do not fit anywhere else such as for "upstream-from-distro" packages. In particular this is handy for a plain version control repository such as a bare git repo in combination with a vcs_url."""
     use_repository = False
     default_repository_url = ""
     namespace_requirement = "optional"
-    allowed_qualifiers = {'download_url', 'checksum'}
+    allowed_qualifiers = {"checksum", "download_url"}
     namespace_case_sensitive = False
     name_case_sensitive = False
     version_case_sensitive = False
@@ -327,11 +317,11 @@ class GenericTypeValidator(TypeValidator):
 class GithubTypeValidator(TypeValidator):
     type = "github"
     type_name = "GitHub"
-    description = '''GitHub-based packages'''
+    description = """GitHub-based packages"""
     use_repository = True
     default_repository_url = "https://github.com"
     namespace_requirement = "required"
-    allowed_qualifiers = {'repository_url'}
+    allowed_qualifiers = {"repository_url"}
     namespace_case_sensitive = False
     name_case_sensitive = False
     version_case_sensitive = False
@@ -341,11 +331,11 @@ class GithubTypeValidator(TypeValidator):
 class GolangTypeValidator(TypeValidator):
     type = "golang"
     type_name = "Go package"
-    description = '''Go packages'''
+    description = """Go packages"""
     use_repository = True
     default_repository_url = ""
     namespace_requirement = "required"
-    allowed_qualifiers = {'repository_url'}
+    allowed_qualifiers = {"repository_url"}
     namespace_case_sensitive = False
     name_case_sensitive = False
     version_case_sensitive = False
@@ -355,11 +345,11 @@ class GolangTypeValidator(TypeValidator):
 class HackageTypeValidator(TypeValidator):
     type = "hackage"
     type_name = "Haskell package"
-    description = '''Haskell packages'''
+    description = """Haskell packages"""
     use_repository = True
     default_repository_url = "https://hackage.haskell.org"
     namespace_requirement = "prohibited"
-    allowed_qualifiers = {'repository_url'}
+    allowed_qualifiers = {"repository_url"}
     namespace_case_sensitive = False
     name_case_sensitive = True
     version_case_sensitive = False
@@ -369,11 +359,11 @@ class HackageTypeValidator(TypeValidator):
 class HexTypeValidator(TypeValidator):
     type = "hex"
     type_name = "Hex"
-    description = '''Hex packages'''
+    description = """Hex packages"""
     use_repository = True
     default_repository_url = "https://repo.hex.pm"
     namespace_requirement = "optional"
-    allowed_qualifiers = {'repository_url'}
+    allowed_qualifiers = {"repository_url"}
     namespace_case_sensitive = False
     name_case_sensitive = False
     version_case_sensitive = False
@@ -383,11 +373,11 @@ class HexTypeValidator(TypeValidator):
 class HuggingfaceTypeValidator(TypeValidator):
     type = "huggingface"
     type_name = "HuggingFace models"
-    description = '''Hugging Face ML models'''
+    description = """Hugging Face ML models"""
     use_repository = True
     default_repository_url = ""
     namespace_requirement = "required"
-    allowed_qualifiers = {'repository_url'}
+    allowed_qualifiers = {"repository_url"}
     namespace_case_sensitive = True
     name_case_sensitive = True
     version_case_sensitive = False
@@ -397,11 +387,11 @@ class HuggingfaceTypeValidator(TypeValidator):
 class LuarocksTypeValidator(TypeValidator):
     type = "luarocks"
     type_name = "LuaRocks"
-    description = '''Lua packages installed with LuaRocks'''
+    description = """Lua packages installed with LuaRocks"""
     use_repository = True
     default_repository_url = ""
     namespace_requirement = "optional"
-    allowed_qualifiers = {'repository_url'}
+    allowed_qualifiers = {"repository_url"}
     namespace_case_sensitive = False
     name_case_sensitive = False
     version_case_sensitive = True
@@ -411,11 +401,11 @@ class LuarocksTypeValidator(TypeValidator):
 class MavenTypeValidator(TypeValidator):
     type = "maven"
     type_name = "Maven"
-    description = '''PURL type for Maven JARs and related artifacts.'''
+    description = """PURL type for Maven JARs and related artifacts."""
     use_repository = True
     default_repository_url = "https://repo.maven.apache.org/maven2/"
     namespace_requirement = "required"
-    allowed_qualifiers = {'classifier', 'repository_url', 'type'}
+    allowed_qualifiers = {"type", "classifier", "repository_url"}
     namespace_case_sensitive = True
     name_case_sensitive = True
     version_case_sensitive = True
@@ -425,11 +415,11 @@ class MavenTypeValidator(TypeValidator):
 class MlflowTypeValidator(TypeValidator):
     type = "mlflow"
     type_name = ""
-    description = '''MLflow ML models (Azure ML, Databricks, etc.)'''
+    description = """MLflow ML models (Azure ML, Databricks, etc.)"""
     use_repository = True
     default_repository_url = ""
     namespace_requirement = "prohibited"
-    allowed_qualifiers = {'model_uuid', 'run_id', 'repository_url'}
+    allowed_qualifiers = {"run_id", "repository_url", "model_uuid"}
     namespace_case_sensitive = False
     name_case_sensitive = False
     version_case_sensitive = False
@@ -439,11 +429,11 @@ class MlflowTypeValidator(TypeValidator):
 class NpmTypeValidator(TypeValidator):
     type = "npm"
     type_name = "Node NPM packages"
-    description = '''PURL type for npm packages.'''
+    description = """PURL type for npm packages."""
     use_repository = True
     default_repository_url = "https://registry.npmjs.org/"
     namespace_requirement = "optional"
-    allowed_qualifiers = {'repository_url'}
+    allowed_qualifiers = {"repository_url"}
     namespace_case_sensitive = False
     name_case_sensitive = False
     version_case_sensitive = True
@@ -453,11 +443,11 @@ class NpmTypeValidator(TypeValidator):
 class NugetTypeValidator(TypeValidator):
     type = "nuget"
     type_name = "NuGet"
-    description = '''NuGet .NET packages'''
+    description = """NuGet .NET packages"""
     use_repository = True
     default_repository_url = "https://www.nuget.org"
     namespace_requirement = "prohibited"
-    allowed_qualifiers = {'repository_url'}
+    allowed_qualifiers = {"repository_url"}
     namespace_case_sensitive = False
     name_case_sensitive = True
     version_case_sensitive = False
@@ -467,11 +457,11 @@ class NugetTypeValidator(TypeValidator):
 class OciTypeValidator(TypeValidator):
     type = "oci"
     type_name = "OCI image"
-    description = '''For artifacts stored in registries that conform to the OCI Distribution Specification https://github.com/opencontainers/distribution-spec including container images built by Docker and others'''
+    description = """For artifacts stored in registries that conform to the OCI Distribution Specification https://github.com/opencontainers/distribution-spec including container images built by Docker and others"""
     use_repository = True
     default_repository_url = ""
     namespace_requirement = "prohibited"
-    allowed_qualifiers = {'arch', 'tag', 'repository_url'}
+    allowed_qualifiers = {"arch", "repository_url", "tag"}
     namespace_case_sensitive = False
     name_case_sensitive = False
     version_case_sensitive = False
@@ -481,11 +471,11 @@ class OciTypeValidator(TypeValidator):
 class PubTypeValidator(TypeValidator):
     type = "pub"
     type_name = "Pub"
-    description = '''Dart and Flutter pub packages'''
+    description = """Dart and Flutter pub packages"""
     use_repository = True
     default_repository_url = "https://pub.dartlang.org"
     namespace_requirement = "prohibited"
-    allowed_qualifiers = {'repository_url'}
+    allowed_qualifiers = {"repository_url"}
     namespace_case_sensitive = False
     name_case_sensitive = False
     version_case_sensitive = False
@@ -495,11 +485,11 @@ class PubTypeValidator(TypeValidator):
 class PypiTypeValidator(TypeValidator):
     type = "pypi"
     type_name = "PyPI"
-    description = '''Python packages'''
+    description = """Python packages"""
     use_repository = True
     default_repository_url = "https://pypi.org"
     namespace_requirement = "prohibited"
-    allowed_qualifiers = {'file_name', 'repository_url'}
+    allowed_qualifiers = {"repository_url", "file_name"}
     namespace_case_sensitive = False
     name_case_sensitive = False
     version_case_sensitive = False
@@ -509,11 +499,11 @@ class PypiTypeValidator(TypeValidator):
 class QpkgTypeValidator(TypeValidator):
     type = "qpkg"
     type_name = "QNX package"
-    description = '''QNX packages'''
+    description = """QNX packages"""
     use_repository = True
     default_repository_url = ""
     namespace_requirement = "required"
-    allowed_qualifiers = {'repository_url'}
+    allowed_qualifiers = {"repository_url"}
     namespace_case_sensitive = False
     name_case_sensitive = False
     version_case_sensitive = False
@@ -523,11 +513,11 @@ class QpkgTypeValidator(TypeValidator):
 class RpmTypeValidator(TypeValidator):
     type = "rpm"
     type_name = "RPM"
-    description = '''RPM packages'''
+    description = """RPM packages"""
     use_repository = True
     default_repository_url = ""
     namespace_requirement = "required"
-    allowed_qualifiers = {'epoch', 'arch', 'repository_url'}
+    allowed_qualifiers = {"arch", "repository_url", "epoch"}
     namespace_case_sensitive = False
     name_case_sensitive = True
     version_case_sensitive = False
@@ -537,11 +527,11 @@ class RpmTypeValidator(TypeValidator):
 class SwidTypeValidator(TypeValidator):
     type = "swid"
     type_name = "Software Identification (SWID) Tag"
-    description = '''PURL type for ISO-IEC 19770-2 Software Identification (SWID) tags.'''
+    description = """PURL type for ISO-IEC 19770-2 Software Identification (SWID) tags."""
     use_repository = False
     default_repository_url = ""
     namespace_requirement = "optional"
-    allowed_qualifiers = {'tag_version', 'tag_creator_name', 'tag_id', 'patch', 'tag_creator_regid'}
+    allowed_qualifiers = {"patch", "tag_id", "tag_creator_regid", "tag_creator_name", "tag_version"}
     namespace_case_sensitive = True
     name_case_sensitive = True
     version_case_sensitive = True
@@ -551,86 +541,48 @@ class SwidTypeValidator(TypeValidator):
 class SwiftTypeValidator(TypeValidator):
     type = "swift"
     type_name = "Swift packages"
-    description = '''Swift packages'''
+    description = """Swift packages"""
     use_repository = True
     default_repository_url = ""
     namespace_requirement = "required"
-    allowed_qualifiers = {'repository_url'}
+    allowed_qualifiers = {"repository_url"}
     namespace_case_sensitive = True
     name_case_sensitive = True
     version_case_sensitive = True
     purl_pattern = "pkg:swift/.*"
 
-VALIDATORS_BY_TYPE = {
-    'alpm' : AlpmTypeValidator,
-    'apk' : ApkTypeValidator,
-    'bitbucket' : BitbucketTypeValidator,
-    'bitnami' : BitnamiTypeValidator,
-    'cargo' : CargoTypeValidator,
-    'cocoapods' : CocoapodsTypeValidator,
-    'composer' : ComposerTypeValidator,
-    'conan' : ConanTypeValidator,
-    'conda' : CondaTypeValidator,
-    'cpan' : CpanTypeValidator,
-    'cran' : CranTypeValidator,
-    'deb' : DebTypeValidator,
-    'docker' : DockerTypeValidator,
-    'gem' : GemTypeValidator,
-    'generic' : GenericTypeValidator,
-    'github' : GithubTypeValidator,
-    'golang' : GolangTypeValidator,
-    'hackage' : HackageTypeValidator,
-    'hex' : HexTypeValidator,
-    'huggingface' : HuggingfaceTypeValidator,
-    'luarocks' : LuarocksTypeValidator,
-    'maven' : MavenTypeValidator,
-    'mlflow' : MlflowTypeValidator,
-    'npm' : NpmTypeValidator,
-    'nuget' : NugetTypeValidator,
-    'oci' : OciTypeValidator,
-    'pub' : PubTypeValidator,
-    'pypi' : PypiTypeValidator,
-    'qpkg' : QpkgTypeValidator,
-    'rpm' : RpmTypeValidator,
-    'swid' : SwidTypeValidator,
-    'swift' : SwiftTypeValidator,
-}
-PACKAGE_REGISTRY = [ 
-    AlpmTypeValidator,
-    ApkTypeValidator,
-    BitbucketTypeValidator,
-    BitnamiTypeValidator,
-    CargoTypeValidator,
-    CocoapodsTypeValidator,
-    ComposerTypeValidator,
-    ConanTypeValidator,
-    CondaTypeValidator,
-    CpanTypeValidator,
-    CranTypeValidator,
-    DebTypeValidator,
-    DockerTypeValidator,
-    GemTypeValidator,
-    GenericTypeValidator,
-    GithubTypeValidator,
-    GolangTypeValidator,
-    HackageTypeValidator,
-    HexTypeValidator,
-    HuggingfaceTypeValidator,
-    LuarocksTypeValidator,
-    MavenTypeValidator,
-    MlflowTypeValidator,
-    NpmTypeValidator,
-    NugetTypeValidator,
-    OciTypeValidator,
-    PubTypeValidator,
-    PypiTypeValidator,
-    QpkgTypeValidator,
-    RpmTypeValidator,
-    SwidTypeValidator,
-    SwiftTypeValidator,
-   ]
-validate_router = Router()
 
-for pkg_class in PACKAGE_REGISTRY:
-    validate_router.append(pattern=pkg_class.purl_pattern, endpoint=pkg_class.validate)
-    
+VALIDATORS_BY_TYPE = {
+    "alpm": AlpmTypeValidator,
+    "apk": ApkTypeValidator,
+    "bitbucket": BitbucketTypeValidator,
+    "bitnami": BitnamiTypeValidator,
+    "cargo": CargoTypeValidator,
+    "cocoapods": CocoapodsTypeValidator,
+    "composer": ComposerTypeValidator,
+    "conan": ConanTypeValidator,
+    "conda": CondaTypeValidator,
+    "cpan": CpanTypeValidator,
+    "cran": CranTypeValidator,
+    "deb": DebTypeValidator,
+    "docker": DockerTypeValidator,
+    "gem": GemTypeValidator,
+    "generic": GenericTypeValidator,
+    "github": GithubTypeValidator,
+    "golang": GolangTypeValidator,
+    "hackage": HackageTypeValidator,
+    "hex": HexTypeValidator,
+    "huggingface": HuggingfaceTypeValidator,
+    "luarocks": LuarocksTypeValidator,
+    "maven": MavenTypeValidator,
+    "mlflow": MlflowTypeValidator,
+    "npm": NpmTypeValidator,
+    "nuget": NugetTypeValidator,
+    "oci": OciTypeValidator,
+    "pub": PubTypeValidator,
+    "pypi": PypiTypeValidator,
+    "qpkg": QpkgTypeValidator,
+    "rpm": RpmTypeValidator,
+    "swid": SwidTypeValidator,
+    "swift": SwiftTypeValidator,
+}

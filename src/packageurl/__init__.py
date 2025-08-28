@@ -38,7 +38,6 @@ from urllib.parse import unquote as _percent_unquote
 from urllib.parse import urlsplit as _urlsplit
 
 from packageurl.contrib.route import NoRouteAvailable
-from packageurl.validate import validate_router
 
 if TYPE_CHECKING:
     from collections.abc import Callable
@@ -473,13 +472,18 @@ class PackageURL(
 
         return "".join(purl)
 
-    def validate(self) -> list[str]:
+    def validate(self, strict: bool = False) -> list[str]:
         """
         Validate this PackageURL object and return a list of validation error messages.
         """
+        from packageurl.validate import VALIDATORS_BY_TYPE
+
         if self:
             try:
-                messages = list(validate_router.process(self))
+                validator_class = VALIDATORS_BY_TYPE.get(self.type)
+                if not validator_class:
+                    return [f"Given type: {self.type} can not be validated"]
+                messages = list(validator_class.validate(self, strict))  # type: ignore[no-untyped-call]
                 return messages
             except NoRouteAvailable:
                 return [f"Given type: {self.type} can not be validated"]

@@ -72,8 +72,6 @@ HEADER = '''# Copyright (c) the purl authors
 # Visit https://github.com/package-url/packageurl-python for support and
 # download.
 
-from packageurl import PackageURL
-from packageurl import normalize
 from packageurl.contrib.route import Router
 
 """
@@ -82,102 +80,78 @@ Validate each type according to the PURL spec type definitions
 
 class TypeValidator:
     @classmethod
-    def validate(cls, purl: PackageURL, strict=False):
+    def validate(cls, purl, strict=False):
         if not strict:
             purl = cls.normalize(purl)
 
         if cls.namespace_requirement == "prohibited" and purl.namespace:
             yield f"Namespace is prohibited for purl type: {cls.type!r}"
-        
-        if not cls.namespace_case_sensitive and purl.namespace and purl.namespace.lower() != purl.name:
+
+        elif cls.namespace_requirement == "required" and not purl.namespace:
+            yield f"Namespace is required for purl type: {cls.type!r}"
+
+        if (
+            cls.namespace_case_sensitive
+            and purl.namespace
+            and purl.namespace.lower() != purl.namespace
+        ):
             yield f"Namespace is not lowercased for purl type: {cls.type!r}"
-        
-        if not cls.name_case_sensitive and purl.name and purl.name.lower() != purl.name:
+
+        if cls.name_case_sensitive and purl.name and purl.name.lower() != purl.name:
             yield f"Name is not lowercased for purl type: {cls.type!r}"
 
         if not cls.version_case_sensitive and purl.version and purl.version.lower() != purl.version:
             yield f"Version is not lowercased for purl type: {cls.type!r}"
-        
-        yield from cls.validate_type(purl)
-    
-    @classmethod
-    def normalize_type(cls, type: str):
-        return type
-     
-    @classmethod
-    def normalize_namespace(cls, namespace: str):
-        return namespace
-    
-    @classmethod
-    def normalize_name(cls, name: str):
-        return name
+
+        yield from cls.validate_type(purl, strict=strict)
 
     @classmethod
-    def normalize_version(cls, version: str):
-        return version
-    
-    @classmethod
-    def normalize_qualifiers(cls, qualifiers: dict):
-        return qualifiers
-    
-    @classmethod
-    def normalize_subpath(cls, subpath: str):
-        return subpath
+    def normalize(cls, purl):
+        from packageurl import PackageURL
+        from packageurl import normalize
 
-    @classmethod
-    def normalize(cls, purl: PackageURL):
-        type_norm, namespace_norm, name_norm, version_norm, qualifiers_norm, subpath_norm = normalize(purl.type, 
-            purl.namespace, 
-            purl.name, 
-            purl.version, 
-            purl.qualifiers, 
-            purl.subpath,
-            encode=False,
+        type_norm, namespace_norm, name_norm, version_norm, qualifiers_norm, subpath_norm = (
+            normalize(
+                purl.type,
+                purl.namespace,
+                purl.name,
+                purl.version,
+                purl.qualifiers,
+                purl.subpath,
+                encode=False,
+            )
         )
 
         return PackageURL(
-            type = type_norm,
-            namespace = namespace_norm,
-            name = name_norm,
-            version = version_norm,
-            qualifiers = qualifiers_norm,
-            subpath = subpath_norm,
+            type=type_norm,
+            namespace=namespace_norm,
+            name=name_norm,
+            version=version_norm,
+            qualifiers=qualifiers_norm,
+            subpath=subpath_norm,
         )
 
     @classmethod
-    def validate_type(cls, purl: PackageURL):
-        yield from cls.validate_qualifiers(purl=purl)
-        
+    def validate_type(cls, purl, strict=False):
+        if strict:
+            yield from cls.validate_qualifiers(purl=purl)
+
     @classmethod
-    def validate_qualifiers(cls, purl: PackageURL):
+    def validate_qualifiers(cls, purl):
         if not purl.qualifiers:
             return
-    
+
         purl_qualifiers_keys = set(purl.qualifiers.keys())
         allowed_qualifiers_set = cls.allowed_qualifiers
 
         disallowed = purl_qualifiers_keys - allowed_qualifiers_set
-        
+
         if disallowed:
-            yield (f"Invalid qualifiers found: {', '.join(disallowed)}. "
+            yield (
+                f"Invalid qualifiers found: {', '.join(disallowed)}. "
                 f"Allowed qualifiers are: {', '.join(allowed_qualifiers_set)}"
             )
 '''
-
-def validate_qualifiers(allowed_qualifiers, purl: PackageURL):
-    if not purl.qualifiers:
-        return True
-    
-    purl_qualifiers_keys = set(purl.qualifiers.keys())
-    allowed_qualifiers_set = set(allowed_qualifiers)
-
-    disallowed = purl_qualifiers_keys - allowed_qualifiers_set
-    
-    if disallowed:
-        yield (f"Invalid qualifiers found: {', '.join(disallowed)}. "
-            f"Allowed qualifiers are: {', '.join(allowed_qualifiers_set)}"
-        )
-
 
 
 TEMPLATE = """
@@ -195,16 +169,6 @@ class {class_name}({validator_class}):
     purl_pattern = "{purl_pattern}"
 """
 
-TEMPLATE_NAME_RULES = '''
-    @override
-    @classmethod
-    def normalize_name(cls, name: str):
-        """
-        Normalize name according to type rules
-        {rules}
-        """
-        raise NotImplementedError()
-'''
 
 def generate_validators():
     """
@@ -260,22 +224,13 @@ def generate_validators():
         ))
 
         script_parts.append(type_validator)
-
-        # if name_normalization_rules:
-        #     name_overrides = get_name_norm_rules(name_normalization_rules)
-        #     script_parts.append(name_overrides)
     
     script_parts.append(generate_validators_by_type(validators_by_type=validators_by_type))
-    script_parts.append(attach_router(validators_by_type.values()))
+    # script_parts.append(attach_router(validators_by_type.values()))
 
     validate_script = base_dir / "src" / "packageurl" / "validate.py"
 
     validate_script.write_text("\n".join(script_parts))
-
-
-def get_name_norm_rules(name_normalization_rules):
-    rules = "\n".join(name_normalization_rules)
-    return TEMPLATE_NAME_RULES.format(rules=rules)
 
 
 def generate_validators_by_type(validators_by_type):
