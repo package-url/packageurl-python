@@ -151,7 +151,7 @@ def run_test_case(case, test_type, desc):
             subpath=input_data.get("subpath"),
         )
         assert purl.to_string() == case["expected_output"]
-    
+
     elif test_type == "validation":
         input_data = case["input"]
         purl = PackageURL(
@@ -163,9 +163,9 @@ def run_test_case(case, test_type, desc):
             subpath=input_data.get("subpath"),
         )
         test_group = case.get("test_group")
-        strict=True
+        strict = True
         if test_group == "advanced":
-            strict=False
+            strict = False
         messages = purl.validate(strict=strict)
         if case.get("expected_messages"):
             assert messages == case["expected_messages"]
