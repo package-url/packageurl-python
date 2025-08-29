@@ -22,8 +22,6 @@
 # Visit https://github.com/package-url/packageurl-python for support and
 # download.
 
-from packageurl.contrib.route import Router
-
 """
 Validate each type according to the PURL spec type definitions
 """
@@ -41,7 +39,10 @@ class TypeValidator:
         elif cls.namespace_requirement == "required" and not purl.namespace:
             yield f"Namespace is required for purl type: {cls.type!r}"
 
-        if (
+        if purl.type == "cpan":
+            if purl.namespace and purl.namespace != purl.namespace.upper():
+                yield f"Namespace must be uppercase for purl type: {cls.type!r}"
+        elif (
             not cls.namespace_case_sensitive
             and purl.namespace
             and purl.namespace.lower() != purl.namespace
@@ -243,6 +244,14 @@ class CpanTypeValidator(TypeValidator):
     version_case_sensitive = True
     purl_pattern = "pkg:cpan/.*"
 
+    @classmethod
+    def validate_type(cls, purl, strict=False):
+        if purl.namespace and "::" in purl.name:
+            yield f"Name must not contain '::' when Namespace is absent for purl type: {cls.type!r}"
+        if not purl.namespace and "-" in purl.name:
+            yield f"Name must not contain '-' when Namespace is absent for purl type: {cls.type!r}"
+        yield from super().validate_type(purl, strict)
+
 
 class CranTypeValidator(TypeValidator):
     type = "cran"
@@ -354,6 +363,12 @@ class HackageTypeValidator(TypeValidator):
     name_case_sensitive = True
     version_case_sensitive = True
     purl_pattern = "pkg:hackage/.*"
+
+    @classmethod
+    def validate_type(cls, purl, strict=False):
+        if "_" in purl.name:
+            yield f"Name contains underscores but should be kebab-case for purl type: {cls.type!r}"
+        yield from super().validate_type(purl, strict)
 
 
 class HexTypeValidator(TypeValidator):
@@ -481,6 +496,14 @@ class PubTypeValidator(TypeValidator):
     version_case_sensitive = True
     purl_pattern = "pkg:pub/.*"
 
+    @classmethod
+    def validate_type(cls, purl, strict=False):
+        if any(not (c.islower() or c.isdigit() or c == "_") for c in purl.name):
+            yield f"Name contains invalid characters but should only contain lowercase letters, digits, or underscores for purl type: {cls.type!r}"
+        if " " in purl.name:
+            yield f"Name contains spaces but should use underscores instead for purl type: {cls.type!r}"
+        yield from super().validate_type(purl, strict)
+
 
 class PypiTypeValidator(TypeValidator):
     type = "pypi"
@@ -494,6 +517,12 @@ class PypiTypeValidator(TypeValidator):
     name_case_sensitive = False
     version_case_sensitive = True
     purl_pattern = "pkg:pypi/.*"
+
+    @classmethod
+    def validate_type(cls, purl, strict=False):
+        if "_" in purl.name:
+            yield f"Name cannot contain `_` for purl type:{cls.type!r}"
+        yield from super().validate_type(purl, strict)
 
 
 class QpkgTypeValidator(TypeValidator):

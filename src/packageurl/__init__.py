@@ -133,7 +133,7 @@ def normalize_namespace(
         "hex",
     ):
         namespace_str = namespace_str.lower()
-    if ptype in ("cpan"):
+    if ptype and ptype in ("cpan"):
         namespace_str = namespace_str.upper()
     segments = [seg for seg in namespace_str.split("/") if seg.strip()]
     segments_quoted = map(get_quoter(encode), segments)
@@ -192,6 +192,8 @@ def normalize_name(
         name_str = name_str.lower()
     if ptype == "pypi":
         name_str = name_str.replace("_", "-").lower()
+    if ptype == "hackage":
+        name_str = name_str.replace("_", "-")
     return name_str or None
 
 
@@ -395,7 +397,7 @@ class PackageURL(
         version: AnyStr | None = None,
         qualifiers: AnyStr | dict[str, str] | None = None,
         subpath: AnyStr | None = None,
-        normalize_purl=True,
+        normalize_purl: bool = True,
     ) -> Self:
         required = dict(type=type, name=name)
         for key, value in required.items():
@@ -421,6 +423,13 @@ class PackageURL(
                 f"Invalid purl: qualifiers argument must be a dict or a string: {qualifiers!r}."
             )
 
+        type_final: str
+        namespace_final: Optional[str]
+        name_final: str
+        version_final: Optional[str]
+        qualifiers_final: dict[str, str]
+        subpath_final: Optional[str]
+
         if normalize_purl:
             (
                 type_final,
@@ -430,14 +439,18 @@ class PackageURL(
                 qualifiers_final,
                 subpath_final,
             ) = normalize(type, namespace, name, version, qualifiers, subpath, encode=None)
-
         else:
-            type_final = type
-            namespace_final = namespace
-            name_final = name
-            version_final = version
-            qualifiers_final = qualifiers
-            subpath_final = subpath
+            from packageurl.utils import ensure_str
+
+            type_final = ensure_str(type) or ""
+            namespace_final = ensure_str(namespace)
+            name_final = ensure_str(name) or ""
+            version_final = ensure_str(version)
+            if isinstance(qualifiers, dict):
+                qualifiers_final = qualifiers
+            else:
+                qualifiers_final = {}
+            subpath_final = ensure_str(subpath)
 
         return super().__new__(
             cls,

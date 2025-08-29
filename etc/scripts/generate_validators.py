@@ -72,8 +72,6 @@ HEADER = '''# Copyright (c) the purl authors
 # Visit https://github.com/package-url/packageurl-python for support and
 # download.
 
-from packageurl.contrib.route import Router
-
 """
 Validate each type according to the PURL spec type definitions
 """
