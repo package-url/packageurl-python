@@ -120,8 +120,21 @@ def normalize_namespace(
 
     namespace_str = namespace if isinstance(namespace, str) else namespace.decode("utf-8")
     namespace_str = namespace_str.strip().strip("/")
-    if ptype in ("bitbucket", "github", "pypi", "gitlab", "composer"):
+    if ptype in (
+        "bitbucket",
+        "github",
+        "pypi",
+        "gitlab",
+        "composer",
+        "luarocks",
+        "qpkg",
+        "alpm",
+        "apk",
+        "hex",
+    ):
         namespace_str = namespace_str.lower()
+    if ptype in ("cpan"):
+        namespace_str = namespace_str.upper()
     segments = [seg for seg in namespace_str.split("/") if seg.strip()]
     segments_quoted = map(get_quoter(encode), segments)
     return "/".join(segments_quoted) or None
@@ -162,10 +175,23 @@ def normalize_name(
     name_str = name_str.strip().strip("/")
     if ptype and ptype in ("mlflow"):
         return normalize_mlflow_name(name_str, qualifiers)
-    if ptype in ("bitbucket", "github", "pypi", "gitlab", "composer"):
+    if ptype in (
+        "bitbucket",
+        "github",
+        "pypi",
+        "gitlab",
+        "composer",
+        "luarocks",
+        "oci",
+        "npm",
+        "alpm",
+        "apk",
+        "bitnami",
+        "hex",
+    ):
         name_str = name_str.lower()
     if ptype == "pypi":
-        name_str = name_str.replace("_", "-")
+        name_str = name_str.replace("_", "-").lower()
     return name_str or None
 
 
@@ -178,7 +204,7 @@ def normalize_version(
     version_str = version if isinstance(version, str) else version.decode("utf-8")
     quoter = get_quoter(encode)
     version_str = quoter(version_str.strip())
-    if ptype and isinstance(ptype, str) and ptype in ("huggingface"):
+    if ptype and isinstance(ptype, str) and ptype in ("huggingface", "oci"):
         return version_str.lower()
     return version_str or None
 
@@ -369,6 +395,7 @@ class PackageURL(
         version: AnyStr | None = None,
         qualifiers: AnyStr | dict[str, str] | None = None,
         subpath: AnyStr | None = None,
+        normalize_purl=True,
     ) -> Self:
         required = dict(type=type, name=name)
         for key, value in required.items():
@@ -394,23 +421,32 @@ class PackageURL(
                 f"Invalid purl: qualifiers argument must be a dict or a string: {qualifiers!r}."
             )
 
-        (
-            type_norm,
-            namespace_norm,
-            name_norm,
-            version_norm,
-            qualifiers_norm,
-            subpath_norm,
-        ) = normalize(type, namespace, name, version, qualifiers, subpath, encode=None)
+        if normalize_purl:
+            (
+                type_final,
+                namespace_final,
+                name_final,
+                version_final,
+                qualifiers_final,
+                subpath_final,
+            ) = normalize(type, namespace, name, version, qualifiers, subpath, encode=None)
+        
+        else:
+            type_final = type
+            namespace_final = namespace
+            name_final = name
+            version_final = version
+            qualifiers_final = qualifiers
+            subpath_final = subpath
 
         return super().__new__(
             cls,
-            type=type_norm,
-            namespace=namespace_norm,
-            name=name_norm,
-            version=version_norm,
-            qualifiers=qualifiers_norm,
-            subpath=subpath_norm,
+            type=type_final,
+            namespace=namespace_final,
+            name=name_final,
+            version=version_final,
+            qualifiers=qualifiers_final,
+            subpath=subpath_final,
         )
 
     def __str__(self, *args: Any, **kwargs: Any) -> str:

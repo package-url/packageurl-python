@@ -42,13 +42,13 @@ class TypeValidator:
             yield f"Namespace is required for purl type: {cls.type!r}"
 
         if (
-            cls.namespace_case_sensitive
+            not cls.namespace_case_sensitive
             and purl.namespace
             and purl.namespace.lower() != purl.namespace
         ):
             yield f"Namespace is not lowercased for purl type: {cls.type!r}"
 
-        if cls.name_case_sensitive and purl.name and purl.name.lower() != purl.name:
+        if not cls.name_case_sensitive and purl.name and purl.name.lower() != purl.name:
             yield f"Name is not lowercased for purl type: {cls.type!r}"
 
         if not cls.version_case_sensitive and purl.version and purl.version.lower() != purl.version:
@@ -99,8 +99,8 @@ class TypeValidator:
 
         if disallowed:
             yield (
-                f"Invalid qualifiers found: {', '.join(disallowed)}. "
-                f"Allowed qualifiers are: {', '.join(allowed_qualifiers_set)}"
+                f"Invalid qualifiers found: {', '.join(sorted(disallowed))}. "
+                f"Allowed qualifiers are: {', '.join(sorted(allowed_qualifiers_set))}"
             )
 
 
@@ -111,7 +111,7 @@ class AlpmTypeValidator(TypeValidator):
     use_repository = True
     default_repository_url = ""
     namespace_requirement = "required"
-    allowed_qualifiers = {"arch", "repository_url"}
+    allowed_qualifiers = {"repository_url", "arch"}
     namespace_case_sensitive = False
     name_case_sensitive = False
     version_case_sensitive = True
@@ -125,10 +125,10 @@ class ApkTypeValidator(TypeValidator):
     use_repository = True
     default_repository_url = ""
     namespace_requirement = "required"
-    allowed_qualifiers = {"arch", "repository_url"}
+    allowed_qualifiers = {"repository_url", "arch"}
     namespace_case_sensitive = False
     name_case_sensitive = False
-    version_case_sensitive = False
+    version_case_sensitive = True
     purl_pattern = "pkg:apk/.*"
 
 
@@ -142,7 +142,7 @@ class BitbucketTypeValidator(TypeValidator):
     allowed_qualifiers = {"repository_url"}
     namespace_case_sensitive = False
     name_case_sensitive = False
-    version_case_sensitive = False
+    version_case_sensitive = True
     purl_pattern = "pkg:bitbucket/.*"
 
 
@@ -153,10 +153,10 @@ class BitnamiTypeValidator(TypeValidator):
     use_repository = True
     default_repository_url = "https://downloads.bitnami.com/files/stacksmith"
     namespace_requirement = "prohibited"
-    allowed_qualifiers = {"arch", "repository_url", "distro"}
+    allowed_qualifiers = {"distro", "repository_url", "arch"}
     namespace_case_sensitive = False
     name_case_sensitive = False
-    version_case_sensitive = False
+    version_case_sensitive = True
     purl_pattern = "pkg:bitnami/.*"
 
 
@@ -169,8 +169,8 @@ class CargoTypeValidator(TypeValidator):
     namespace_requirement = "prohibited"
     allowed_qualifiers = {"repository_url"}
     namespace_case_sensitive = False
-    name_case_sensitive = False
-    version_case_sensitive = False
+    name_case_sensitive = True
+    version_case_sensitive = True
     purl_pattern = "pkg:cargo/.*"
 
 
@@ -184,7 +184,7 @@ class CocoapodsTypeValidator(TypeValidator):
     allowed_qualifiers = {"repository_url"}
     namespace_case_sensitive = False
     name_case_sensitive = True
-    version_case_sensitive = False
+    version_case_sensitive = True
     purl_pattern = "pkg:cocoapods/.*"
 
 
@@ -198,7 +198,7 @@ class ComposerTypeValidator(TypeValidator):
     allowed_qualifiers = {"repository_url"}
     namespace_case_sensitive = False
     name_case_sensitive = False
-    version_case_sensitive = False
+    version_case_sensitive = True
     purl_pattern = "pkg:composer/.*"
 
 
@@ -209,10 +209,10 @@ class ConanTypeValidator(TypeValidator):
     use_repository = True
     default_repository_url = "https://center.conan.io"
     namespace_requirement = "optional"
-    allowed_qualifiers = {"rrev", "channel", "prev", "user", "repository_url"}
+    allowed_qualifiers = {"channel", "rrev", "user", "repository_url", "prev"}
     namespace_case_sensitive = False
     name_case_sensitive = False
-    version_case_sensitive = False
+    version_case_sensitive = True
     purl_pattern = "pkg:conan/.*"
 
 
@@ -223,10 +223,10 @@ class CondaTypeValidator(TypeValidator):
     use_repository = True
     default_repository_url = "https://repo.anaconda.com"
     namespace_requirement = "prohibited"
-    allowed_qualifiers = {"type", "build", "subdir", "channel", "repository_url"}
+    allowed_qualifiers = {"channel", "build", "subdir", "repository_url", "type"}
     namespace_case_sensitive = False
     name_case_sensitive = False
-    version_case_sensitive = False
+    version_case_sensitive = True
     purl_pattern = "pkg:conda/.*"
 
 
@@ -237,10 +237,10 @@ class CpanTypeValidator(TypeValidator):
     use_repository = True
     default_repository_url = "https://www.cpan.org/"
     namespace_requirement = "optional"
-    allowed_qualifiers = {"vcs_url", "ext", "repository_url", "download_url"}
+    allowed_qualifiers = {"repository_url", "ext", "vcs_url", "download_url"}
     namespace_case_sensitive = False
     name_case_sensitive = True
-    version_case_sensitive = False
+    version_case_sensitive = True
     purl_pattern = "pkg:cpan/.*"
 
 
@@ -253,8 +253,8 @@ class CranTypeValidator(TypeValidator):
     namespace_requirement = "prohibited"
     allowed_qualifiers = {"repository_url"}
     namespace_case_sensitive = False
-    name_case_sensitive = False
-    version_case_sensitive = False
+    name_case_sensitive = True
+    version_case_sensitive = True
     purl_pattern = "pkg:cran/.*"
 
 
@@ -265,10 +265,10 @@ class DebTypeValidator(TypeValidator):
     use_repository = True
     default_repository_url = ""
     namespace_requirement = "required"
-    allowed_qualifiers = {"arch", "repository_url"}
+    allowed_qualifiers = {"repository_url", "arch"}
     namespace_case_sensitive = False
     name_case_sensitive = False
-    version_case_sensitive = False
+    version_case_sensitive = True
     purl_pattern = "pkg:deb/.*"
 
 
@@ -282,7 +282,7 @@ class DockerTypeValidator(TypeValidator):
     allowed_qualifiers = {"repository_url"}
     namespace_case_sensitive = False
     name_case_sensitive = False
-    version_case_sensitive = False
+    version_case_sensitive = True
     purl_pattern = "pkg:docker/.*"
 
 
@@ -296,7 +296,7 @@ class GemTypeValidator(TypeValidator):
     allowed_qualifiers = {"repository_url", "platform"}
     namespace_case_sensitive = False
     name_case_sensitive = False
-    version_case_sensitive = False
+    version_case_sensitive = True
     purl_pattern = "pkg:gem/.*"
 
 
@@ -310,7 +310,7 @@ class GenericTypeValidator(TypeValidator):
     allowed_qualifiers = {"checksum", "download_url"}
     namespace_case_sensitive = False
     name_case_sensitive = False
-    version_case_sensitive = False
+    version_case_sensitive = True
     purl_pattern = "pkg:generic/.*"
 
 
@@ -324,7 +324,7 @@ class GithubTypeValidator(TypeValidator):
     allowed_qualifiers = {"repository_url"}
     namespace_case_sensitive = False
     name_case_sensitive = False
-    version_case_sensitive = False
+    version_case_sensitive = True
     purl_pattern = "pkg:github/.*"
 
 
@@ -338,7 +338,7 @@ class GolangTypeValidator(TypeValidator):
     allowed_qualifiers = {"repository_url"}
     namespace_case_sensitive = False
     name_case_sensitive = False
-    version_case_sensitive = False
+    version_case_sensitive = True
     purl_pattern = "pkg:golang/.*"
 
 
@@ -352,7 +352,7 @@ class HackageTypeValidator(TypeValidator):
     allowed_qualifiers = {"repository_url"}
     namespace_case_sensitive = False
     name_case_sensitive = True
-    version_case_sensitive = False
+    version_case_sensitive = True
     purl_pattern = "pkg:hackage/.*"
 
 
@@ -366,7 +366,7 @@ class HexTypeValidator(TypeValidator):
     allowed_qualifiers = {"repository_url"}
     namespace_case_sensitive = False
     name_case_sensitive = False
-    version_case_sensitive = False
+    version_case_sensitive = True
     purl_pattern = "pkg:hex/.*"
 
 
@@ -380,7 +380,7 @@ class HuggingfaceTypeValidator(TypeValidator):
     allowed_qualifiers = {"repository_url"}
     namespace_case_sensitive = True
     name_case_sensitive = True
-    version_case_sensitive = False
+    version_case_sensitive = True
     purl_pattern = "pkg:huggingface/.*"
 
 
@@ -405,7 +405,7 @@ class MavenTypeValidator(TypeValidator):
     use_repository = True
     default_repository_url = "https://repo.maven.apache.org/maven2/"
     namespace_requirement = "required"
-    allowed_qualifiers = {"type", "classifier", "repository_url"}
+    allowed_qualifiers = {"repository_url", "type", "classifier"}
     namespace_case_sensitive = True
     name_case_sensitive = True
     version_case_sensitive = True
@@ -419,10 +419,10 @@ class MlflowTypeValidator(TypeValidator):
     use_repository = True
     default_repository_url = ""
     namespace_requirement = "prohibited"
-    allowed_qualifiers = {"run_id", "repository_url", "model_uuid"}
+    allowed_qualifiers = {"repository_url", "run_id", "model_uuid"}
     namespace_case_sensitive = False
     name_case_sensitive = False
-    version_case_sensitive = False
+    version_case_sensitive = True
     purl_pattern = "pkg:mlflow/.*"
 
 
@@ -450,7 +450,7 @@ class NugetTypeValidator(TypeValidator):
     allowed_qualifiers = {"repository_url"}
     namespace_case_sensitive = False
     name_case_sensitive = True
-    version_case_sensitive = False
+    version_case_sensitive = True
     purl_pattern = "pkg:nuget/.*"
 
 
@@ -461,10 +461,10 @@ class OciTypeValidator(TypeValidator):
     use_repository = True
     default_repository_url = ""
     namespace_requirement = "prohibited"
-    allowed_qualifiers = {"arch", "repository_url", "tag"}
+    allowed_qualifiers = {"repository_url", "tag", "arch"}
     namespace_case_sensitive = False
     name_case_sensitive = False
-    version_case_sensitive = False
+    version_case_sensitive = True
     purl_pattern = "pkg:oci/.*"
 
 
@@ -478,7 +478,7 @@ class PubTypeValidator(TypeValidator):
     allowed_qualifiers = {"repository_url"}
     namespace_case_sensitive = False
     name_case_sensitive = False
-    version_case_sensitive = False
+    version_case_sensitive = True
     purl_pattern = "pkg:pub/.*"
 
 
@@ -489,10 +489,10 @@ class PypiTypeValidator(TypeValidator):
     use_repository = True
     default_repository_url = "https://pypi.org"
     namespace_requirement = "prohibited"
-    allowed_qualifiers = {"repository_url", "file_name"}
+    allowed_qualifiers = {"file_name", "repository_url"}
     namespace_case_sensitive = False
     name_case_sensitive = False
-    version_case_sensitive = False
+    version_case_sensitive = True
     purl_pattern = "pkg:pypi/.*"
 
 
@@ -506,7 +506,7 @@ class QpkgTypeValidator(TypeValidator):
     allowed_qualifiers = {"repository_url"}
     namespace_case_sensitive = False
     name_case_sensitive = False
-    version_case_sensitive = False
+    version_case_sensitive = True
     purl_pattern = "pkg:qpkg/.*"
 
 
@@ -517,10 +517,10 @@ class RpmTypeValidator(TypeValidator):
     use_repository = True
     default_repository_url = ""
     namespace_requirement = "required"
-    allowed_qualifiers = {"arch", "repository_url", "epoch"}
+    allowed_qualifiers = {"repository_url", "arch", "epoch"}
     namespace_case_sensitive = False
     name_case_sensitive = True
-    version_case_sensitive = False
+    version_case_sensitive = True
     purl_pattern = "pkg:rpm/.*"
 
 
@@ -531,7 +531,7 @@ class SwidTypeValidator(TypeValidator):
     use_repository = False
     default_repository_url = ""
     namespace_requirement = "optional"
-    allowed_qualifiers = {"patch", "tag_id", "tag_creator_regid", "tag_creator_name", "tag_version"}
+    allowed_qualifiers = {"tag_creator_name", "tag_creator_regid", "tag_version", "tag_id", "patch"}
     namespace_case_sensitive = True
     name_case_sensitive = True
     version_case_sensitive = True

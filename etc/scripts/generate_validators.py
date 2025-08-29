@@ -91,13 +91,13 @@ class TypeValidator:
             yield f"Namespace is required for purl type: {cls.type!r}"
 
         if (
-            cls.namespace_case_sensitive
+            not cls.namespace_case_sensitive
             and purl.namespace
             and purl.namespace.lower() != purl.namespace
         ):
             yield f"Namespace is not lowercased for purl type: {cls.type!r}"
 
-        if cls.name_case_sensitive and purl.name and purl.name.lower() != purl.name:
+        if not cls.name_case_sensitive and purl.name and purl.name.lower() != purl.name:
             yield f"Name is not lowercased for purl type: {cls.type!r}"
 
         if not cls.version_case_sensitive and purl.version and purl.version.lower() != purl.version:
@@ -148,8 +148,8 @@ class TypeValidator:
 
         if disallowed:
             yield (
-                f"Invalid qualifiers found: {', '.join(disallowed)}. "
-                f"Allowed qualifiers are: {', '.join(allowed_qualifiers_set)}"
+                f"Invalid qualifiers found: {', '.join(sorted(disallowed))}. "
+                f"Allowed qualifiers are: {', '.join(sorted(allowed_qualifiers_set))}"
             )
 '''
 
@@ -197,7 +197,7 @@ def generate_validators():
         namespace_case_sensitive = type_def["namespace_definition"].get("case_sensitive") or False
         name_case_sensitive = type_def["name_definition"].get("case_sensitive") or False
         version_definition = type_def.get("version_definition") or {}
-        version_case_sensitive = version_definition.get("case_sensitive") or False
+        version_case_sensitive = version_definition.get("case_sensitive") or True
         repository = type_def.get("repository")
         use_repository_url = repository.get("use_repository") or False 
 
