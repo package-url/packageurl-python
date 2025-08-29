@@ -430,7 +430,7 @@ class PackageURL(
                 qualifiers_final,
                 subpath_final,
             ) = normalize(type, namespace, name, version, qualifiers, subpath, encode=None)
-        
+
         else:
             type_final = type
             namespace_final = namespace
