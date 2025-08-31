@@ -24,6 +24,9 @@
 # Visit https://github.com/package-url/packageurl-python for support and
 # download.
 
+from typing import Optional
+from typing import Union
+
 from packageurl import PackageURL
 
 
@@ -51,3 +54,11 @@ def get_golang_purl(go_package: str):
     name = parts[-1]
     namespace = "/".join(parts[:-1])
     return PackageURL(type="golang", namespace=namespace, name=name, version=version)
+
+
+def ensure_str(value: Optional[Union[str, bytes]]) -> Optional[str]:
+    if value is None:
+        return None
+    if isinstance(value, bytes):
+        return value.decode("utf-8")  # or whatever encoding is right
+    return value

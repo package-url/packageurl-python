@@ -151,3 +151,26 @@ def run_test_case(case, test_type, desc):
             subpath=input_data.get("subpath"),
         )
         assert purl.to_string() == case["expected_output"]
+
+    elif test_type == "validation":
+        input_data = case["input"]
+        test_group = case.get("test_group")
+        if test_group not in ("base", "advanced"):
+            raise Exception(test_group)
+        strict = True
+        if test_group == "advanced":
+            strict = False
+        purl = PackageURL(
+            type=input_data["type"],
+            namespace=input_data["namespace"],
+            name=input_data["name"],
+            version=input_data["version"],
+            qualifiers=input_data.get("qualifiers"),
+            subpath=input_data.get("subpath"),
+            normalize_purl=not strict,
+        )
+        messages = purl.validate(strict=strict)
+        if case.get("expected_messages"):
+            assert messages == case["expected_messages"]
+        else:
+            assert not messages

@@ -24,6 +24,7 @@
 
 from __future__ import annotations
 
+import re
 import string
 from collections import namedtuple
 from collections.abc import Mapping
@@ -35,6 +36,8 @@ from typing import overload
 from urllib.parse import quote as _percent_quote
 from urllib.parse import unquote as _percent_unquote
 from urllib.parse import urlsplit as _urlsplit
+
+from packageurl.contrib.route import NoRouteAvailable
 
 if TYPE_CHECKING:
     from collections.abc import Callable
@@ -117,8 +120,21 @@ def normalize_namespace(
 
     namespace_str = namespace if isinstance(namespace, str) else namespace.decode("utf-8")
     namespace_str = namespace_str.strip().strip("/")
-    if ptype in ("bitbucket", "github", "pypi", "gitlab", "composer"):
+    if ptype in (
+        "bitbucket",
+        "github",
+        "pypi",
+        "gitlab",
+        "composer",
+        "luarocks",
+        "qpkg",
+        "alpm",
+        "apk",
+        "hex",
+    ):
         namespace_str = namespace_str.lower()
+    if ptype and ptype in ("cpan"):
+        namespace_str = namespace_str.upper()
     segments = [seg for seg in namespace_str.split("/") if seg.strip()]
     segments_quoted = map(get_quoter(encode), segments)
     return "/".join(segments_quoted) or None
@@ -159,9 +175,24 @@ def normalize_name(
     name_str = name_str.strip().strip("/")
     if ptype and ptype in ("mlflow"):
         return normalize_mlflow_name(name_str, qualifiers)
-    if ptype in ("bitbucket", "github", "pypi", "gitlab", "composer"):
+    if ptype in (
+        "bitbucket",
+        "github",
+        "pypi",
+        "gitlab",
+        "composer",
+        "luarocks",
+        "oci",
+        "npm",
+        "alpm",
+        "apk",
+        "bitnami",
+        "hex",
+    ):
         name_str = name_str.lower()
     if ptype == "pypi":
+        name_str = name_str.replace("_", "-").lower()
+    if ptype == "hackage":
         name_str = name_str.replace("_", "-")
     return name_str or None
 
@@ -175,7 +206,7 @@ def normalize_version(
     version_str = version if isinstance(version, str) else version.decode("utf-8")
     quoter = get_quoter(encode)
     version_str = quoter(version_str.strip())
-    if ptype and isinstance(ptype, str) and ptype in ("huggingface"):
+    if ptype and isinstance(ptype, str) and ptype in ("huggingface", "oci"):
         return version_str.lower()
     return version_str or None
 
@@ -366,6 +397,7 @@ class PackageURL(
         version: AnyStr | None = None,
         qualifiers: AnyStr | dict[str, str] | None = None,
         subpath: AnyStr | None = None,
+        normalize_purl: bool = True,
     ) -> Self:
         required = dict(type=type, name=name)
         for key, value in required.items():
@@ -391,23 +423,43 @@ class PackageURL(
                 f"Invalid purl: qualifiers argument must be a dict or a string: {qualifiers!r}."
             )
 
-        (
-            type_norm,
-            namespace_norm,
-            name_norm,
-            version_norm,
-            qualifiers_norm,
-            subpath_norm,
-        ) = normalize(type, namespace, name, version, qualifiers, subpath, encode=None)
+        type_final: str
+        namespace_final: Optional[str]
+        name_final: str
+        version_final: Optional[str]
+        qualifiers_final: dict[str, str]
+        subpath_final: Optional[str]
+
+        if normalize_purl:
+            (
+                type_final,
+                namespace_final,
+                name_final,
+                version_final,
+                qualifiers_final,
+                subpath_final,
+            ) = normalize(type, namespace, name, version, qualifiers, subpath, encode=None)
+        else:
+            from packageurl.utils import ensure_str
+
+            type_final = ensure_str(type) or ""
+            namespace_final = ensure_str(namespace)
+            name_final = ensure_str(name) or ""
+            version_final = ensure_str(version)
+            if isinstance(qualifiers, dict):
+                qualifiers_final = qualifiers
+            else:
+                qualifiers_final = {}
+            subpath_final = ensure_str(subpath)
 
         return super().__new__(
             cls,
-            type=type_norm,
-            namespace=namespace_norm,
-            name=name_norm,
-            version=version_norm,
-            qualifiers=qualifiers_norm,
-            subpath=subpath_norm,
+            type=type_final,
+            namespace=namespace_final,
+            name=name_final,
+            version=version_final,
+            qualifiers=qualifiers_final,
+            subpath=subpath_final,
         )
 
     def __str__(self, *args: Any, **kwargs: Any) -> str:
@@ -468,6 +520,22 @@ class PackageURL(
             purl.append(subpath)
 
         return "".join(purl)
+
+    def validate(self, strict: bool = False) -> list[str]:
+        """
+        Validate this PackageURL object and return a list of validation error messages.
+        """
+        from packageurl.validate import VALIDATORS_BY_TYPE
+
+        if self:
+            try:
+                validator_class = VALIDATORS_BY_TYPE.get(self.type)
+                if not validator_class:
+                    return [f"Given type: {self.type} can not be validated"]
+                messages = list(validator_class.validate(self, strict))  # type: ignore[no-untyped-call]
+                return messages
+            except NoRouteAvailable:
+                return [f"Given type: {self.type} can not be validated"]
 
     @classmethod
     def from_string(cls, purl: str) -> Self:
