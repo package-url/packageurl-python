@@ -131,7 +131,7 @@ class TypeValidator:
 
     @classmethod
     def validate_type(cls, purl, strict=False):
-        yield
+        return
 
     @classmethod
     def validate_qualifiers(cls, purl):
