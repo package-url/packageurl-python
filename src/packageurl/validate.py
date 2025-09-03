@@ -55,7 +55,9 @@ class TypeValidator:
         if not cls.version_case_sensitive and purl.version and purl.version.lower() != purl.version:
             yield f"Version is not lowercased for purl type: {cls.type!r}"
 
-        yield from cls.validate_type(purl, strict=strict)
+        messages = cls.validate_type(purl, strict=strict)
+        if messages:
+            yield from messages
 
     @classmethod
     def normalize(cls, purl):
@@ -85,8 +87,7 @@ class TypeValidator:
 
     @classmethod
     def validate_type(cls, purl, strict=False):
-        if strict:
-            yield from cls.validate_qualifiers(purl=purl)
+        return
 
     @classmethod
     def validate_qualifiers(cls, purl):
@@ -250,7 +251,9 @@ class CpanTypeValidator(TypeValidator):
             yield f"Name must not contain '::' when Namespace is absent for purl type: {cls.type!r}"
         if not purl.namespace and "-" in purl.name:
             yield f"Name must not contain '-' when Namespace is absent for purl type: {cls.type!r}"
-        yield from super().validate_type(purl, strict)
+        messages = super().validate_type(purl, strict)
+        if messages:
+            yield from messages
 
 
 class CranTypeValidator(TypeValidator):
@@ -368,7 +371,9 @@ class HackageTypeValidator(TypeValidator):
     def validate_type(cls, purl, strict=False):
         if "_" in purl.name:
             yield f"Name contains underscores but should be kebab-case for purl type: {cls.type!r}"
-        yield from super().validate_type(purl, strict)
+        messages = super().validate_type(purl, strict)
+        if messages:
+            yield from messages
 
 
 class HexTypeValidator(TypeValidator):
@@ -502,7 +507,9 @@ class PubTypeValidator(TypeValidator):
             yield f"Name contains invalid characters but should only contain lowercase letters, digits, or underscores for purl type: {cls.type!r}"
         if " " in purl.name:
             yield f"Name contains spaces but should use underscores instead for purl type: {cls.type!r}"
-        yield from super().validate_type(purl, strict)
+        messages = super().validate_type(purl, strict)
+        if messages:
+            yield from messages
 
 
 class PypiTypeValidator(TypeValidator):
@@ -522,7 +529,9 @@ class PypiTypeValidator(TypeValidator):
     def validate_type(cls, purl, strict=False):
         if "_" in purl.name:
             yield f"Name cannot contain `_` for purl type:{cls.type!r}"
-        yield from super().validate_type(purl, strict)
+        messages = super().validate_type(purl, strict)
+        if messages:
+            yield from messages
 
 
 class QpkgTypeValidator(TypeValidator):

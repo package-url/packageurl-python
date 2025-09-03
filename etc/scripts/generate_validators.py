@@ -44,7 +44,7 @@
   ]
 }
 """
-from packageurl import PackageURL
+
 from pathlib import Path
 import json
 
@@ -131,8 +131,7 @@ class TypeValidator:
 
     @classmethod
     def validate_type(cls, purl, strict=False):
-        if strict:
-            yield from cls.validate_qualifiers(purl=purl)
+        yield
 
     @classmethod
     def validate_qualifiers(cls, purl):
