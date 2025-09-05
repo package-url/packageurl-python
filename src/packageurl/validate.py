@@ -26,6 +26,21 @@
 Validate each type according to the PURL spec type definitions
 """
 
+from enum import Enum
+from dataclasses import dataclass
+
+
+class ValidationSeverity(Enum):
+    ERROR = "error"
+    WARNING = "warning"
+    INFO = "info"
+
+
+@dataclass
+class ValidationMessage:
+    severity: ValidationSeverity
+    message: str
+
 
 class TypeValidator:
     @classmethod
@@ -34,26 +49,45 @@ class TypeValidator:
             purl = cls.normalize(purl)
 
         if cls.namespace_requirement == "prohibited" and purl.namespace:
-            yield f"Namespace is prohibited for purl type: {cls.type!r}"
+            yield ValidationMessage(
+                severity=ValidationSeverity.ERROR,
+                message=f"Namespace is prohibited for purl type: {cls.type!r}",
+            )
 
         elif cls.namespace_requirement == "required" and not purl.namespace:
-            yield f"Namespace is required for purl type: {cls.type!r}"
+            yield ValidationMessage(
+                severity=ValidationSeverity.ERROR,
+                message=f"Namespace is required for purl type: {cls.type!r}",
+            )
 
         if purl.type == "cpan":
             if purl.namespace and purl.namespace != purl.namespace.upper():
-                yield f"Namespace must be uppercase for purl type: {cls.type!r}"
+                yield ValidationMessage(
+                    severity=ValidationSeverity.WARNING,
+                    message=f"Namespace must be uppercase for purl type: {cls.type!r}",
+                )
+        # TODO: Check pending CPAN PR and decide if we want to upgrade the type definition schema
         elif (
             not cls.namespace_case_sensitive
             and purl.namespace
             and purl.namespace.lower() != purl.namespace
         ):
-            yield f"Namespace is not lowercased for purl type: {cls.type!r}"
+            yield ValidationMessage(
+                severity=ValidationSeverity.WARNING,
+                message=f"Namespace is not lowercased for purl type: {cls.type!r}",
+            )
 
         if not cls.name_case_sensitive and purl.name and purl.name.lower() != purl.name:
-            yield f"Name is not lowercased for purl type: {cls.type!r}"
+            yield ValidationMessage(
+                severity=ValidationSeverity.WARNING,
+                message=f"Name is not lowercased for purl type: {cls.type!r}",
+            )
 
         if not cls.version_case_sensitive and purl.version and purl.version.lower() != purl.version:
-            yield f"Version is not lowercased for purl type: {cls.type!r}"
+            yield ValidationMessage(
+                severity=ValidationSeverity.WARNING,
+                message=f"Version is not lowercased for purl type: {cls.type!r}",
+            )
 
         messages = cls.validate_type(purl, strict=strict)
         if messages:
@@ -87,7 +121,8 @@ class TypeValidator:
 
     @classmethod
     def validate_type(cls, purl, strict=False):
-        return
+        if strict:
+            yield from cls.validate_qualifiers(purl)
 
     @classmethod
     def validate_qualifiers(cls, purl):
@@ -100,9 +135,12 @@ class TypeValidator:
         disallowed = purl_qualifiers_keys - allowed_qualifiers_set
 
         if disallowed:
-            yield (
-                f"Invalid qualifiers found: {', '.join(sorted(disallowed))}. "
-                f"Allowed qualifiers are: {', '.join(sorted(allowed_qualifiers_set))}"
+            yield ValidationMessage(
+                severity=ValidationSeverity.INFO,
+                message=(
+                    f"Invalid qualifiers found: {', '.join(sorted(disallowed))}. "
+                    f"Allowed qualifiers are: {', '.join(sorted(allowed_qualifiers_set))}"
+                ),
             )
 
 
@@ -248,9 +286,15 @@ class CpanTypeValidator(TypeValidator):
     @classmethod
     def validate_type(cls, purl, strict=False):
         if purl.namespace and "::" in purl.name:
-            yield f"Name must not contain '::' when Namespace is absent for purl type: {cls.type!r}"
+            yield ValidationMessage(
+                severity=ValidationSeverity.ERROR,
+                message=f"Name must not contain '::' when Namespace is present for purl type: {cls.type!r}",
+            )
         if not purl.namespace and "-" in purl.name:
-            yield f"Name must not contain '-' when Namespace is absent for purl type: {cls.type!r}"
+            yield ValidationMessage(
+                severity=ValidationSeverity.ERROR,
+                message=f"Name must not contain '-' when Namespace is absent for purl type: {cls.type!r}",
+            )
         messages = super().validate_type(purl, strict)
         if messages:
             yield from messages
@@ -370,7 +414,10 @@ class HackageTypeValidator(TypeValidator):
     @classmethod
     def validate_type(cls, purl, strict=False):
         if "_" in purl.name:
-            yield f"Name contains underscores but should be kebab-case for purl type: {cls.type!r}"
+            yield ValidationMessage(
+                severity=ValidationSeverity.WARNING,
+                message=f"Name cannot contain underscores for purl type:{cls.type!r}",
+            )
         messages = super().validate_type(purl, strict)
         if messages:
             yield from messages
@@ -503,10 +550,17 @@ class PubTypeValidator(TypeValidator):
 
     @classmethod
     def validate_type(cls, purl, strict=False):
-        if any(not (c.islower() or c.isdigit() or c == "_") for c in purl.name):
-            yield f"Name contains invalid characters but should only contain lowercase letters, digits, or underscores for purl type: {cls.type!r}"
+        if not all(c.isalnum() or c == "_" for c in purl.name):
+            yield ValidationMessage(
+                severity=ValidationSeverity.ERROR,
+                message=f"Name contains invalid characters but should only contain letters, digits, or underscores for purl type: {cls.type!r}",
+            )
+
         if " " in purl.name:
-            yield f"Name contains spaces but should use underscores instead for purl type: {cls.type!r}"
+            yield ValidationMessage(
+                severity=ValidationSeverity.ERROR,
+                message=f"Name contains spaces but should use underscores instead for purl type: {cls.type!r}",
+            )
         messages = super().validate_type(purl, strict)
         if messages:
             yield from messages
@@ -528,7 +582,10 @@ class PypiTypeValidator(TypeValidator):
     @classmethod
     def validate_type(cls, purl, strict=False):
         if "_" in purl.name:
-            yield f"Name cannot contain `_` for purl type:{cls.type!r}"
+            yield ValidationMessage(
+                severity=ValidationSeverity.WARNING,
+                message=f"Name cannot contain underscores for purl type:{cls.type!r}",
+            )
         messages = super().validate_type(purl, strict)
         if messages:
             yield from messages

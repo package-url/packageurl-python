@@ -160,17 +160,18 @@ def run_test_case(case, test_type, desc):
         strict = True
         if test_group == "advanced":
             strict = False
-        purl = PackageURL(
-            type=input_data["type"],
-            namespace=input_data["namespace"],
-            name=input_data["name"],
-            version=input_data["version"],
-            qualifiers=input_data.get("qualifiers"),
-            subpath=input_data.get("subpath"),
-            normalize_purl=not strict,
-        )
+        purl = PackageURL.from_string(input_data, normalize_purl=False)
         messages = purl.validate(strict=strict)
-        if case.get("expected_messages"):
-            assert messages == case["expected_messages"]
+        messages = list(change_messages_to_json(messages))
+        if case.get("expected_output"):
+            assert messages == case["expected_output"]
         else:
             assert not messages
+
+
+def change_messages_to_json(messages):
+    for message in messages:
+        yield {
+            "severity": message.severity.value,
+            "message": message.message,
+        }

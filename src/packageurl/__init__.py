@@ -538,7 +538,7 @@ class PackageURL(
                 return [f"Given type: {self.type} can not be validated"]
 
     @classmethod
-    def from_string(cls, purl: str) -> Self:
+    def from_string(cls, purl: str, normalize_purl: bool = True) -> Self:
         """
         Return a PackageURL object parsed from a string.
         Raise ValueError on errors.
@@ -622,14 +622,18 @@ class PackageURL(
         if not name:
             raise ValueError(f"purl is missing the required name component: {purl!r}")
 
-        type_, namespace, name, version, qualifiers, subpath = normalize(
-            type_,
-            namespace,
-            name,
-            version,
-            qualifiers_str,
-            subpath,
-            encode=False,
+        if normalize_purl:
+            type_, namespace, name, version, qualifiers, subpath = normalize(
+                type_,
+                namespace,
+                name,
+                version,
+                qualifiers_str,
+                subpath,
+                encode=False,
+            )
+        else:
+            qualifiers = normalize_qualifiers(qualifiers_str, encode=False) or {}
+        return cls(
+            type_, namespace, name, version, qualifiers, subpath, normalize_purl=normalize_purl
         )
-
-        return cls(type_, namespace, name, version, qualifiers, subpath)
