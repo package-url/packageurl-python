@@ -552,13 +552,13 @@ class PubTypeValidator(TypeValidator):
     def validate_type(cls, purl, strict=False):
         if not all(c.isalnum() or c == "_" for c in purl.name):
             yield ValidationMessage(
-                severity=ValidationSeverity.ERROR,
+                severity=ValidationSeverity.WARNING,
                 message=f"Name contains invalid characters but should only contain letters, digits, or underscores for purl type: {cls.type!r}",
             )
 
         if " " in purl.name:
             yield ValidationMessage(
-                severity=ValidationSeverity.ERROR,
+                severity=ValidationSeverity.WARNING,
                 message=f"Name contains spaces but should use underscores instead for purl type: {cls.type!r}",
             )
         messages = super().validate_type(purl, strict)

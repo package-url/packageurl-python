@@ -188,12 +188,15 @@ def normalize_name(
         "apk",
         "bitnami",
         "hex",
+        "pub",
     ):
         name_str = name_str.lower()
     if ptype == "pypi":
         name_str = name_str.replace("_", "-").lower()
     if ptype == "hackage":
         name_str = name_str.replace("_", "-")
+    if ptype == "pub":
+        name_str = re.sub(r"[^a-z0-9]", "_", name_str.lower())
     return name_str or None
 
 
