@@ -524,21 +524,38 @@ class PackageURL(
 
         return "".join(purl)
 
-    def validate(self, strict: bool = False) -> list[str]:
+    def validate(self, strict: bool = False) -> list:
         """
         Validate this PackageURL object and return a list of validation error messages.
         """
-        from packageurl.validate import VALIDATORS_BY_TYPE
+        from packageurl.validate import DEFINITIONS_BY_TYPE
+        from packageurl.validate import ValidationMessage
+        from packageurl.validate import ValidationSeverity
 
-        if self:
-            try:
-                validator_class = VALIDATORS_BY_TYPE.get(self.type)
-                if not validator_class:
-                    return [f"Given type: {self.type} can not be validated"]
-                messages = list(validator_class.validate(self, strict))  # type: ignore[no-untyped-call]
-                return messages
-            except NoRouteAvailable:
-                return [f"Given type: {self.type} can not be validated"]
+        validator_class = DEFINITIONS_BY_TYPE.get(self.type)
+        if not validator_class:
+            return [ValidationMessage(
+                severity=ValidationSeverity.ERROR,
+                message=f"Unexpected purl type: expected {self.type!r}",
+            )]
+        return list(validator_class.validate(purl=self, strict=strict))  # type: ignore[no-untyped-call]
+    
+    @classmethod
+    def validate_string(cls, purl: str, strict: bool = False) -> list:
+        """
+        Validate a PURL string and return a list of validation error messages.
+        """
+        from packageurl.validate import ValidationMessage
+        from packageurl.validate import ValidationSeverity
+
+        try:
+            purl = cls.from_string(purl, normalize_purl=not strict)
+        except ValueError as e:
+            return [ValidationMessage(
+                severity=ValidationSeverity.ERROR,
+                message=str(e),
+            )]
+        return purl.validate(strict=strict)
 
     @classmethod
     def from_string(cls, purl: str, normalize_purl: bool = True) -> Self:

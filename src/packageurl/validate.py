@@ -28,9 +28,10 @@ Validate each type according to the PURL spec type definitions
 
 from enum import Enum
 from dataclasses import dataclass
+import dataclasses
 
 
-class ValidationSeverity(Enum):
+class ValidationSeverity(str, Enum):
     ERROR = "error"
     WARNING = "warning"
     INFO = "info"
@@ -40,14 +41,85 @@ class ValidationSeverity(Enum):
 class ValidationMessage:
     severity: ValidationSeverity
     message: str
+    to_dict = dataclasses.asdict
 
+class BasePurlType:
+    """
+    Base class for all PURL type classes
+    """
+    type: str
+    """The type string for this Package-URL type."""
 
-class TypeValidator:
+    type_name: str
+    """The name for this PURL type."""
+
+    description: str
+    """The description of this PURL type."""
+
+    use_repository: bool = False
+    """true if this PURL type use a public package repository."""
+
+    default_repository_url: str
+    """The default public repository URL for this PURL type"""
+
+    namespace_requirement: str
+    """"States if this namespace is required, optional, or prohibited."""
+
+    allowed_qualifiers: dict = {"repository_url", "arch"}
+    """Set of allowed qualifier keys for this PURL type."""
+
+    namespace_case_sensitive: bool = True
+    """true if namespace is case sensitive. If false, the canonical form must be lowercased."""
+
+    name_case_sensitive: bool = True
+    """true if name is case sensitive. If false, the canonical form must be lowercased."""
+
+    version_case_sensitive: bool = True
+    """true if version is case sensitive. If false, the canonical form must be lowercased."""
+
+    purl_pattern: str
+    """A regex pattern that matches valid purls of this type."""
+
     @classmethod
     def validate(cls, purl, strict=False):
+        """
+        Validate a PackageURL instance or string.
+        Yields ValidationMessage and performs strict validation if strict=True
+        """
+        if not purl:
+            yield ValidationMessage(
+                severity=ValidationSeverity.ERROR,
+                message="No purl provided",
+            )
+            return
+        
+        from packageurl import PackageURL
+
+        if not isinstance(purl, PackageURL):
+            try:
+                purl = PackageURL.from_string(purl, normalize_purl=False)
+            except Exception as e:
+                yield ValidationMessage(
+                    severity=ValidationSeverity.ERROR,
+                    message=f"Invalid purl {purl!r} string: {e}",
+                )
+                return        
+
         if not strict:
             purl = cls.normalize(purl)
+        
+        yield from cls._validate_namespace(purl)
+        yield from cls._validate_name(purl)
+        yield from cls._validate_version(purl)
+        if strict:
+            yield from cls._validate_qualifiers(purl)
 
+        messages = cls.validate_using_type_rules(purl, strict=strict)
+        if messages:
+            yield from messages
+    
+    @classmethod
+    def _validate_namespace(cls, purl):
         if cls.namespace_requirement == "prohibited" and purl.namespace:
             yield ValidationMessage(
                 severity=ValidationSeverity.ERROR,
@@ -60,13 +132,13 @@ class TypeValidator:
                 message=f"Namespace is required for purl type: {cls.type!r}",
             )
 
+        # TODO: Check pending CPAN PR and decide if we want to upgrade the type definition schema
         if purl.type == "cpan":
             if purl.namespace and purl.namespace != purl.namespace.upper():
                 yield ValidationMessage(
                     severity=ValidationSeverity.WARNING,
                     message=f"Namespace must be uppercase for purl type: {cls.type!r}",
                 )
-        # TODO: Check pending CPAN PR and decide if we want to upgrade the type definition schema
         elif (
             not cls.namespace_case_sensitive
             and purl.namespace
@@ -76,22 +148,22 @@ class TypeValidator:
                 severity=ValidationSeverity.WARNING,
                 message=f"Namespace is not lowercased for purl type: {cls.type!r}",
             )
-
+    
+    @classmethod
+    def _validate_name(cls, purl):
         if not cls.name_case_sensitive and purl.name and purl.name.lower() != purl.name:
             yield ValidationMessage(
                 severity=ValidationSeverity.WARNING,
                 message=f"Name is not lowercased for purl type: {cls.type!r}",
             )
-
+    
+    @classmethod
+    def _validate_version(cls, purl):
         if not cls.version_case_sensitive and purl.version and purl.version.lower() != purl.version:
             yield ValidationMessage(
                 severity=ValidationSeverity.WARNING,
                 message=f"Version is not lowercased for purl type: {cls.type!r}",
             )
-
-        messages = cls.validate_type(purl, strict=strict)
-        if messages:
-            yield from messages
 
     @classmethod
     def normalize(cls, purl):
@@ -120,12 +192,16 @@ class TypeValidator:
         )
 
     @classmethod
-    def validate_type(cls, purl, strict=False):
-        if strict:
-            yield from cls.validate_qualifiers(purl)
+    def validate_using_type_rules(cls, purl, strict=False):
+        """
+        Validate using any additional type specific rules.
+        Yield validation messages.
+        Subclasses can override this method to add type specific validation rules.
+        """
+        return iter([])
 
     @classmethod
-    def validate_qualifiers(cls, purl):
+    def _validate_qualifiers(cls, purl):
         if not purl.qualifiers:
             return
 
@@ -144,7 +220,7 @@ class TypeValidator:
             )
 
 
-class AlpmTypeValidator(TypeValidator):
+class AlpmTypeDefinition(BasePurlType):
     type = "alpm"
     type_name = "Arch Linux package"
     description = """Arch Linux packages and other users of the libalpm/pacman package manager."""
@@ -158,7 +234,7 @@ class AlpmTypeValidator(TypeValidator):
     purl_pattern = "pkg:alpm/.*"
 
 
-class ApkTypeValidator(TypeValidator):
+class ApkTypeDefinition(BasePurlType):
     type = "apk"
     type_name = "APK-based packages"
     description = """Alpine Linux APK-based packages"""
@@ -172,7 +248,7 @@ class ApkTypeValidator(TypeValidator):
     purl_pattern = "pkg:apk/.*"
 
 
-class BitbucketTypeValidator(TypeValidator):
+class BitbucketTypeDefinition(BasePurlType):
     type = "bitbucket"
     type_name = "Bitbucket"
     description = """Bitbucket-based packages"""
@@ -186,7 +262,7 @@ class BitbucketTypeValidator(TypeValidator):
     purl_pattern = "pkg:bitbucket/.*"
 
 
-class BitnamiTypeValidator(TypeValidator):
+class BitnamiTypeDefinition(BasePurlType):
     type = "bitnami"
     type_name = "Bitnami"
     description = """Bitnami-based packages"""
@@ -200,7 +276,7 @@ class BitnamiTypeValidator(TypeValidator):
     purl_pattern = "pkg:bitnami/.*"
 
 
-class CargoTypeValidator(TypeValidator):
+class CargoTypeDefinition(BasePurlType):
     type = "cargo"
     type_name = "Cargo"
     description = """Cargo packages for Rust"""
@@ -214,7 +290,7 @@ class CargoTypeValidator(TypeValidator):
     purl_pattern = "pkg:cargo/.*"
 
 
-class CocoapodsTypeValidator(TypeValidator):
+class CocoapodsTypeDefinition(BasePurlType):
     type = "cocoapods"
     type_name = "CocoaPods"
     description = """CocoaPods pods"""
@@ -228,7 +304,7 @@ class CocoapodsTypeValidator(TypeValidator):
     purl_pattern = "pkg:cocoapods/.*"
 
 
-class ComposerTypeValidator(TypeValidator):
+class ComposerTypeDefinition(BasePurlType):
     type = "composer"
     type_name = "Composer"
     description = """Composer PHP packages"""
@@ -242,7 +318,7 @@ class ComposerTypeValidator(TypeValidator):
     purl_pattern = "pkg:composer/.*"
 
 
-class ConanTypeValidator(TypeValidator):
+class ConanTypeDefinition(BasePurlType):
     type = "conan"
     type_name = "Conan C/C++ packages"
     description = """Conan C/C++ packages. The purl is designed to closely resemble the Conan-native <package-name>/<package-version>@<user>/<channel> syntax for package references as specified in https://docs.conan.io/en/1.46/cheatsheet.html#package-terminology"""
@@ -256,7 +332,7 @@ class ConanTypeValidator(TypeValidator):
     purl_pattern = "pkg:conan/.*"
 
 
-class CondaTypeValidator(TypeValidator):
+class CondaTypeDefinition(BasePurlType):
     type = "conda"
     type_name = "Conda"
     description = """conda is for Conda packages"""
@@ -270,7 +346,7 @@ class CondaTypeValidator(TypeValidator):
     purl_pattern = "pkg:conda/.*"
 
 
-class CpanTypeValidator(TypeValidator):
+class CpanTypeDefinition(BasePurlType):
     type = "cpan"
     type_name = "CPAN"
     description = """CPAN Perl packages"""
@@ -284,7 +360,7 @@ class CpanTypeValidator(TypeValidator):
     purl_pattern = "pkg:cpan/.*"
 
     @classmethod
-    def validate_type(cls, purl, strict=False):
+    def validate_using_type_rules(cls, purl, strict=False):
         if purl.namespace and "::" in purl.name:
             yield ValidationMessage(
                 severity=ValidationSeverity.ERROR,
@@ -295,12 +371,12 @@ class CpanTypeValidator(TypeValidator):
                 severity=ValidationSeverity.ERROR,
                 message=f"Name must not contain '-' when Namespace is absent for purl type: {cls.type!r}",
             )
-        messages = super().validate_type(purl, strict)
+        messages = super().validate_using_type_rules(purl, strict)
         if messages:
             yield from messages
 
 
-class CranTypeValidator(TypeValidator):
+class CranTypeDefinition(BasePurlType):
     type = "cran"
     type_name = "CRAN"
     description = """CRAN R packages"""
@@ -314,7 +390,7 @@ class CranTypeValidator(TypeValidator):
     purl_pattern = "pkg:cran/.*"
 
 
-class DebTypeValidator(TypeValidator):
+class DebTypeDefinition(BasePurlType):
     type = "deb"
     type_name = "Debian package"
     description = """Debian packages, Debian derivatives, and Ubuntu packages"""
@@ -328,7 +404,7 @@ class DebTypeValidator(TypeValidator):
     purl_pattern = "pkg:deb/.*"
 
 
-class DockerTypeValidator(TypeValidator):
+class DockerTypeDefinition(BasePurlType):
     type = "docker"
     type_name = "Docker image"
     description = """for Docker images"""
@@ -342,7 +418,7 @@ class DockerTypeValidator(TypeValidator):
     purl_pattern = "pkg:docker/.*"
 
 
-class GemTypeValidator(TypeValidator):
+class GemTypeDefinition(BasePurlType):
     type = "gem"
     type_name = "RubyGems"
     description = """RubyGems"""
@@ -356,7 +432,7 @@ class GemTypeValidator(TypeValidator):
     purl_pattern = "pkg:gem/.*"
 
 
-class GenericTypeValidator(TypeValidator):
+class GenericTypeDefinition(BasePurlType):
     type = "generic"
     type_name = "Generic Package"
     description = """The generic type is for plain, generic packages that do not fit anywhere else such as for "upstream-from-distro" packages. In particular this is handy for a plain version control repository such as a bare git repo in combination with a vcs_url."""
@@ -370,7 +446,7 @@ class GenericTypeValidator(TypeValidator):
     purl_pattern = "pkg:generic/.*"
 
 
-class GithubTypeValidator(TypeValidator):
+class GithubTypeDefinition(BasePurlType):
     type = "github"
     type_name = "GitHub"
     description = """GitHub-based packages"""
@@ -384,7 +460,7 @@ class GithubTypeValidator(TypeValidator):
     purl_pattern = "pkg:github/.*"
 
 
-class GolangTypeValidator(TypeValidator):
+class GolangTypeDefinition(BasePurlType):
     type = "golang"
     type_name = "Go package"
     description = """Go packages"""
@@ -398,7 +474,7 @@ class GolangTypeValidator(TypeValidator):
     purl_pattern = "pkg:golang/.*"
 
 
-class HackageTypeValidator(TypeValidator):
+class HackageTypeDefinition(BasePurlType):
     type = "hackage"
     type_name = "Haskell package"
     description = """Haskell packages"""
@@ -412,18 +488,18 @@ class HackageTypeValidator(TypeValidator):
     purl_pattern = "pkg:hackage/.*"
 
     @classmethod
-    def validate_type(cls, purl, strict=False):
+    def validate_using_type_rules(cls, purl, strict=False):
         if "_" in purl.name:
             yield ValidationMessage(
                 severity=ValidationSeverity.WARNING,
                 message=f"Name cannot contain underscores for purl type:{cls.type!r}",
             )
-        messages = super().validate_type(purl, strict)
+        messages = super().validate_using_type_rules(purl, strict)
         if messages:
             yield from messages
 
 
-class HexTypeValidator(TypeValidator):
+class HexTypeDefinition(BasePurlType):
     type = "hex"
     type_name = "Hex"
     description = """Hex packages"""
@@ -437,7 +513,7 @@ class HexTypeValidator(TypeValidator):
     purl_pattern = "pkg:hex/.*"
 
 
-class HuggingfaceTypeValidator(TypeValidator):
+class HuggingfaceTypeDefinition(BasePurlType):
     type = "huggingface"
     type_name = "HuggingFace models"
     description = """Hugging Face ML models"""
@@ -451,7 +527,7 @@ class HuggingfaceTypeValidator(TypeValidator):
     purl_pattern = "pkg:huggingface/.*"
 
 
-class LuarocksTypeValidator(TypeValidator):
+class LuarocksTypeDefinition(BasePurlType):
     type = "luarocks"
     type_name = "LuaRocks"
     description = """Lua packages installed with LuaRocks"""
@@ -465,7 +541,7 @@ class LuarocksTypeValidator(TypeValidator):
     purl_pattern = "pkg:luarocks/.*"
 
 
-class MavenTypeValidator(TypeValidator):
+class MavenTypeDefinition(BasePurlType):
     type = "maven"
     type_name = "Maven"
     description = """PURL type for Maven JARs and related artifacts."""
@@ -479,7 +555,7 @@ class MavenTypeValidator(TypeValidator):
     purl_pattern = "pkg:maven/.*"
 
 
-class MlflowTypeValidator(TypeValidator):
+class MlflowTypeDefinition(BasePurlType):
     type = "mlflow"
     type_name = ""
     description = """MLflow ML models (Azure ML, Databricks, etc.)"""
@@ -493,7 +569,7 @@ class MlflowTypeValidator(TypeValidator):
     purl_pattern = "pkg:mlflow/.*"
 
 
-class NpmTypeValidator(TypeValidator):
+class NpmTypeDefinition(BasePurlType):
     type = "npm"
     type_name = "Node NPM packages"
     description = """PURL type for npm packages."""
@@ -507,7 +583,7 @@ class NpmTypeValidator(TypeValidator):
     purl_pattern = "pkg:npm/.*"
 
 
-class NugetTypeValidator(TypeValidator):
+class NugetTypeDefinition(BasePurlType):
     type = "nuget"
     type_name = "NuGet"
     description = """NuGet .NET packages"""
@@ -521,7 +597,7 @@ class NugetTypeValidator(TypeValidator):
     purl_pattern = "pkg:nuget/.*"
 
 
-class OciTypeValidator(TypeValidator):
+class OciTypeDefinition(BasePurlType):
     type = "oci"
     type_name = "OCI image"
     description = """For artifacts stored in registries that conform to the OCI Distribution Specification https://github.com/opencontainers/distribution-spec including container images built by Docker and others"""
@@ -535,7 +611,7 @@ class OciTypeValidator(TypeValidator):
     purl_pattern = "pkg:oci/.*"
 
 
-class PubTypeValidator(TypeValidator):
+class PubTypeDefinition(BasePurlType):
     type = "pub"
     type_name = "Pub"
     description = """Dart and Flutter pub packages"""
@@ -549,7 +625,7 @@ class PubTypeValidator(TypeValidator):
     purl_pattern = "pkg:pub/.*"
 
     @classmethod
-    def validate_type(cls, purl, strict=False):
+    def validate_using_type_rules(cls, purl, strict=False):
         if not all(c.isalnum() or c == "_" for c in purl.name):
             yield ValidationMessage(
                 severity=ValidationSeverity.WARNING,
@@ -561,12 +637,12 @@ class PubTypeValidator(TypeValidator):
                 severity=ValidationSeverity.WARNING,
                 message=f"Name contains spaces but should use underscores instead for purl type: {cls.type!r}",
             )
-        messages = super().validate_type(purl, strict)
+        messages = super().validate_using_type_rules(purl, strict)
         if messages:
             yield from messages
 
 
-class PypiTypeValidator(TypeValidator):
+class PypiTypeDefinition(BasePurlType):
     type = "pypi"
     type_name = "PyPI"
     description = """Python packages"""
@@ -580,18 +656,18 @@ class PypiTypeValidator(TypeValidator):
     purl_pattern = "pkg:pypi/.*"
 
     @classmethod
-    def validate_type(cls, purl, strict=False):
+    def validate_using_type_rules(cls, purl, strict=False):
         if "_" in purl.name:
             yield ValidationMessage(
                 severity=ValidationSeverity.WARNING,
                 message=f"Name cannot contain underscores for purl type:{cls.type!r}",
             )
-        messages = super().validate_type(purl, strict)
+        messages = super().validate_using_type_rules(purl, strict)
         if messages:
             yield from messages
 
 
-class QpkgTypeValidator(TypeValidator):
+class QpkgTypeDefinition(BasePurlType):
     type = "qpkg"
     type_name = "QNX package"
     description = """QNX packages"""
@@ -605,7 +681,7 @@ class QpkgTypeValidator(TypeValidator):
     purl_pattern = "pkg:qpkg/.*"
 
 
-class RpmTypeValidator(TypeValidator):
+class RpmTypeDefinition(BasePurlType):
     type = "rpm"
     type_name = "RPM"
     description = """RPM packages"""
@@ -619,7 +695,7 @@ class RpmTypeValidator(TypeValidator):
     purl_pattern = "pkg:rpm/.*"
 
 
-class SwidTypeValidator(TypeValidator):
+class SwidTypeDefinition(BasePurlType):
     type = "swid"
     type_name = "Software Identification (SWID) Tag"
     description = """PURL type for ISO-IEC 19770-2 Software Identification (SWID) tags."""
@@ -633,7 +709,7 @@ class SwidTypeValidator(TypeValidator):
     purl_pattern = "pkg:swid/.*"
 
 
-class SwiftTypeValidator(TypeValidator):
+class SwiftTypeDefinition(BasePurlType):
     type = "swift"
     type_name = "Swift packages"
     description = """Swift packages"""
@@ -647,37 +723,37 @@ class SwiftTypeValidator(TypeValidator):
     purl_pattern = "pkg:swift/.*"
 
 
-VALIDATORS_BY_TYPE = {
-    "alpm": AlpmTypeValidator,
-    "apk": ApkTypeValidator,
-    "bitbucket": BitbucketTypeValidator,
-    "bitnami": BitnamiTypeValidator,
-    "cargo": CargoTypeValidator,
-    "cocoapods": CocoapodsTypeValidator,
-    "composer": ComposerTypeValidator,
-    "conan": ConanTypeValidator,
-    "conda": CondaTypeValidator,
-    "cpan": CpanTypeValidator,
-    "cran": CranTypeValidator,
-    "deb": DebTypeValidator,
-    "docker": DockerTypeValidator,
-    "gem": GemTypeValidator,
-    "generic": GenericTypeValidator,
-    "github": GithubTypeValidator,
-    "golang": GolangTypeValidator,
-    "hackage": HackageTypeValidator,
-    "hex": HexTypeValidator,
-    "huggingface": HuggingfaceTypeValidator,
-    "luarocks": LuarocksTypeValidator,
-    "maven": MavenTypeValidator,
-    "mlflow": MlflowTypeValidator,
-    "npm": NpmTypeValidator,
-    "nuget": NugetTypeValidator,
-    "oci": OciTypeValidator,
-    "pub": PubTypeValidator,
-    "pypi": PypiTypeValidator,
-    "qpkg": QpkgTypeValidator,
-    "rpm": RpmTypeValidator,
-    "swid": SwidTypeValidator,
-    "swift": SwiftTypeValidator,
+DEFINITIONS_BY_TYPE = {
+    "alpm": AlpmTypeDefinition,
+    "apk": ApkTypeDefinition,
+    "bitbucket": BitbucketTypeDefinition,
+    "bitnami": BitnamiTypeDefinition,
+    "cargo": CargoTypeDefinition,
+    "cocoapods": CocoapodsTypeDefinition,
+    "composer": ComposerTypeDefinition,
+    "conan": ConanTypeDefinition,
+    "conda": CondaTypeDefinition,
+    "cpan": CpanTypeDefinition,
+    "cran": CranTypeDefinition,
+    "deb": DebTypeDefinition,
+    "docker": DockerTypeDefinition,
+    "gem": GemTypeDefinition,
+    "generic": GenericTypeDefinition,
+    "github": GithubTypeDefinition,
+    "golang": GolangTypeDefinition,
+    "hackage": HackageTypeDefinition,
+    "hex": HexTypeDefinition,
+    "huggingface": HuggingfaceTypeDefinition,
+    "luarocks": LuarocksTypeDefinition,
+    "maven": MavenTypeDefinition,
+    "mlflow": MlflowTypeDefinition,
+    "npm": NpmTypeDefinition,
+    "nuget": NugetTypeDefinition,
+    "oci": OciTypeDefinition,
+    "pub": PubTypeDefinition,
+    "pypi": PypiTypeDefinition,
+    "qpkg": QpkgTypeDefinition,
+    "rpm": RpmTypeDefinition,
+    "swid": SwidTypeDefinition,
+    "swift": SwiftTypeDefinition,
 }

@@ -24,28 +24,38 @@
 
 import json
 import os
+from dataclasses import dataclass
+from typing import Any, Dict, Optional, List
 
 import pytest
-
 from packageurl import PackageURL
 
-current_dir = os.path.dirname(__file__)
-root_dir = os.path.abspath(os.path.join(current_dir, ".."))
-spec_file_path = os.path.join(root_dir, "spec", "tests", "spec", "specification-test.json")
 
-with open(spec_file_path, "r", encoding="utf-8") as f:
-    test_cases = json.load(f)
-
-tests = test_cases["tests"]
-
-parse_tests = [t for t in tests if t["test_type"] == "parse"]
-build_tests = [t for t in tests if t["test_type"] == "build"]
+@dataclass
+class PurlTestCase:
+    description: str
+    test_type: str
+    input: Any
+    expected_output: Optional[Any] = None
+    expected_failure: bool = False
+    test_group: Optional[str] = None
 
 
-def load_spec_files(spec_dir):
+def load_test_case(case_dict: dict) -> PurlTestCase:
+    return PurlTestCase(
+        description=case_dict["description"],
+        test_type=case_dict["test_type"],
+        input=case_dict["input"],
+        expected_output=case_dict.get("expected_output"),
+        expected_failure=case_dict.get("expected_failure", False),
+        test_group=case_dict.get("test_group"),
+    )
+
+
+def load_spec_files(spec_dir: str) -> Dict[str, List[PurlTestCase]]:
     """
-    Load all JSON files from the given directory into a dictionary.
-    Key = filename, Value = parsed JSON content
+    Load all JSON files from the given directory into a dictionary of test cases.
+    Key = filename, Value = list of PurlTestCase objects
     """
     spec_data = {}
     for filename in os.listdir(spec_dir):
@@ -54,11 +64,22 @@ def load_spec_files(spec_dir):
             with open(filepath, "r", encoding="utf-8") as f:
                 try:
                     data = json.load(f)
-                    spec_data[filename] = data["tests"]
+                    spec_data[filename] = [load_test_case(tc) for tc in data["tests"]]
                 except json.JSONDecodeError as e:
                     print(f"Error parsing {filename}: {e}")
     return spec_data
 
+
+current_dir = os.path.dirname(__file__)
+root_dir = os.path.abspath(os.path.join(current_dir, ".."))
+spec_file_path = os.path.join(root_dir, "spec", "tests", "spec", "specification-test.json")
+
+with open(spec_file_path, "r", encoding="utf-8") as f:
+    test_cases = json.load(f)
+
+all_tests = [load_test_case(tc) for tc in test_cases["tests"]]
+parse_tests = [t for t in all_tests if t.test_type == "parse"]
+build_tests = [t for t in all_tests if t.test_type == "build"]
 
 SPEC_DIR = os.path.join(os.path.dirname(__file__), "..", "spec", "tests", "types")
 spec_dict = load_spec_files(SPEC_DIR)
@@ -66,66 +87,63 @@ spec_dict = load_spec_files(SPEC_DIR)
 flattened_cases = []
 for filename, cases in spec_dict.items():
     for case in cases:
-        flattened_cases.append((filename, case["description"], case))
+        flattened_cases.append((filename, case.description, case))
 
 
 @pytest.mark.parametrize(
-    "description, input_str, expected_output, expected_failure",
-    [
-        (t["description"], t["input"], t["expected_output"], t["expected_failure"])
-        for t in parse_tests
-    ],
+    "case",
+    parse_tests,
+    ids=lambda c: c.description,
 )
-def test_parse(description, input_str, expected_output, expected_failure):
-    if expected_failure:
+def test_parse(case: PurlTestCase):
+    if case.expected_failure:
         with pytest.raises(Exception):
-            PackageURL.from_string(input_str)
+            PackageURL.from_string(case.input)
     else:
-        result = PackageURL.from_string(input_str)
-        assert result.to_string() == expected_output
+        result = PackageURL.from_string(case.input)
+        assert result.to_string() == case.expected_output
 
 
 @pytest.mark.parametrize(
-    "description, input_dict, expected_output, expected_failure",
-    [
-        (t["description"], t["input"], t["expected_output"], t["expected_failure"])
-        for t in build_tests
-    ],
+    "case",
+    build_tests,
+    ids=lambda c: c.description,
 )
-def test_build(description, input_dict, expected_output, expected_failure):
+def test_build(case: PurlTestCase):
     kwargs = {
-        "type": input_dict.get("type"),
-        "namespace": input_dict.get("namespace"),
-        "name": input_dict.get("name"),
-        "version": input_dict.get("version"),
-        "qualifiers": input_dict.get("qualifiers"),
-        "subpath": input_dict.get("subpath"),
+        "type": case.input.get("type"),
+        "namespace": case.input.get("namespace"),
+        "name": case.input.get("name"),
+        "version": case.input.get("version"),
+        "qualifiers": case.input.get("qualifiers"),
+        "subpath": case.input.get("subpath"),
     }
 
-    if expected_failure:
+    if case.expected_failure:
         with pytest.raises(Exception):
             PackageURL(**kwargs).to_string()
     else:
         purl = PackageURL(**kwargs)
-        assert purl.to_string() == expected_output
+        assert purl.to_string() == case.expected_output
 
 
-@pytest.mark.parametrize("filename,description,test_case", flattened_cases)
-def test_package_type_case(filename, description, test_case):
-    test_type = test_case["test_type"]
-    expected_failure = test_case.get("expected_failure", False)
-
-    if expected_failure:
+@pytest.mark.parametrize(
+    "filename,description,case",
+    flattened_cases,
+    ids=lambda v: v[1] if isinstance(v, tuple) else str(v),
+)
+def test_package_type_case(filename, description, case: PurlTestCase):
+    if case.expected_failure:
         with pytest.raises(Exception):
-            run_test_case(test_case, test_type, description)
+            run_test_case(case)
     else:
-        run_test_case(test_case, test_type, description)
+        run_test_case(case)
 
 
-def run_test_case(case, test_type, desc):
-    if test_type == "parse":
-        purl = PackageURL.from_string(case["input"])
-        expected = case["expected_output"]
+def run_test_case(case: PurlTestCase):
+    if case.test_type == "parse":
+        purl = PackageURL.from_string(case.input)
+        expected = case.expected_output
         assert purl.type == expected["type"]
         assert purl.namespace == expected["namespace"]
         assert purl.name == expected["name"]
@@ -136,42 +154,30 @@ def run_test_case(case, test_type, desc):
             assert not purl.qualifiers
         assert purl.subpath == expected["subpath"]
 
-    elif test_type == "roundtrip":
-        purl = PackageURL.from_string(case["input"])
-        assert purl.to_string() == case["expected_output"]
+    elif case.test_type == "roundtrip":
+        purl = PackageURL.from_string(case.input)
+        assert purl.to_string() == case.expected_output
 
-    elif test_type == "build":
-        input_data = case["input"]
+    elif case.test_type == "build":
+        inp = case.input
         purl = PackageURL(
-            type=input_data["type"],
-            namespace=input_data["namespace"],
-            name=input_data["name"],
-            version=input_data["version"],
-            qualifiers=input_data.get("qualifiers"),
-            subpath=input_data.get("subpath"),
+            type=inp["type"],
+            namespace=inp["namespace"],
+            name=inp["name"],
+            version=inp["version"],
+            qualifiers=inp.get("qualifiers"),
+            subpath=inp.get("subpath"),
         )
-        assert purl.to_string() == case["expected_output"]
+        assert purl.to_string() == case.expected_output
 
-    elif test_type == "validation":
-        input_data = case["input"]
-        test_group = case.get("test_group")
+    elif case.test_type == "validation":
+        test_group = case.test_group
         if test_group not in ("base", "advanced"):
             raise Exception(test_group)
-        strict = True
-        if test_group == "advanced":
-            strict = False
-        purl = PackageURL.from_string(input_data, normalize_purl=False)
-        messages = purl.validate(strict=strict)
-        messages = list(change_messages_to_json(messages))
-        if case.get("expected_output"):
-            assert messages == case["expected_output"]
+        strict = test_group == "base"
+        messages = PackageURL.validate_string(purl=case.input, strict=strict)
+        messages = [message.to_dict() for message in messages]
+        if case.expected_output:
+            assert messages == case.expected_output
         else:
             assert not messages
-
-
-def change_messages_to_json(messages):
-    for message in messages:
-        yield {
-            "severity": message.severity.value,
-            "message": message.message,
-        }
