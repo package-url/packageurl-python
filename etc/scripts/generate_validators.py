@@ -76,32 +76,140 @@ HEADER = '''# Copyright (c) the purl authors
 Validate each type according to the PURL spec type definitions
 """
 
-class TypeValidator:
+class BasePurlType:
+    """
+    Base class for all PURL type classes
+    """
+
+    type: str
+    """The type string for this Package-URL type."""
+
+    type_name: str
+    """The name for this PURL type."""
+
+    description: str
+    """The description of this PURL type."""
+
+    use_repository: bool = False
+    """true if this PURL type use a public package repository."""
+
+    default_repository_url: str
+    """The default public repository URL for this PURL type"""
+
+    namespace_requirement: str
+    """"States if this namespace is required, optional, or prohibited."""
+
+    allowed_qualifiers: dict = {"repository_url", "arch"}
+    """Set of allowed qualifier keys for this PURL type."""
+
+    namespace_case_sensitive: bool = True
+    """true if namespace is case sensitive. If false, the canonical form must be lowercased."""
+
+    name_case_sensitive: bool = True
+    """true if name is case sensitive. If false, the canonical form must be lowercased."""
+
+    version_case_sensitive: bool = True
+    """true if version is case sensitive. If false, the canonical form must be lowercased."""
+
+    purl_pattern: str
+    """A regex pattern that matches valid purls of this type."""
+
     @classmethod
     def validate(cls, purl, strict=False):
+        """
+        Validate a PackageURL instance or string.
+        Yields ValidationMessage and performs strict validation if strict=True
+        """
+        from packageurl import ValidationMessage
+        from packageurl import ValidationSeverity
+
+        if not purl:
+            yield ValidationMessage(
+                severity=ValidationSeverity.ERROR,
+                message="No purl provided",
+            )
+            return
+
+        from packageurl import PackageURL
+
+        if not isinstance(purl, PackageURL):
+            try:
+                purl = PackageURL.from_string(purl, normalize_purl=False)
+            except Exception as e:
+                yield ValidationMessage(
+                    severity=ValidationSeverity.ERROR,
+                    message=f"Invalid purl {purl!r} string: {e}",
+                )
+                return
+
         if not strict:
             purl = cls.normalize(purl)
 
+        yield from cls._validate_namespace(purl)
+        yield from cls._validate_name(purl)
+        yield from cls._validate_version(purl)
+        if strict:
+            yield from cls._validate_qualifiers(purl)
+
+        messages = cls.validate_using_type_rules(purl, strict=strict)
+        if messages:
+            yield from messages
+
+    @classmethod
+    def _validate_namespace(cls, purl):
+        from packageurl import ValidationMessage
+        from packageurl import ValidationSeverity
+
         if cls.namespace_requirement == "prohibited" and purl.namespace:
-            yield f"Namespace is prohibited for purl type: {cls.type!r}"
+            yield ValidationMessage(
+                severity=ValidationSeverity.ERROR,
+                message=f"Namespace is prohibited for purl type: {cls.type!r}",
+            )
 
         elif cls.namespace_requirement == "required" and not purl.namespace:
-            yield f"Namespace is required for purl type: {cls.type!r}"
+            yield ValidationMessage(
+                severity=ValidationSeverity.ERROR,
+                message=f"Namespace is required for purl type: {cls.type!r}",
+            )
 
-        if (
+        # TODO: Check pending CPAN PR and decide if we want to upgrade the type definition schema
+        if purl.type == "cpan":
+            if purl.namespace and purl.namespace != purl.namespace.upper():
+                yield ValidationMessage(
+                    severity=ValidationSeverity.WARNING,
+                    message=f"Namespace must be uppercase for purl type: {cls.type!r}",
+                )
+        elif (
             not cls.namespace_case_sensitive
             and purl.namespace
             and purl.namespace.lower() != purl.namespace
         ):
-            yield f"Namespace is not lowercased for purl type: {cls.type!r}"
+            yield ValidationMessage(
+                severity=ValidationSeverity.WARNING,
+                message=f"Namespace is not lowercased for purl type: {cls.type!r}",
+            )
 
+    @classmethod
+    def _validate_name(cls, purl):
         if not cls.name_case_sensitive and purl.name and purl.name.lower() != purl.name:
-            yield f"Name is not lowercased for purl type: {cls.type!r}"
+            from packageurl import ValidationMessage
+            from packageurl import ValidationSeverity
 
+            yield ValidationMessage(
+                severity=ValidationSeverity.WARNING,
+                message=f"Name is not lowercased for purl type: {cls.type!r}",
+            )
+
+    @classmethod
+    def _validate_version(cls, purl):
         if not cls.version_case_sensitive and purl.version and purl.version.lower() != purl.version:
-            yield f"Version is not lowercased for purl type: {cls.type!r}"
+            from packageurl import ValidationMessage
+            from packageurl import ValidationSeverity
 
-        yield from cls.validate_type(purl, strict=strict)
+            yield ValidationMessage(
+                severity=ValidationSeverity.WARNING,
+                message=f"Version is not lowercased for purl type: {cls.type!r}",
+            )
 
     @classmethod
     def normalize(cls, purl):
@@ -130,11 +238,16 @@ class TypeValidator:
         )
 
     @classmethod
-    def validate_type(cls, purl, strict=False):
-        return
+    def validate_using_type_rules(cls, purl, strict=False):
+        """
+        Validate using any additional type specific rules.
+        Yield validation messages.
+        Subclasses can override this method to add type specific validation rules.
+        """
+        return iter([])
 
     @classmethod
-    def validate_qualifiers(cls, purl):
+    def _validate_qualifiers(cls, purl):
         if not purl.qualifiers:
             return
 
@@ -144,9 +257,15 @@ class TypeValidator:
         disallowed = purl_qualifiers_keys - allowed_qualifiers_set
 
         if disallowed:
-            yield (
-                f"Invalid qualifiers found: {', '.join(sorted(disallowed))}. "
-                f"Allowed qualifiers are: {', '.join(sorted(allowed_qualifiers_set))}"
+            from packageurl import ValidationMessage
+            from packageurl import ValidationSeverity
+
+            yield ValidationMessage(
+                severity=ValidationSeverity.INFO,
+                message=(
+                    f"Invalid qualifiers found: {', '.join(sorted(disallowed))}. "
+                    f"Allowed qualifiers are: {', '.join(sorted(allowed_qualifiers_set))}"
+                ),
             )
 '''
 
@@ -184,10 +303,10 @@ def generate_validators():
         type_def = json.loads(type.read_text())
 
         _type = type_def["type"]
-        standard_validator_class = "TypeValidator"
+        standard_validator_class = "BasePurlType"
 
         class_prefix = _type.capitalize()
-        class_name = f"{class_prefix}{standard_validator_class}"
+        class_name = f"{class_prefix}TypeDefinition"
         validators_by_type[_type] = class_name
         name_normalization_rules=type_def["name_definition"].get("normalization_rules") or []
         allowed_qualifiers = [defintion.get("key") for defintion in type_def.get("qualifiers_definition") or []]

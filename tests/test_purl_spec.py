@@ -25,9 +25,13 @@
 import json
 import os
 from dataclasses import dataclass
-from typing import Any, Dict, Optional, List
+from typing import Any
+from typing import Dict
+from typing import List
+from typing import Optional
 
 import pytest
+
 from packageurl import PackageURL
 
 

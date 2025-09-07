@@ -26,27 +26,12 @@
 Validate each type according to the PURL spec type definitions
 """
 
-from enum import Enum
-from dataclasses import dataclass
-import dataclasses
-
-
-class ValidationSeverity(str, Enum):
-    ERROR = "error"
-    WARNING = "warning"
-    INFO = "info"
-
-
-@dataclass
-class ValidationMessage:
-    severity: ValidationSeverity
-    message: str
-    to_dict = dataclasses.asdict
 
 class BasePurlType:
     """
     Base class for all PURL type classes
     """
+
     type: str
     """The type string for this Package-URL type."""
 
@@ -86,13 +71,16 @@ class BasePurlType:
         Validate a PackageURL instance or string.
         Yields ValidationMessage and performs strict validation if strict=True
         """
+        from packageurl import ValidationMessage
+        from packageurl import ValidationSeverity
+
         if not purl:
             yield ValidationMessage(
                 severity=ValidationSeverity.ERROR,
                 message="No purl provided",
             )
             return
-        
+
         from packageurl import PackageURL
 
         if not isinstance(purl, PackageURL):
@@ -103,11 +91,11 @@ class BasePurlType:
                     severity=ValidationSeverity.ERROR,
                     message=f"Invalid purl {purl!r} string: {e}",
                 )
-                return        
+                return
 
         if not strict:
             purl = cls.normalize(purl)
-        
+
         yield from cls._validate_namespace(purl)
         yield from cls._validate_name(purl)
         yield from cls._validate_version(purl)
@@ -117,9 +105,12 @@ class BasePurlType:
         messages = cls.validate_using_type_rules(purl, strict=strict)
         if messages:
             yield from messages
-    
+
     @classmethod
     def _validate_namespace(cls, purl):
+        from packageurl import ValidationMessage
+        from packageurl import ValidationSeverity
+
         if cls.namespace_requirement == "prohibited" and purl.namespace:
             yield ValidationMessage(
                 severity=ValidationSeverity.ERROR,
@@ -148,18 +139,24 @@ class BasePurlType:
                 severity=ValidationSeverity.WARNING,
                 message=f"Namespace is not lowercased for purl type: {cls.type!r}",
             )
-    
+
     @classmethod
     def _validate_name(cls, purl):
         if not cls.name_case_sensitive and purl.name and purl.name.lower() != purl.name:
+            from packageurl import ValidationMessage
+            from packageurl import ValidationSeverity
+
             yield ValidationMessage(
                 severity=ValidationSeverity.WARNING,
                 message=f"Name is not lowercased for purl type: {cls.type!r}",
             )
-    
+
     @classmethod
     def _validate_version(cls, purl):
         if not cls.version_case_sensitive and purl.version and purl.version.lower() != purl.version:
+            from packageurl import ValidationMessage
+            from packageurl import ValidationSeverity
+
             yield ValidationMessage(
                 severity=ValidationSeverity.WARNING,
                 message=f"Version is not lowercased for purl type: {cls.type!r}",
@@ -211,6 +208,9 @@ class BasePurlType:
         disallowed = purl_qualifiers_keys - allowed_qualifiers_set
 
         if disallowed:
+            from packageurl import ValidationMessage
+            from packageurl import ValidationSeverity
+
             yield ValidationMessage(
                 severity=ValidationSeverity.INFO,
                 message=(
@@ -361,6 +361,9 @@ class CpanTypeDefinition(BasePurlType):
 
     @classmethod
     def validate_using_type_rules(cls, purl, strict=False):
+        from packageurl import ValidationMessage
+        from packageurl import ValidationSeverity
+
         if purl.namespace and "::" in purl.name:
             yield ValidationMessage(
                 severity=ValidationSeverity.ERROR,
@@ -489,6 +492,9 @@ class HackageTypeDefinition(BasePurlType):
 
     @classmethod
     def validate_using_type_rules(cls, purl, strict=False):
+        from packageurl import ValidationMessage
+        from packageurl import ValidationSeverity
+
         if "_" in purl.name:
             yield ValidationMessage(
                 severity=ValidationSeverity.WARNING,
@@ -626,6 +632,9 @@ class PubTypeDefinition(BasePurlType):
 
     @classmethod
     def validate_using_type_rules(cls, purl, strict=False):
+        from packageurl import ValidationMessage
+        from packageurl import ValidationSeverity
+
         if not all(c.isalnum() or c == "_" for c in purl.name):
             yield ValidationMessage(
                 severity=ValidationSeverity.WARNING,
@@ -657,6 +666,9 @@ class PypiTypeDefinition(BasePurlType):
 
     @classmethod
     def validate_using_type_rules(cls, purl, strict=False):
+        from packageurl import ValidationMessage
+        from packageurl import ValidationSeverity
+
         if "_" in purl.name:
             yield ValidationMessage(
                 severity=ValidationSeverity.WARNING,

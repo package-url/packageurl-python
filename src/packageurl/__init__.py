@@ -24,10 +24,13 @@
 
 from __future__ import annotations
 
+import dataclasses
 import re
 import string
 from collections import namedtuple
 from collections.abc import Mapping
+from dataclasses import dataclass
+from enum import Enum
 from typing import TYPE_CHECKING
 from typing import Any
 from typing import Optional
@@ -56,6 +59,19 @@ basestring = (bytes, str)
 A purl (aka. Package URL) implementation as specified at:
 https://github.com/package-url/purl-spec
 """
+
+
+class ValidationSeverity(str, Enum):
+    ERROR = "error"
+    WARNING = "warning"
+    INFO = "info"
+
+
+@dataclass
+class ValidationMessage:
+    severity: ValidationSeverity
+    message: str
+    to_dict = dataclasses.asdict
 
 
 def quote(s: AnyStr) -> str:
@@ -524,38 +540,38 @@ class PackageURL(
 
         return "".join(purl)
 
-    def validate(self, strict: bool = False) -> list:
+    def validate(self, strict: bool = False) -> list["ValidationMessage"]:
         """
         Validate this PackageURL object and return a list of validation error messages.
         """
         from packageurl.validate import DEFINITIONS_BY_TYPE
-        from packageurl.validate import ValidationMessage
-        from packageurl.validate import ValidationSeverity
 
         validator_class = DEFINITIONS_BY_TYPE.get(self.type)
         if not validator_class:
-            return [ValidationMessage(
-                severity=ValidationSeverity.ERROR,
-                message=f"Unexpected purl type: expected {self.type!r}",
-            )]
+            return [
+                ValidationMessage(
+                    severity=ValidationSeverity.ERROR,
+                    message=f"Unexpected purl type: expected {self.type!r}",
+                )
+            ]
         return list(validator_class.validate(purl=self, strict=strict))  # type: ignore[no-untyped-call]
-    
+
     @classmethod
-    def validate_string(cls, purl: str, strict: bool = False) -> list:
+    def validate_string(cls, purl: str, strict: bool = False) -> list["ValidationMessage"]:
         """
         Validate a PURL string and return a list of validation error messages.
         """
-        from packageurl.validate import ValidationMessage
-        from packageurl.validate import ValidationSeverity
-
         try:
-            purl = cls.from_string(purl, normalize_purl=not strict)
+            purl_obj = cls.from_string(purl, normalize_purl=not strict)
+            assert isinstance(purl_obj, PackageURL)
+            return purl_obj.validate(strict=strict)
         except ValueError as e:
-            return [ValidationMessage(
-                severity=ValidationSeverity.ERROR,
-                message=str(e),
-            )]
-        return purl.validate(strict=strict)
+            return [
+                ValidationMessage(
+                    severity=ValidationSeverity.ERROR,
+                    message=str(e),
+                )
+            ]
 
     @classmethod
     def from_string(cls, purl: str, normalize_purl: bool = True) -> Self:
