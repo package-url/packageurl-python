@@ -24,10 +24,13 @@
 
 from __future__ import annotations
 
+import dataclasses
 import re
 import string
 from collections import namedtuple
 from collections.abc import Mapping
+from dataclasses import dataclass
+from enum import Enum
 from typing import TYPE_CHECKING
 from typing import Any
 from typing import Optional
@@ -56,6 +59,19 @@ basestring = (bytes, str)
 A purl (aka. Package URL) implementation as specified at:
 https://github.com/package-url/purl-spec
 """
+
+
+class ValidationSeverity(str, Enum):
+    ERROR = "error"
+    WARNING = "warning"
+    INFO = "info"
+
+
+@dataclass
+class ValidationMessage:
+    severity: ValidationSeverity
+    message: str
+    to_dict = dataclasses.asdict
 
 
 def quote(s: AnyStr) -> str:
@@ -188,12 +204,15 @@ def normalize_name(
         "apk",
         "bitnami",
         "hex",
+        "pub",
     ):
         name_str = name_str.lower()
     if ptype == "pypi":
         name_str = name_str.replace("_", "-").lower()
     if ptype == "hackage":
         name_str = name_str.replace("_", "-")
+    if ptype == "pub":
+        name_str = re.sub(r"[^a-z0-9]", "_", name_str.lower())
     return name_str or None
 
 
@@ -521,24 +540,41 @@ class PackageURL(
 
         return "".join(purl)
 
-    def validate(self, strict: bool = False) -> list[str]:
+    def validate(self, strict: bool = False) -> list["ValidationMessage"]:
         """
         Validate this PackageURL object and return a list of validation error messages.
         """
-        from packageurl.validate import VALIDATORS_BY_TYPE
+        from packageurl.validate import DEFINITIONS_BY_TYPE
 
-        if self:
-            try:
-                validator_class = VALIDATORS_BY_TYPE.get(self.type)
-                if not validator_class:
-                    return [f"Given type: {self.type} can not be validated"]
-                messages = list(validator_class.validate(self, strict))  # type: ignore[no-untyped-call]
-                return messages
-            except NoRouteAvailable:
-                return [f"Given type: {self.type} can not be validated"]
+        validator_class = DEFINITIONS_BY_TYPE.get(self.type)
+        if not validator_class:
+            return [
+                ValidationMessage(
+                    severity=ValidationSeverity.ERROR,
+                    message=f"Unexpected purl type: expected {self.type!r}",
+                )
+            ]
+        return list(validator_class.validate(purl=self, strict=strict))  # type: ignore[no-untyped-call]
 
     @classmethod
-    def from_string(cls, purl: str) -> Self:
+    def validate_string(cls, purl: str, strict: bool = False) -> list["ValidationMessage"]:
+        """
+        Validate a PURL string and return a list of validation error messages.
+        """
+        try:
+            purl_obj = cls.from_string(purl, normalize_purl=not strict)
+            assert isinstance(purl_obj, PackageURL)
+            return purl_obj.validate(strict=strict)
+        except ValueError as e:
+            return [
+                ValidationMessage(
+                    severity=ValidationSeverity.ERROR,
+                    message=str(e),
+                )
+            ]
+
+    @classmethod
+    def from_string(cls, purl: str, normalize_purl: bool = True) -> Self:
         """
         Return a PackageURL object parsed from a string.
         Raise ValueError on errors.
@@ -622,14 +658,18 @@ class PackageURL(
         if not name:
             raise ValueError(f"purl is missing the required name component: {purl!r}")
 
-        type_, namespace, name, version, qualifiers, subpath = normalize(
-            type_,
-            namespace,
-            name,
-            version,
-            qualifiers_str,
-            subpath,
-            encode=False,
+        if normalize_purl:
+            type_, namespace, name, version, qualifiers, subpath = normalize(
+                type_,
+                namespace,
+                name,
+                version,
+                qualifiers_str,
+                subpath,
+                encode=False,
+            )
+        else:
+            qualifiers = normalize_qualifiers(qualifiers_str, encode=False) or {}
+        return cls(
+            type_, namespace, name, version, qualifiers, subpath, normalize_purl=normalize_purl
         )
-
-        return cls(type_, namespace, name, version, qualifiers, subpath)
