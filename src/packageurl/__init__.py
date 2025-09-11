@@ -24,16 +24,23 @@
 
 from __future__ import annotations
 
+import dataclasses
+import re
 import string
 from collections import namedtuple
 from collections.abc import Mapping
+from dataclasses import dataclass
+from enum import Enum
 from typing import TYPE_CHECKING
 from typing import Any
+from typing import Optional
 from typing import Union
 from typing import overload
 from urllib.parse import quote as _percent_quote
 from urllib.parse import unquote as _percent_unquote
 from urllib.parse import urlsplit as _urlsplit
+
+from packageurl.contrib.route import NoRouteAvailable
 
 if TYPE_CHECKING:
     from collections.abc import Callable
@@ -56,6 +63,19 @@ https://github.com/package-url/purl-spec
 """
 
 
+class ValidationSeverity(str, Enum):
+    ERROR = "error"
+    WARNING = "warning"
+    INFO = "info"
+
+
+@dataclass
+class ValidationMessage:
+    severity: ValidationSeverity
+    message: str
+    to_dict = dataclasses.asdict
+
+
 def quote(s: AnyStr) -> str:
     """
     Return a percent-encoded unicode string, except for colon :, given an `s`
@@ -74,7 +94,7 @@ def unquote(s: AnyStr) -> str:
     Return a percent-decoded unicode string, given an `s` byte or unicode
     string.
     """
-    unquoted = _percent_unquote(s)  # type:ignore[arg-type]  # typeshed is incorrect here
+    unquoted = _percent_unquote(s)
     if not isinstance(unquoted, str):
         unquoted = unquoted.decode("utf-8")
     return unquoted
@@ -118,16 +138,52 @@ def normalize_namespace(
 
     namespace_str = namespace if isinstance(namespace, str) else namespace.decode("utf-8")
     namespace_str = namespace_str.strip().strip("/")
-    if ptype in ("bitbucket", "github", "pypi", "gitlab"):
+    if ptype in (
+        "bitbucket",
+        "github",
+        "pypi",
+        "gitlab",
+        "composer",
+        "luarocks",
+        "qpkg",
+        "alpm",
+        "apk",
+        "hex",
+    ):
         namespace_str = namespace_str.lower()
+    if ptype and ptype in ("cpan"):
+        namespace_str = namespace_str.upper()
     segments = [seg for seg in namespace_str.split("/") if seg.strip()]
     segments_quoted = map(get_quoter(encode), segments)
     return "/".join(segments_quoted) or None
 
 
+def normalize_mlflow_name(
+    name_str: str,
+    qualifiers: Union[str, bytes, dict[str, str], None],
+) -> Optional[str]:
+    """MLflow purl names are case-sensitive for Azure ML, it is case sensitive and must be kept as-is in the package URL
+    For Databricks, it is case insensitive and must be lowercased in the package URL"""
+    if isinstance(qualifiers, dict):
+        repo_url = qualifiers.get("repository_url")
+        if repo_url and "azureml" in repo_url.lower():
+            return name_str
+        if repo_url and "databricks" in repo_url.lower():
+            return name_str.lower()
+    if isinstance(qualifiers, str):
+        if "azureml" in qualifiers.lower():
+            return name_str
+        if "databricks" in qualifiers.lower():
+            return name_str.lower()
+    return name_str
+
+
 def normalize_name(
-    name: AnyStr | None, ptype: str | None, encode: bool | None = True
-) -> str | None:
+    name: AnyStr | None,
+    qualifiers: Union[Union[str, bytes], dict[str, str], None],
+    ptype: str | None,
+    encode: bool | None = True,
+) -> Optional[str]:
     if not name:
         return None
 
@@ -135,20 +191,44 @@ def normalize_name(
     quoter = get_quoter(encode)
     name_str = quoter(name_str)
     name_str = name_str.strip().strip("/")
-    if ptype in ("bitbucket", "github", "pypi", "gitlab"):
+    if ptype and ptype in ("mlflow"):
+        return normalize_mlflow_name(name_str, qualifiers)
+    if ptype in (
+        "bitbucket",
+        "github",
+        "pypi",
+        "gitlab",
+        "composer",
+        "luarocks",
+        "oci",
+        "npm",
+        "alpm",
+        "apk",
+        "bitnami",
+        "hex",
+        "pub",
+    ):
         name_str = name_str.lower()
     if ptype == "pypi":
+        name_str = name_str.replace("_", "-").lower()
+    if ptype == "hackage":
         name_str = name_str.replace("_", "-")
+    if ptype == "pub":
+        name_str = re.sub(r"[^a-z0-9]", "_", name_str.lower())
     return name_str or None
 
 
-def normalize_version(version: AnyStr | None, encode: bool | None = True) -> str | None:
+def normalize_version(
+    version: AnyStr | None, ptype: Optional[Union[str, bytes]], encode: bool | None = True
+) -> str | None:
     if not version:
         return None
 
     version_str = version if isinstance(version, str) else version.decode("utf-8")
     quoter = get_quoter(encode)
     version_str = quoter(version_str.strip())
+    if ptype and isinstance(ptype, str) and ptype in ("huggingface", "oci"):
+        return version_str.lower()
     return version_str or None
 
 
@@ -309,8 +389,8 @@ def normalize(
     """
     type_norm = normalize_type(type, encode)
     namespace_norm = normalize_namespace(namespace, type_norm, encode)
-    name_norm = normalize_name(name, type_norm, encode)
-    version_norm = normalize_version(version, encode)
+    name_norm = normalize_name(name, qualifiers, type_norm, encode)
+    version_norm = normalize_version(version, type, encode)
     qualifiers_norm = normalize_qualifiers(qualifiers, encode)
     subpath_norm = normalize_subpath(subpath, encode)
     return type_norm, namespace_norm, name_norm, version_norm, qualifiers_norm, subpath_norm
@@ -341,6 +421,7 @@ class PackageURL(
         version: AnyStr | None = None,
         qualifiers: AnyStr | dict[str, str] | None = None,
         subpath: AnyStr | None = None,
+        normalize_purl: bool = True,
     ) -> Self:
         required = dict(type=type, name=name)
         for key, value in required.items():
@@ -366,23 +447,43 @@ class PackageURL(
                 f"Invalid purl: qualifiers argument must be a dict or a string: {qualifiers!r}."
             )
 
-        (
-            type_norm,
-            namespace_norm,
-            name_norm,
-            version_norm,
-            qualifiers_norm,
-            subpath_norm,
-        ) = normalize(type, namespace, name, version, qualifiers, subpath, encode=None)
+        type_final: str
+        namespace_final: Optional[str]
+        name_final: str
+        version_final: Optional[str]
+        qualifiers_final: dict[str, str]
+        subpath_final: Optional[str]
+
+        if normalize_purl:
+            (
+                type_final,
+                namespace_final,
+                name_final,
+                version_final,
+                qualifiers_final,
+                subpath_final,
+            ) = normalize(type, namespace, name, version, qualifiers, subpath, encode=None)
+        else:
+            from packageurl.utils import ensure_str
+
+            type_final = ensure_str(type) or ""
+            namespace_final = ensure_str(namespace)
+            name_final = ensure_str(name) or ""
+            version_final = ensure_str(version)
+            if isinstance(qualifiers, dict):
+                qualifiers_final = qualifiers
+            else:
+                qualifiers_final = {}
+            subpath_final = ensure_str(subpath)
 
         return super().__new__(
             cls,
-            type=type_norm,
-            namespace=namespace_norm,
-            name=name_norm,
-            version=version_norm,
-            qualifiers=qualifiers_norm,
-            subpath=subpath_norm,
+            type=type_final,
+            namespace=namespace_final,
+            name=name_final,
+            version=version_final,
+            qualifiers=qualifiers_final,
+            subpath=subpath_final,
         )
 
     def __str__(self, *args: Any, **kwargs: Any) -> str:
@@ -444,8 +545,41 @@ class PackageURL(
 
         return "".join(purl)
 
+    def validate(self, strict: bool = False) -> list["ValidationMessage"]:
+        """
+        Validate this PackageURL object and return a list of validation error messages.
+        """
+        from packageurl.validate import DEFINITIONS_BY_TYPE
+
+        validator_class = DEFINITIONS_BY_TYPE.get(self.type)
+        if not validator_class:
+            return [
+                ValidationMessage(
+                    severity=ValidationSeverity.ERROR,
+                    message=f"Unexpected purl type: expected {self.type!r}",
+                )
+            ]
+        return list(validator_class.validate(purl=self, strict=strict))  # type: ignore[no-untyped-call]
+
     @classmethod
-    def from_string(cls, purl: str) -> Self:
+    def validate_string(cls, purl: str, strict: bool = False) -> list["ValidationMessage"]:
+        """
+        Validate a PURL string and return a list of validation error messages.
+        """
+        try:
+            purl_obj = cls.from_string(purl, normalize_purl=not strict)
+            assert isinstance(purl_obj, PackageURL)
+            return purl_obj.validate(strict=strict)
+        except ValueError as e:
+            return [
+                ValidationMessage(
+                    severity=ValidationSeverity.ERROR,
+                    message=str(e),
+                )
+            ]
+
+    @classmethod
+    def from_string(cls, purl: str, normalize_purl: bool = True) -> Self:
         """
         Return a PackageURL object parsed from a string.
         Raise ValueError on errors.
@@ -469,7 +603,18 @@ class PackageURL(
         if not type_ or not sep:
             raise ValueError(f"purl is missing the required type component: {purl!r}.")
 
+        valid_chars = string.ascii_letters + string.digits + ".-_"
+        if not all(c in valid_chars for c in type_):
+            raise ValueError(
+                f"purl type must be composed only of ASCII letters and numbers, period, dash and underscore: {type_!r}."
+            )
+
+        if type_[0] in string.digits:
+            raise ValueError(f"purl type cannot start with a number: {type_!r}.")
+
         type_ = type_.lower()
+
+        original_remainder = remainder
 
         scheme, authority, path, qualifiers_str, subpath = _urlsplit(
             url=remainder, scheme="", allow_fragments=True
@@ -485,7 +630,9 @@ class PackageURL(
             path = authority + ":" + path
 
         if scheme:
-            path = scheme + ":" + path
+            # This is a way to preserve the casing of the original scheme
+            original_scheme = original_remainder.split(":", 1)[0]
+            path = original_scheme + ":" + path
 
         path = path.lstrip("/")
 
@@ -516,14 +663,18 @@ class PackageURL(
         if not name:
             raise ValueError(f"purl is missing the required name component: {purl!r}")
 
-        type_, namespace, name, version, qualifiers, subpath = normalize(
-            type_,
-            namespace,
-            name,
-            version,
-            qualifiers_str,
-            subpath,
-            encode=False,
+        if normalize_purl:
+            type_, namespace, name, version, qualifiers, subpath = normalize(
+                type_,
+                namespace,
+                name,
+                version,
+                qualifiers_str,
+                subpath,
+                encode=False,
+            )
+        else:
+            qualifiers = normalize_qualifiers(qualifiers_str, encode=False) or {}
+        return cls(
+            type_, namespace, name, version, qualifiers, subpath, normalize_purl=normalize_purl
         )
-
-        return cls(type_, namespace, name, version, qualifiers, subpath)

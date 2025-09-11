@@ -98,6 +98,21 @@ def test_purl2url_get_download_url():
         "pkg:maven/org.apache.commons/commons-io@1.3.2?repository_url=https://repo1.maven.org/maven2": "https://repo1.maven.org/maven2/org/apache/commons/commons-io/1.3.2/commons-io-1.3.2.jar",
         "pkg:maven/org.apache.commons/commons-io@1.3.2?type=pom": "https://repo.maven.apache.org/maven2/org/apache/commons/commons-io/1.3.2/commons-io-1.3.2.pom",
         "pkg:maven/org.apache.commons/commons-math3@3.6.1?classifier=sources": "https://repo.maven.apache.org/maven2/org/apache/commons/commons-math3/3.6.1/commons-math3-3.6.1-sources.jar",
+        "pkg:hex/plug@1.11.1": "https://repo.hex.pm/tarballs/plug-1.11.1.tar",
+        "pkg:golang/xorm.io/xorm@v0.8.2": "https://proxy.golang.org/xorm.io/xorm/@v/v0.8.2.zip",
+        "pkg:golang/gopkg.in/ldap.v3@v3.1.0": "https://proxy.golang.org/gopkg.in/ldap.v3/@v/v3.1.0.zip",
+        "pkg:golang/example.com/M.v3@v3.1.0": "https://proxy.golang.org/example.com/!m.v3/@v/v3.1.0.zip",
+        "pkg:golang/golang.org/x/oauth2@0.29.0": "https://proxy.golang.org/golang.org/x/oauth2/@v/v0.29.0.zip",
+        "pkg:pub/http@0.13.3": "https://pub.dev/api/archives/http-0.13.3.tar.gz",
+        "pkg:swift/github.com/Alamofire/Alamofire@5.4.3": "https://github.com/Alamofire/Alamofire/archive/5.4.3.zip",
+        "pkg:swift/github.com/RxSwiftCommunity/RxFlow@2.12.4": "https://github.com/RxSwiftCommunity/RxFlow/archive/2.12.4.zip",
+        "pkg:luarocks/luasocket@3.1.0-1": "https://luarocks.org/luasocket-3.1.0-1.src.rock",
+        "pkg:luarocks/hisham/luafilesystem@1.8.0-1": "https://luarocks.org/luafilesystem-1.8.0-1.src.rock",
+        "pkg:conda/absl-py@0.4.1?build=py36h06a4308_0&channel=main&subdir=linux-64&type=tar.bz2": "https://repo.anaconda.com/pkgs/main/linux-64/absl-py-0.4.1-py36h06a4308_0.tar.bz2",
+        "pkg:alpm/arch/pacman@6.0.1-1?arch=x86_64": "https://archive.archlinux.org/packages/p/pacman/pacman-6.0.1-1-x86_64.pkg.tar.zst",
+        "pkg:deb/debian/attr@1:2.4.48-6?arch=amd64": "https://deb.debian.org/debian/pool/main/a/attr/attr_2.4.48-6_amd64.deb",
+        "pkg:deb/debian/attr@1:2.4.48-6?arch=amd64&repository_url=http://archive.debian.org/debian": "http://archive.debian.org/debian/pool/main/a/attr/attr_2.4.48-6_amd64.deb",
+        "pkg:apk/acct@6.6.4-r0?arch=x86&alpine_version=v3.11&repo=main": "https://dl-cdn.alpinelinux.org/alpine/v3.11/main/x86/acct-6.6.4-r0.apk",
         # From `download_url` qualifier
         "pkg:github/yarnpkg/yarn@1.3.2?download_url=https://github.com/yarnpkg/yarn/releases/download/v1.3.2/yarn-v1.3.2.tar.gz&version_prefix=v": "https://github.com/yarnpkg/yarn/releases/download/v1.3.2/yarn-v1.3.2.tar.gz",
         "pkg:generic/lxc-master.tar.gz?download_url=https://salsa.debian.org/lxc-team/lxc/-/archive/master/lxc-master.tar.gz": "https://salsa.debian.org/lxc-team/lxc/-/archive/master/lxc-master.tar.gz",
@@ -112,8 +127,6 @@ def test_purl2url_get_download_url():
         "pkg:bitbucket/birkenfeld": None,
         "pkg:pypi/sortedcontainers@2.4.0": None,
         "pkg:composer/psr/log@1.1.3": None,
-        "pkg:golang/xorm.io/xorm@v0.8.2": None,
-        "pkg:golang/gopkg.in/ldap.v3@v3.1.0": None,
     }
 
     for purl, url in purls_url.items():

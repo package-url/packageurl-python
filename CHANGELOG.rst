@@ -1,6 +1,32 @@
 Changelog
 =========
 
+0.17.5 (2025-08-06)
+-------------------
+
+- Remove support for getting download URL for qpkg in ``purl2url``.
+  https://github.com/package-url/packageurl-python/pull/202
+
+0.17.4 (2025-08-05)
+-------------------
+
+- Add support for getting download URL for debian, apk, qpkg in ``purl2url``.
+  https://github.com/package-url/packageurl-python/pull/201
+
+0.17.3 (2025-08-01)
+-------------------
+
+- Add support for getting download URL for Luarocks, Conda, Alpm in ``purl2url``.
+  https://github.com/package-url/packageurl-python/pull/199
+- Fix Incorrect download url from build_golang_download_url()
+  https://github.com/package-url/packageurl-python/issues/198
+
+0.17.2 (2025-07-29)
+-------------------
+
+- Add support for getting download URL for Golang, Hex, Pub and Swift in ``purl2url``.
+  https://github.com/package-url/packageurl-python/pull/195
+
 0.17.1 (2025-06-06)
 -------------------
 
