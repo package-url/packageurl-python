@@ -306,7 +306,7 @@ def normalize_qualifiers(
             raise ValueError(f"A qualifier key cannot start with a number: {key!r}")
 
     if vers := qualifiers_map.get("vers"):
-        VersionRange.from_string(vers, validate=True)
+        VersionRange.from_string(vers, validate=True)  # type: ignore
 
     qualifiers_map = dict(sorted(qualifiers_map.items()))
 
