@@ -274,5 +274,8 @@
   "": null,
   "https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/android-notifier/android-notifier-desktop-0.5.1-1.i386.rpm": "pkg:generic/code.google.com/android-notifier?download_url=https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/android-notifier/android-notifier-desktop-0.5.1-1.i386.rpm",
   "https://cran.r-project.org/src/contrib/jsonlite_1.8.8.tar.gz": "pkg:cran/jsonlite@1.8.8",
-  "https://packagemanager.rstudio.com/cran/2022-06-23/src/contrib/curl_4.3.2.tar.gz": "pkg:cran/curl@4.3.2?download_url=https://packagemanager.rstudio.com/cran/2022-06-23/src/contrib/curl_4.3.2.tar.gz"
+  "https://packagemanager.rstudio.com/cran/2022-06-23/src/contrib/curl_4.3.2.tar.gz": "pkg:cran/curl@4.3.2?download_url=https://packagemanager.rstudio.com/cran/2022-06-23/src/contrib/curl_4.3.2.tar.gz",
+  "https://github.com/TG1999/first_repo/commit/98e516011d6e096e25247b82fc5f196bbeecff10": "pkg:github/tg1999/first_repo@98e516011d6e096e25247b82fc5f196bbeecff10",
+  "https://gitlab.com/TG1999/first_repo/-/commit/bf04e5f289885cf2f20a92b387bcc6df33e30809": "pkg:gitlab/tg1999/first_repo@bf04e5f289885cf2f20a92b387bcc6df33e30809",
+  "https://bitbucket.org/TG1999/first_repo/commits/16a60c4a74ef477cd8c16ca82442eaab2fbe8c86": "pkg:bitbucket/tg1999/first_repo@16a60c4a74ef477cd8c16ca82442eaab2fbe8c86"
 }
