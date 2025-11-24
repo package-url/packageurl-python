@@ -28,6 +28,7 @@ Validate each type according to the PURL spec type definitions
 
 from typing import Set
 
+
 class BasePurlType:
     """
     Base class for all PURL type classes
