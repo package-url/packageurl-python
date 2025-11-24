@@ -1,10 +1,25 @@
 Changelog
 =========
 
+0.17.6 (2025-11-24)
+-------------------
+
+- Enhance url2purl to support commit hashes parsing (GitHub, GitLab, and Bitbucket)
+  https://github.com/package-url/packageurl-python/pull/211
+
+- Adjust validation function
+  https://github.com/package-url/packageurl-python/pull/206
+
+- Add validation function
+  https://github.com/package-url/packageurl-python/pull/205
+
 0.17.5 (2025-08-06)
 -------------------
 
 - Remove support for getting download URL for qpkg in ``purl2url``.
+  https://github.com/package-url/packageurl-python/pull/203
+
+- Add tests for latest purl-spec
   https://github.com/package-url/packageurl-python/pull/202
 
 0.17.4 (2025-08-05)
