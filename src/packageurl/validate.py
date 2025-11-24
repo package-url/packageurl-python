@@ -50,7 +50,7 @@ class BasePurlType:
     namespace_requirement: str
     """"States if this namespace is required, optional, or prohibited."""
 
-    allowed_qualifiers: dict = {"repository_url", "arch"}
+    allowed_qualifiers: set[str] = {"repository_url", "arch"}
     """Set of allowed qualifier keys for this PURL type."""
 
     namespace_case_sensitive: bool = True
