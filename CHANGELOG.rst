@@ -1,6 +1,12 @@
 Changelog
 =========
 
+Unreleased
+----------
+
+- Fix type hint for ``BasePurlType.allowed_qualifiers``
+  https://github.com/package-url/packageurl-python/pull/213
+
 0.17.6 (2025-11-24)
 -------------------
 

@@ -26,6 +26,8 @@
 Validate each type according to the PURL spec type definitions
 """
 
+from typing import Set
+
 
 class BasePurlType:
     """
@@ -50,7 +52,7 @@ class BasePurlType:
     namespace_requirement: str
     """"States if this namespace is required, optional, or prohibited."""
 
-    allowed_qualifiers: dict = {"repository_url", "arch"}
+    allowed_qualifiers: Set[str] = {"repository_url", "arch"}
     """Set of allowed qualifier keys for this PURL type."""
 
     namespace_case_sensitive: bool = True
