@@ -543,7 +543,14 @@ def build_github_purl(url):
     # https://github.com/pombredanne/schematics.git
     git_pattern = r"https?://github.com/(?P<namespace>.+)/(?P<name>.+).(git)"
 
+    # https://github.com/<namespace>/<name>/commit/<sha>
+    commit_pattern = (
+        r"https?://github.com/"
+        r"(?P<namespace>[^/]+)/(?P<name>[^/]+)/commit/(?P<version>[0-9a-fA-F]{7,40})/?$"
+    )
+
     patterns = (
+        commit_pattern,
         archive_tags_pattern,
         archive_pattern,
         raw_pattern,
@@ -591,6 +598,13 @@ def build_github_purl(url):
     )
 
 
+# https://bitbucket.org/<namespace>/<name>/commits/<sha>
+bitbucket_commit_pattern = (
+    r"https?://bitbucket.org/"
+    r"(?P<namespace>[^/]+)/(?P<name>[^/]+)/commits/(?P<version>[0-9a-fA-F]{7,64})/?$"
+)
+
+
 @purl_router.route("https?://bitbucket\\.org/.*")
 def build_bitbucket_purl(url):
     """
@@ -599,7 +613,18 @@ def build_bitbucket_purl(url):
     https://bitbucket.org/TG1999/first_repo/src/master or
     https://bitbucket.org/TG1999/first_repo/src or
     https://bitbucket.org/TG1999/first_repo/src/master/new_folder
+    https://bitbucket.org/TG1999/first_repo/commits/16a60c4a74ef477cd8c16ca82442eaab2fbe8c86
     """
+    commit_matche = re.search(bitbucket_commit_pattern, url)
+    if commit_matche:
+        return PackageURL(
+            type="bitbucket",
+            namespace=commit_matche.group("namespace"),
+            name=commit_matche.group("name"),
+            version=commit_matche.group("version"),
+            qualifiers={},
+            subpath="",
+        )
 
     segments = get_path_segments(url)
 
@@ -651,7 +676,26 @@ def build_gitlab_purl(url):
     https://gitlab.com/TG1999/firebase/-/tree
     https://gitlab.com/TG1999/firebase/-/master
     https://gitlab.com/tg1999/Firebase/-/tree/master
+    https://gitlab.com/tg1999/Firebase/-/commit/bf04e5f289885cf2f20a92b387bcc6df33e30809
     """
+    # https://gitlab.com/<ns>/<name>/-/commit/<sha>
+    commit_pattern = (
+        r"https?://gitlab.com/"
+        r"(?P<namespace>[^/]+)/(?P<name>[^/]+)/-/commit/"
+        r"(?P<version>[0-9a-fA-F]{7,64})/?$"
+    )
+
+    commit_matche = re.search(commit_pattern, url)
+    if commit_matche:
+        return PackageURL(
+            type="gitlab",
+            namespace=commit_matche.group("namespace"),
+            name=commit_matche.group("name"),
+            version=commit_matche.group("version"),
+            qualifiers={},
+            subpath="",
+        )
+
     segments = get_path_segments(url)
 
     if not len(segments) >= 2:
