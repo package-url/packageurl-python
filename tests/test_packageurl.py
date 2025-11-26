@@ -29,6 +29,8 @@ import os
 import re
 import unittest
 
+import pytest
+
 from packageurl import PackageURL
 from packageurl import normalize
 from packageurl import normalize_qualifiers
@@ -374,6 +376,16 @@ def test_encoding_stuff_with_colons_correctly() -> None:
         p.to_string()
         == "pkg:nuget/an:odd:space/libiconv:%20character%20set%20conversion%20library@1.9?package-id=e11a609df352e292"
     )
+
+
+def test_vers_validation_ok():
+    url = PackageURL.from_string("pkg:pypi/requests?vers=vers:pypi/>=2.0")
+    assert url.qualifiers["vers"] == "vers:pypi/>=2.0"
+
+
+def test_vers_validation_fails():
+    with pytest.raises(ValueError, match="must start with the 'vers:' URI scheme."):
+        PackageURL.from_string("pkg:pypi/requests?vers=>=2.0")
 
 
 def test_no_encoding_to_string():
