@@ -147,7 +147,7 @@ build_tests()
 class NormalizePurlTest(unittest.TestCase):
     def test_normalize_qualifiers_as_string(self):
         qualifiers_as_dict = {"classifier": "sources", "repository_url": "repo.spring.io/release"}
-        qualifiers_as_string = "classifier=sources&repository_url=repo.spring.io/release"
+        qualifiers_as_string = "classifier=sources&repository_url=repo.spring.io%2Frelease"
         assert qualifiers_as_string == normalize_qualifiers(qualifiers_as_dict, encode=True)
 
     def test_normalize_qualifiers_as_dict(self):
@@ -156,7 +156,7 @@ class NormalizePurlTest(unittest.TestCase):
         assert qualifiers_as_dict == normalize_qualifiers(qualifiers_as_string, encode=False)
 
     def test_create_PackageURL_from_qualifiers_string(self):
-        canonical_purl = "pkg:maven/org.apache.xmlgraphics/batik-anim@1.9.1?classifier=sources&repository_url=repo.spring.io/release"
+        canonical_purl = "pkg:maven/org.apache.xmlgraphics/batik-anim@1.9.1?classifier=sources&repository_url=repo.spring.io%2Frelease"
         type = "maven"  # NOQA
         namespace = "org.apache.xmlgraphics"
         name = "batik-anim"
@@ -168,7 +168,7 @@ class NormalizePurlTest(unittest.TestCase):
         assert canonical_purl == purl.to_string()
 
     def test_create_PackageURL_from_qualifiers_dict(self):
-        canonical_purl = "pkg:maven/org.apache.xmlgraphics/batik-anim@1.9.1?classifier=sources&repository_url=repo.spring.io/release"
+        canonical_purl = "pkg:maven/org.apache.xmlgraphics/batik-anim@1.9.1?classifier=sources&repository_url=repo.spring.io%2Frelease"
         type = "maven"  # NOQA
         namespace = "org.apache.xmlgraphics"
         name = "batik-anim"
@@ -191,14 +191,14 @@ class NormalizePurlTest(unittest.TestCase):
             encode=True,
         )
         expected = (
-            "n%c3%bacleo/n%c3%bacleo",
+            "n%c3%bacleo%2fn%c3%bacleo",
             "n%C3%BAcleo/n%C3%BAcleo",
-            "n%C3%BAcleo/n%C3%BAcleo",
-            "n%C3%BAcleo/n%C3%BAcleo",
-            "a=n%C3%BAcleo/n%C3%BAcleo",
+            "n%C3%BAcleo%2Fn%C3%BAcleo",
+            "n%C3%BAcleo%2Fn%C3%BAcleo",
+            "a=n%C3%BAcleo%2Fn%C3%BAcleo",
             "n%C3%BAcleo/n%C3%BAcleo",
         )
-        assert expected == normal
+        assert expected == normal, normal
 
     def test_normalize_decode_can_take_unicode_with_non_ascii_with_slash(self):
         uncd = "núcleo/núcleo"
@@ -233,14 +233,14 @@ class NormalizePurlTest(unittest.TestCase):
             encode=True,
         )
         expected = (
+            "n%25c3%25bacleo%2fn%25c3%25bacleo",
             "n%25c3%25bacleo/n%25c3%25bacleo",
-            "n%25c3%25bacleo/n%25c3%25bacleo",
-            "n%25c3%25bacleo/n%25c3%25bacleo",
-            "n%25c3%25bacleo/n%25c3%25bacleo",
-            "a=n%25c3%25bacleo/n%25c3%25bacleo",
+            "n%25c3%25bacleo%2Fn%25c3%25bacleo",
+            "n%25c3%25bacleo%2Fn%25c3%25bacleo",
+            "a=n%25c3%25bacleo%2Fn%25c3%25bacleo",
             "n%25c3%25bacleo/n%25c3%25bacleo",
         )
-        assert expected == normal
+        assert expected == normal, normal
 
     def test_qualifiers_must_be_key_value_pairs(self):
         purl = "pkg:maven/org.apache.xmlgraphics/batik-anim@1.9.1?this+is+not+a+key_value"

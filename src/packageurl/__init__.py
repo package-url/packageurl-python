@@ -80,7 +80,7 @@ def quote(s: AnyStr) -> str:
     byte or unicode string.
     """
     s_bytes = s.encode("utf-8") if isinstance(s, str) else s
-    quoted = _percent_quote(s_bytes, safe=':/')
+    quoted = _percent_quote(s_bytes, safe=':')
     if not isinstance(quoted, str):
         quoted = quoted.decode("utf-8")
     return quoted
