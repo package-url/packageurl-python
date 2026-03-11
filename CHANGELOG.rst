@@ -1,8 +1,12 @@
 Changelog
 =========
 
-Unreleased
-----------
+0.18.0 (unlreleased)
+--------------------
+
+- Add support for Python 3.14
+
+- Drop support for Python 3.8
 
 - Fix type hint for ``BasePurlType.allowed_qualifiers``
   https://github.com/package-url/packageurl-python/pull/213

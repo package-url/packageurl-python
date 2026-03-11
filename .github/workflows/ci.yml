@@ -36,12 +36,12 @@ jobs:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
         python-version:
+          - "3.14"
           - "3.13"
           - "3.12"
           - "3.11"
           - "3.10"
           - "3.9"
-          - "3.8"
 
     steps:
       - name: Checkout
