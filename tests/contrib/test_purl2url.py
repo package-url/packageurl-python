@@ -39,8 +39,8 @@ def test_purl2url_get_repo_url():
         "pkg:cargo/rand@0.7.2": "https://crates.io/crates/rand/0.7.2",
         "pkg:cargo/abc": "https://crates.io/crates/abc",
         "pkg:gem/bundler@2.3.23": "https://rubygems.org/gems/bundler/versions/2.3.23",
-        "pkg:rubygems/bundler@2.3.23": "https://rubygems.org/gems/bundler/versions/2.3.23",
-        "pkg:rubygems/package-name": "https://rubygems.org/gems/package-name",
+        "pkg:gem/bundler@2.3.23": "https://rubygems.org/gems/bundler/versions/2.3.23",
+        "pkg:gem/package-name": "https://rubygems.org/gems/package-name",
         "pkg:bitbucket/birkenfeld/pygments-main": "https://bitbucket.org/birkenfeld/pygments-main",
         "pkg:bitbucket/birkenfeld/pygments-main@244fd47e07d1014f0aed9c": "https://bitbucket.org/birkenfeld/pygments-main",
         "pkg:bitbucket/birkenfeld/pygments-main@master#views": "https://bitbucket.org/birkenfeld/pygments-main",
@@ -123,7 +123,7 @@ def test_purl2url_get_download_url():
         # Not-supported
         "pkg:github/tg1999/fetchcode": None,
         "pkg:cargo/abc": None,
-        "pkg:rubygems/package-name": None,
+        "pkg:gem/package-name": None,
         "pkg:bitbucket/birkenfeld": None,
         "pkg:pypi/sortedcontainers@2.4.0": None,
         "pkg:composer/psr/log@1.1.3": None,
@@ -168,7 +168,7 @@ def test_purl2url_get_inferred_urls():
         "pkg:pypi/sortedcontainers@2.4.0": ["https://pypi.org/project/sortedcontainers/2.4.0/"],
         "pkg:cocoapods/AFNetworking@4.0.1": ["https://cocoapods.org/pods/AFNetworking"],
         "pkg:composer/psr/log@1.1.3": ["https://packagist.org/packages/psr/log#1.1.3"],
-        "pkg:rubygems/package-name": ["https://rubygems.org/gems/package-name"],
+        "pkg:gem/package-name": ["https://rubygems.org/gems/package-name"],
         "pkg:maven/org.apache.commons/commons-io@1.3.2": [
             "https://repo.maven.apache.org/maven2/org/apache/commons/commons-io/1.3.2",
             "https://repo.maven.apache.org/maven2/org/apache/commons/commons-io/1.3.2/commons-io-1.3.2.jar",
