@@ -182,7 +182,7 @@ class NormalizePurlTest(unittest.TestCase):
     def test_normalize_encode_can_take_unicode_with_non_ascii_with_slash(self):
         uncd = "núcleo/núcleo"
         normal = normalize(
-            type=uncd,
+            type="generic",
             namespace=uncd,
             name=uncd,
             version=uncd,
@@ -191,7 +191,7 @@ class NormalizePurlTest(unittest.TestCase):
             encode=True,
         )
         expected = (
-            "n%c3%bacleo/n%c3%bacleo",
+            "generic",
             "n%C3%BAcleo/n%C3%BAcleo",
             "n%C3%BAcleo/n%C3%BAcleo",
             "n%C3%BAcleo/n%C3%BAcleo",
@@ -203,7 +203,7 @@ class NormalizePurlTest(unittest.TestCase):
     def test_normalize_decode_can_take_unicode_with_non_ascii_with_slash(self):
         uncd = "núcleo/núcleo"
         normal = normalize(
-            type=uncd,
+            type="generic",
             namespace=uncd,
             name=uncd,
             version=uncd,
@@ -212,7 +212,7 @@ class NormalizePurlTest(unittest.TestCase):
             encode=False,
         )
         expected = (
-            "núcleo/núcleo",
+            "generic",
             "núcleo/núcleo",
             "núcleo/núcleo",
             "núcleo/núcleo",
@@ -224,7 +224,7 @@ class NormalizePurlTest(unittest.TestCase):
     def test_normalize_encode_always_reencodes(self):
         uncd = "n%c3%bacleo/n%c3%bacleo"
         normal = normalize(
-            type=uncd,
+            type="generic",
             namespace=uncd,
             name=uncd,
             version=uncd,
@@ -233,7 +233,7 @@ class NormalizePurlTest(unittest.TestCase):
             encode=True,
         )
         expected = (
-            "n%25c3%25bacleo/n%25c3%25bacleo",
+            "generic",
             "n%25c3%25bacleo/n%25c3%25bacleo",
             "n%25c3%25bacleo/n%25c3%25bacleo",
             "n%25c3%25bacleo/n%25c3%25bacleo",

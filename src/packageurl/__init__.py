@@ -61,6 +61,49 @@ https://github.com/package-url/purl-spec
 """
 
 
+PURL_TYPES: set[str] = {
+    "alpm",
+    "apk",
+    "bitbucket",
+    "bitnami",
+    "cargo",
+    "cocoapods",
+    "composer",
+    "conan",
+    "conda",
+    "cpan",
+    "cran",
+    "deb",
+    "docker",
+    "gem",
+    "generic",
+    "github",
+    "golang",
+    "hackage",
+    "hex",
+    "huggingface",
+    "luarocks",
+    "maven",
+    "mlflow",
+    "npm",
+    "nuget",
+    "oci",
+    "pub",
+    "pypi",
+    "qpkg",
+    "rpm",
+    "swid",
+    "swift",
+}
+"""Registered pURL types.
+
+Sourced from the `purl-types-index.json
+<https://github.com/package-url/purl-spec/blob/main/purl-types-index.json>`_
+registry, which is automatically regenerated whenever a new pURL type is
+registered.
+"""
+
+
 class ValidationSeverity(str, Enum):
     ERROR = "error"
     WARNING = "warning"
@@ -124,8 +167,15 @@ def normalize_type(type: AnyStr | None, encode: bool | None = True) -> str | Non
 
     type_str = type if isinstance(type, str) else type.decode("utf-8")
     quoter = get_quoter(encode)
-    type_str = quoter(type_str)
-    return type_str.strip().lower() or None
+    type_str = quoter(type_str).strip().lower()
+    if not type_str:
+        return None
+    if type_str not in PURL_TYPES:
+        raise ValueError(
+            f"Invalid purl type: {type_str!r}. "
+            f"Must be one of: {', '.join(sorted(PURL_TYPES))}."
+        )
+    return type_str
 
 
 def normalize_namespace(
@@ -140,7 +190,6 @@ def normalize_namespace(
         "bitbucket",
         "github",
         "pypi",
-        "gitlab",
         "composer",
         "luarocks",
         "qpkg",
@@ -195,7 +244,6 @@ def normalize_name(
         "bitbucket",
         "github",
         "pypi",
-        "gitlab",
         "composer",
         "luarocks",
         "oci",

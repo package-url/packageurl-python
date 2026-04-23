@@ -4,6 +4,14 @@ Changelog
 0.18.0 (unlreleased)
 --------------------
 
+- Add ``PURL_TYPES`` constant sourced from the ``purl-types-index.json`` registry.
+  Enforce validation of PackageURL types.
+  Remove ``sourceforge`` and ``gitlab`` support from ``url2purl`` and ``purl2url``.
+  Remove ``rubygems`` route alias from ``purl2url`` (the registered type is ``gem``).
+  https://github.com/package-url/packageurl-python/issues/181
+  https://github.com/package-url/packageurl-python/issues/155
+  https://github.com/package-url/packageurl-python/pull/188
+
 - Add support for Python 3.14
 
 - Drop support for Python 3.8

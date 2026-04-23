@@ -44,7 +44,6 @@ def get_repo_download_url_by_package_type(
     download_url_by_type = {
         "github": f"https://github.com/{namespace}/{name}/archive/{version}.{archive_extension}",
         "bitbucket": f"https://bitbucket.org/{namespace}/{name}/get/{version}.{archive_extension}",
-        "gitlab": f"https://gitlab.com/{namespace}/{name}/-/archive/{version}/{name}-{version}.{archive_extension}",
     }
     return download_url_by_type.get(type)
 
@@ -158,21 +157,7 @@ def build_github_repo_url(purl):
     return repo_url
 
 
-@repo_router.route("pkg:gitlab/.*")
-def build_gitlab_repo_url(purl):
-    """
-    Return a gitlab repo URL from the `purl` string.
-    """
-    purl_data = PackageURL.from_string(purl)
-
-    namespace = purl_data.namespace
-    name = purl_data.name
-
-    if name and namespace:
-        return f"https://gitlab.com/{namespace}/{name}"
-
-
-@repo_router.route("pkg:(gem|rubygems)/.*")
+@repo_router.route("pkg:gem/.*")
 def build_rubygems_repo_url(purl):
     """
     Return a rubygems repo URL from the `purl` string.
@@ -351,7 +336,7 @@ def build_cargo_download_url(purl):
         return f"https://crates.io/api/v1/crates/{name}/{version}/download"
 
 
-@download_router.route("pkg:(gem|rubygems)/.*")
+@download_router.route("pkg:gem/.*")
 def build_rubygems_download_url(purl):
     """
     Return a rubygems download URL from the `purl` string.
@@ -435,7 +420,7 @@ def build_nuget_download_url(purl):
         return f"https://www.nuget.org/api/v2/package/{name}/{version}"
 
 
-@download_router.route("pkg:gitlab/.*", "pkg:bitbucket/.*", "pkg:github/.*")
+@download_router.route("pkg:bitbucket/.*", "pkg:github/.*")
 def build_repo_download_url(purl):
     """
     Return a gitlab download URL from the `purl` string.

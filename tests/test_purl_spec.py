@@ -32,7 +32,7 @@ from typing import Optional
 
 import pytest
 
-from packageurl import PackageURL
+from packageurl import PURL_TYPES, PackageURL
 
 
 @dataclass
@@ -90,6 +90,10 @@ spec_dict = load_spec_files(SPEC_DIR)
 
 flattened_cases = []
 for filename, cases in spec_dict.items():
+    # Only run spec tests for registered pURL types.
+    type_name = filename.removesuffix("-test.json")
+    if type_name not in PURL_TYPES:
+        continue
     for case in cases:
         flattened_cases.append((filename, case.description, case))
 
@@ -185,3 +189,31 @@ def run_test_case(case: PurlTestCase):
             assert messages == case.expected_output
         else:
             assert not messages
+
+
+PURL_TYPES_INDEX = os.path.join(root_dir, "spec", "purl-types-index.json")
+
+
+def test_purl_types_synced_with_spec():
+    """Fail if PURL_TYPES drifts from the purl-spec registry.
+
+    This test reads purl-types-index.json from the purl-spec submodule and
+    compares it with the PURL_TYPES constant. When the submodule is bumped
+    and new types appear (or old ones are removed), this test will fail with
+    a message showing exactly what changed.
+    """
+    with open(PURL_TYPES_INDEX, encoding="utf-8") as f:
+        spec_types = set(json.load(f))
+
+    added = sorted(spec_types - PURL_TYPES)
+    removed = sorted(PURL_TYPES - spec_types)
+
+    diff_lines = []
+    if added:
+        diff_lines.append(f"Types in spec but missing from PURL_TYPES: {added}")
+    if removed:
+        diff_lines.append(f"Types in PURL_TYPES but removed from spec: {removed}")
+
+    assert not diff_lines, (
+        "PURL_TYPES is out of sync with purl-types-index.json.\n" + "\n".join(diff_lines)
+    )
