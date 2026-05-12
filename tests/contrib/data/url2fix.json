@@ -1,0 +1,298 @@
+{
+  "https://github.com/aboutcode-org/vulnerablecode/commit/818b92ba8fbdbebf5e773d37eddc4a1698b660a4": {
+    "commit_hash": "818b92ba8fbdbebf5e773d37eddc4a1698b660a4",
+    "patch_url": "https://github.com/aboutcode-org/vulnerablecode/commit/818b92ba8fbdbebf5e773d37eddc4a1698b660a4.patch",
+    "url": "https://github.com/aboutcode-org/vulnerablecode/commit/818b92ba8fbdbebf5e773d37eddc4a1698b660a4",
+    "vcs_url": "https://github.com/aboutcode-org/vulnerablecode.git"
+  },
+  "https://github.com/aboutcode-org/vulnerablecode/tree/818b92ba8fbdbebf5e773d37eddc4a1698b660a4": {
+    "commit_hash": "818b92ba8fbdbebf5e773d37eddc4a1698b660a4",
+    "patch_url": "https://github.com/aboutcode-org/vulnerablecode/commit/818b92ba8fbdbebf5e773d37eddc4a1698b660a4.patch",
+    "url": "https://github.com/aboutcode-org/vulnerablecode/tree/818b92ba8fbdbebf5e773d37eddc4a1698b660a4",
+    "vcs_url": "https://github.com/aboutcode-org/vulnerablecode.git"
+  },
+  "https://github.com/aboutcode-org/vulnerablecode/blob/818b92ba8fbdbebf5e773d37eddc4a1698b660a4": {
+    "commit_hash": "818b92ba8fbdbebf5e773d37eddc4a1698b660a4",
+    "patch_url": "https://github.com/aboutcode-org/vulnerablecode/commit/818b92ba8fbdbebf5e773d37eddc4a1698b660a4.patch",
+    "url": "https://github.com/aboutcode-org/vulnerablecode/blob/818b92ba8fbdbebf5e773d37eddc4a1698b660a4",
+    "vcs_url": "https://github.com/aboutcode-org/vulnerablecode.git"
+  },
+  "https://gitlab.com/tg1999/first_repo/commit/6ceeeb9feb2b7420230e0d19753a626f9a43f9cb": {
+    "commit_hash": "6ceeeb9feb2b7420230e0d19753a626f9a43f9cb",
+    "patch_url": "https://gitlab.com/tg1999/first_repo/-/commit/6ceeeb9feb2b7420230e0d19753a626f9a43f9cb.patch",
+    "url": "https://gitlab.com/tg1999/first_repo/commit/6ceeeb9feb2b7420230e0d19753a626f9a43f9cb",
+    "vcs_url": "https://gitlab.com/tg1999/first_repo"
+  },
+  "https://gitlab.com/TG1999/first_repo/-/commit/6ceeeb9feb2b7420230e0d19753a626f9a43f9cb": {
+    "commit_hash": "6ceeeb9feb2b7420230e0d19753a626f9a43f9cb",
+    "patch_url": "https://gitlab.com/TG1999/first_repo/-/commit/6ceeeb9feb2b7420230e0d19753a626f9a43f9cb.patch",
+    "url": "https://gitlab.com/TG1999/first_repo/-/commit/6ceeeb9feb2b7420230e0d19753a626f9a43f9cb",
+    "vcs_url": "https://gitlab.com/TG1999/first_repo"
+  },
+  "https://gitlab.com/TG1999/firebase/-/tree/6ceeeb9feb2b7420230e0d19753a626f9a43f9cb": {
+    "commit_hash": "6ceeeb9feb2b7420230e0d19753a626f9a43f9cb",
+    "patch_url": "https://gitlab.com/TG1999/firebase/-/commit/6ceeeb9feb2b7420230e0d19753a626f9a43f9cb.patch",
+    "url": "https://gitlab.com/TG1999/firebase/-/tree/6ceeeb9feb2b7420230e0d19753a626f9a43f9cb",
+    "vcs_url": "https://gitlab.com/TG1999/firebase"
+  },
+  "https://gitlab.com/TG1999/firebase/-/blob/6ceeeb9feb2b7420230e0d19753a626f9a43f9cb": {
+    "commit_hash": "6ceeeb9feb2b7420230e0d19753a626f9a43f9cb",
+    "patch_url": "https://gitlab.com/TG1999/firebase/-/commit/6ceeeb9feb2b7420230e0d19753a626f9a43f9cb.patch",
+    "url": "https://gitlab.com/TG1999/firebase/-/blob/6ceeeb9feb2b7420230e0d19753a626f9a43f9cb",
+    "vcs_url": "https://gitlab.com/TG1999/firebase"
+  },
+  "https://bitbucket.org/TG1999/first_repo/commits/38b63edeafc7cc3c3c3ca904cea6c639a96695ab/": {
+    "commit_hash": "38b63edeafc7cc3c3c3ca904cea6c639a96695ab",
+    "patch_url": "https://bitbucket.org/TG1999/first_repo/commits/38b63edeafc7cc3c3c3ca904cea6c639a96695ab/raw",
+    "url": "https://bitbucket.org/TG1999/first_repo/commits/38b63edeafc7cc3c3c3ca904cea6c639a96695ab/",
+    "vcs_url": "https://bitbucket.org/TG1999/first_repo"
+  },
+  "https://gitlab.gnome.org/GNOME/gimp/commit/112a5e038f0646eae5ae314988ec074433d2b365": {
+    "commit_hash": "112a5e038f0646eae5ae314988ec074433d2b365",
+    "patch_url": "https://gitlab.gnome.org/GNOME/gimp/-/commit/112a5e038f0646eae5ae314988ec074433d2b365.patch",
+    "url": "https://gitlab.gnome.org/GNOME/gimp/commit/112a5e038f0646eae5ae314988ec074433d2b365",
+    "vcs_url": "https://gitlab.gnome.org/GNOME/gimp"
+  },
+  "https://gitlab.gnome.org/GNOME/gimp/-/commit/112a5e038f0646eae5ae314988ec074433d2b365": {
+    "commit_hash": "112a5e038f0646eae5ae314988ec074433d2b365",
+    "patch_url": "https://gitlab.gnome.org/GNOME/gimp/-/commit/112a5e038f0646eae5ae314988ec074433d2b365.patch",
+    "url": "https://gitlab.gnome.org/GNOME/gimp/-/commit/112a5e038f0646eae5ae314988ec074433d2b365",
+    "vcs_url": "https://gitlab.gnome.org/GNOME/gimp"
+  },
+  "https://git.codelinaro.org/clo/qsdk/oss/kernel/linux-msm/-/commit/a5f07894058c4198f61e533d727b343c5be879b0": {
+    "commit_hash": "a5f07894058c4198f61e533d727b343c5be879b0",
+    "patch_url": "https://git.codelinaro.org/clo/qsdk/oss/kernel/linux-msm/-/commit/a5f07894058c4198f61e533d727b343c5be879b0.patch",
+    "url": "https://git.codelinaro.org/clo/qsdk/oss/kernel/linux-msm/-/commit/a5f07894058c4198f61e533d727b343c5be879b0",
+    "vcs_url": "https://git.codelinaro.org/clo/qsdk/oss/kernel/linux-msm"
+  },
+  "https://gitlab.freedesktop.org/poppler/poppler/-/commit/8677500399fc2548fa816b619580c2c07915a98c": {
+    "commit_hash": "8677500399fc2548fa816b619580c2c07915a98c",
+    "patch_url": "https://gitlab.freedesktop.org/poppler/poppler/-/commit/8677500399fc2548fa816b619580c2c07915a98c.patch",
+    "url": "https://gitlab.freedesktop.org/poppler/poppler/-/commit/8677500399fc2548fa816b619580c2c07915a98c",
+    "vcs_url": "https://gitlab.freedesktop.org/poppler/poppler"
+  },
+  "https://salsa.debian.org/apt-team/apt/-/commit/dceb1e49e4b8e4dadaf056be34088b415939cda6": {
+    "commit_hash": "dceb1e49e4b8e4dadaf056be34088b415939cda6",
+    "patch_url": "https://salsa.debian.org/apt-team/apt/-/commit/dceb1e49e4b8e4dadaf056be34088b415939cda6.patch",
+    "url": "https://salsa.debian.org/apt-team/apt/-/commit/dceb1e49e4b8e4dadaf056be34088b415939cda6",
+    "vcs_url": "https://salsa.debian.org/apt-team/apt"
+  },
+  "https://gitlab.redox-os.org/redox-os/uefi/-/commit/b711d47e815665b0ec8949e39292ad8e3fdd0756": {
+    "commit_hash": "b711d47e815665b0ec8949e39292ad8e3fdd0756",
+    "patch_url": "https://gitlab.redox-os.org/redox-os/uefi/-/commit/b711d47e815665b0ec8949e39292ad8e3fdd0756.patch",
+    "url": "https://gitlab.redox-os.org/redox-os/uefi/-/commit/b711d47e815665b0ec8949e39292ad8e3fdd0756",
+    "vcs_url": "https://gitlab.redox-os.org/redox-os/uefi"
+  },
+  "https://gitlab.torproject.org/tpo/core/tor/-/commit/80c404c4b79f3bcba3fc4585d4c62a62a04f3ed9": {
+    "commit_hash": "80c404c4b79f3bcba3fc4585d4c62a62a04f3ed9",
+    "patch_url": "https://gitlab.torproject.org/tpo/core/tor/-/commit/80c404c4b79f3bcba3fc4585d4c62a62a04f3ed9.patch",
+    "url": "https://gitlab.torproject.org/tpo/core/tor/-/commit/80c404c4b79f3bcba3fc4585d4c62a62a04f3ed9",
+    "vcs_url": "https://gitlab.torproject.org/tpo/core/tor"
+  },
+  "https://gitlab.matrix.org/matrix-org/olm/-/commit/ccc0d122ee1b4d5e5ca4ec1432086be17d5f901b": {
+    "commit_hash": "ccc0d122ee1b4d5e5ca4ec1432086be17d5f901b",
+    "patch_url": "https://gitlab.matrix.org/matrix-org/olm/-/commit/ccc0d122ee1b4d5e5ca4ec1432086be17d5f901b.patch",
+    "url": "https://gitlab.matrix.org/matrix-org/olm/-/commit/ccc0d122ee1b4d5e5ca4ec1432086be17d5f901b",
+    "vcs_url": "https://gitlab.matrix.org/matrix-org/olm"
+  },
+  "https://gitlab.labs.nic.cz/labs/fbird/commit/1657c41c96b3c07d9265b07dd4912033ead4124b": {
+    "commit_hash": "1657c41c96b3c07d9265b07dd4912033ead4124b",
+    "patch_url": "https://gitlab.labs.nic.cz/labs/fbird/-/commit/1657c41c96b3c07d9265b07dd4912033ead4124b.patch",
+    "url": "https://gitlab.labs.nic.cz/labs/fbird/commit/1657c41c96b3c07d9265b07dd4912033ead4124b",
+    "vcs_url": "https://gitlab.labs.nic.cz/labs/fbird"
+  },
+  "https://gitlab.kitware.com/cmake/cmake/-/commit/37e27f71bc356d880c908040cd0cb68fa2c371b8": {
+    "commit_hash": "37e27f71bc356d880c908040cd0cb68fa2c371b8",
+    "patch_url": "https://gitlab.kitware.com/cmake/cmake/-/commit/37e27f71bc356d880c908040cd0cb68fa2c371b8.patch",
+    "url": "https://gitlab.kitware.com/cmake/cmake/-/commit/37e27f71bc356d880c908040cd0cb68fa2c371b8",
+    "vcs_url": "https://gitlab.kitware.com/cmake/cmake"
+  },
+  "https://gitea.com/htc47/entur/commit/271b852cfb761a1fe257aa0f0a12ff38bd8bfd1c": {
+    "commit_hash": "271b852cfb761a1fe257aa0f0a12ff38bd8bfd1c",
+    "patch_url": "https://gitea.com/htc47/entur/commit/271b852cfb761a1fe257aa0f0a12ff38bd8bfd1c.patch",
+    "url": "https://gitea.com/htc47/entur/commit/271b852cfb761a1fe257aa0f0a12ff38bd8bfd1c",
+    "vcs_url": "https://gitea.com/htc47/entur.git"
+  },
+  "https://git.enlightenment.org/enlightenment/enlightenment/commit/cae78cbb169f237862faef123e4abaf63a1f5064": {
+    "commit_hash": "cae78cbb169f237862faef123e4abaf63a1f5064",
+    "patch_url": "https://git.enlightenment.org/enlightenment/enlightenment/commit/cae78cbb169f237862faef123e4abaf63a1f5064.patch",
+    "url": "https://git.enlightenment.org/enlightenment/enlightenment/commit/cae78cbb169f237862faef123e4abaf63a1f5064",
+    "vcs_url": "https://git.enlightenment.org/enlightenment/enlightenment.git"
+  },
+  "https://git.distrust.co/public/blahaj/commit/4faab1cd33d455f0ca2ccc7208093fd6c18e0767": {
+    "commit_hash": "4faab1cd33d455f0ca2ccc7208093fd6c18e0767",
+    "patch_url": "https://git.distrust.co/public/blahaj/commit/4faab1cd33d455f0ca2ccc7208093fd6c18e0767.patch",
+    "url": "https://git.distrust.co/public/blahaj/commit/4faab1cd33d455f0ca2ccc7208093fd6c18e0767",
+    "vcs_url": "https://git.distrust.co/public/blahaj.git"
+  },
+  "https://codeberg.org/alpinelinux/aports/commit/a40a9732c840e5a324fba78b0ff7980b497c3831": {
+    "commit_hash": "a40a9732c840e5a324fba78b0ff7980b497c3831",
+    "patch_url": "https://codeberg.org/alpinelinux/aports/commit/a40a9732c840e5a324fba78b0ff7980b497c3831.patch",
+    "url": "https://codeberg.org/alpinelinux/aports/commit/a40a9732c840e5a324fba78b0ff7980b497c3831",
+    "vcs_url": "https://codeberg.org/alpinelinux/aports.git"
+  },
+  "https://git.kernel.org/pub/scm/utils/b4/b4.git/commit/?id=477734000555ffc24bf873952e40367deee26f17": {
+    "commit_hash": "477734000555ffc24bf873952e40367deee26f17",
+    "patch_url": "https://git.kernel.org/pub/scm/utils/b4/b4.git/patch/?id=477734000555ffc24bf873952e40367deee26f17",
+    "url": "https://git.kernel.org/pub/scm/utils/b4/b4.git/commit/?id=477734000555ffc24bf873952e40367deee26f17",
+    "vcs_url": "https://git.kernel.org/pub/scm/utils/b4/b4.git"
+  },
+  "https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/net/core/sock.c?id=9d538fa60bad4f7b23193c89e843797a1cf71ef3": {
+    "commit_hash": "9d538fa60bad4f7b23193c89e843797a1cf71ef3",
+    "patch_url": "https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/patch/?id=9d538fa60bad4f7b23193c89e843797a1cf71ef3",
+    "url": "https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/net/core/sock.c?id=9d538fa60bad4f7b23193c89e843797a1cf71ef3",
+    "vcs_url": "https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git"
+  },
+  "https://cgit.git.savannah.gnu.org/cgit/uddf.git/commit/?id=98c41e131dc952aee43d4ec392b80ca4c426be8d": {
+    "commit_hash": "98c41e131dc952aee43d4ec392b80ca4c426be8d",
+    "patch_url": "https://cgit.git.savannah.gnu.org/cgit/uddf.git/patch/?id=98c41e131dc952aee43d4ec392b80ca4c426be8d",
+    "url": "https://cgit.git.savannah.gnu.org/cgit/uddf.git/commit/?id=98c41e131dc952aee43d4ec392b80ca4c426be8d",
+    "vcs_url": "https://cgit.git.savannah.gnu.org/cgit/uddf.git"
+  },
+  "https://git.kernel.org/pub/scm/virt/kvm/mst/qemu.git/commit/?id=7457fe9541b5162f285454947448d553a5d5a531": {
+    "commit_hash": "7457fe9541b5162f285454947448d553a5d5a531",
+    "patch_url": "https://git.kernel.org/pub/scm/virt/kvm/mst/qemu.git/patch/?id=7457fe9541b5162f285454947448d553a5d5a531",
+    "url": "https://git.kernel.org/pub/scm/virt/kvm/mst/qemu.git/commit/?id=7457fe9541b5162f285454947448d553a5d5a531",
+    "vcs_url": "https://git.kernel.org/pub/scm/virt/kvm/mst/qemu.git"
+  },
+  "https://git.kernel.org/pub/scm/linux/kernel/git/deller/linux-fbdev.git/commit/?h=for-next&id=bd771cf5c4254511cc4abb88f3dab3bd58bdf8e8": {
+    "commit_hash": "bd771cf5c4254511cc4abb88f3dab3bd58bdf8e8",
+    "patch_url": "https://git.kernel.org/pub/scm/linux/kernel/git/deller/linux-fbdev.git/patch/?id=bd771cf5c4254511cc4abb88f3dab3bd58bdf8e8",
+    "url": "https://git.kernel.org/pub/scm/linux/kernel/git/deller/linux-fbdev.git/commit/?h=for-next&id=bd771cf5c4254511cc4abb88f3dab3bd58bdf8e8",
+    "vcs_url": "https://git.kernel.org/pub/scm/linux/kernel/git/deller/linux-fbdev.git"
+  },
+  "https://git.kernel.org/stable/c/9a9a8fe26751334b7739193a94eba741073b8a55": {
+    "commit_hash": "9a9a8fe26751334b7739193a94eba741073b8a55",
+    "patch_url": "https://git.kernel.org/pub/scm/linux/kernel/git/stable//linux.git/patch/?id=9a9a8fe26751334b7739193a94eba741073b8a55",
+    "url": "https://git.kernel.org/stable/c/9a9a8fe26751334b7739193a94eba741073b8a55",
+    "vcs_url": "https://git.kernel.org/pub/scm/linux/kernel/git/stable//linux.git"
+  },
+  "https://git.libssh.org/projects/libssh.git/commit/?id=697650caa97eaf7623924c75f9fcfec6dd423cd1": {
+    "commit_hash": "697650caa97eaf7623924c75f9fcfec6dd423cd1",
+    "patch_url": "https://git.libssh.org/projects/libssh.git/patch/?id=697650caa97eaf7623924c75f9fcfec6dd423cd1",
+    "url": "https://git.libssh.org/projects/libssh.git/commit/?id=697650caa97eaf7623924c75f9fcfec6dd423cd1",
+    "vcs_url": "https://git.libssh.org/projects/libssh.git"
+  },
+  "https://gitweb.gentoo.org/dev/darkside.git/commit/?id=8d4b0836f3b6ab7075212926d9aad0b50246d825": {
+    "commit_hash": "8d4b0836f3b6ab7075212926d9aad0b50246d825",
+    "patch_url": "https://gitweb.gentoo.org/dev/darkside.git/patch/?id=8d4b0836f3b6ab7075212926d9aad0b50246d825",
+    "url": "https://gitweb.gentoo.org/dev/darkside.git/commit/?id=8d4b0836f3b6ab7075212926d9aad0b50246d825",
+    "vcs_url": "https://gitweb.gentoo.org/dev/darkside.git"
+  },
+  "https://gitweb.gentoo.org/repo/gentoo.git/commit/?id=f73ae47c5e48010f504f3f55567152258f3013ae": {
+    "commit_hash": "f73ae47c5e48010f504f3f55567152258f3013ae",
+    "patch_url": "https://gitweb.gentoo.org/repo/gentoo.git/patch/?id=f73ae47c5e48010f504f3f55567152258f3013ae",
+    "url": "https://gitweb.gentoo.org/repo/gentoo.git/commit/?id=f73ae47c5e48010f504f3f55567152258f3013ae",
+    "vcs_url": "https://gitweb.gentoo.org/repo/gentoo.git"
+  },
+  "https://android.googlesource.com/platform/frameworks/base/+/b4da73a935a8c906ff5df562155824d63ac849ab": {
+    "commit_hash": "b4da73a935a8c906ff5df562155824d63ac849ab",
+    "patch_url": "https://android.googlesource.com/platform/frameworks/base/+/b4da73a935a8c906ff5df562155824d63ac849ab^!?format=TEXT",
+    "url": "https://android.googlesource.com/platform/frameworks/base/+/b4da73a935a8c906ff5df562155824d63ac849ab",
+    "vcs_url": "https://android.googlesource.com/platform/frameworks/base"
+  },
+  "https://aomedia.googlesource.com/aom/+/4efe20e99dcd9b6f8eadc8de8acc825be7416578": {
+    "commit_hash": "4efe20e99dcd9b6f8eadc8de8acc825be7416578",
+    "patch_url": "https://aomedia.googlesource.com/aom/+/4efe20e99dcd9b6f8eadc8de8acc825be7416578^!?format=TEXT",
+    "url": "https://aomedia.googlesource.com/aom/+/4efe20e99dcd9b6f8eadc8de8acc825be7416578",
+    "vcs_url": "https://aomedia.googlesource.com/aom"
+  },
+  "https://aomedia.googlesource.com/libavifinfo/+/43716e9c34d3389b4882fbd1a81c04543ed04fe3": {
+    "commit_hash": "43716e9c34d3389b4882fbd1a81c04543ed04fe3",
+    "patch_url": "https://aomedia.googlesource.com/libavifinfo/+/43716e9c34d3389b4882fbd1a81c04543ed04fe3^!?format=TEXT",
+    "url": "https://aomedia.googlesource.com/libavifinfo/+/43716e9c34d3389b4882fbd1a81c04543ed04fe3",
+    "vcs_url": "https://aomedia.googlesource.com/libavifinfo"
+  },
+  "https://chromium.googlesource.com/aosp/platform/external/dbus-binding-generator/+/7574c671c7c64aab957dc507fffff3c8c38dc7cb": {
+    "commit_hash": "7574c671c7c64aab957dc507fffff3c8c38dc7cb",
+    "patch_url": "https://chromium.googlesource.com/aosp/platform/external/dbus-binding-generator/+/7574c671c7c64aab957dc507fffff3c8c38dc7cb^!?format=TEXT",
+    "url": "https://chromium.googlesource.com/aosp/platform/external/dbus-binding-generator/+/7574c671c7c64aab957dc507fffff3c8c38dc7cb",
+    "vcs_url": "https://chromium.googlesource.com/aosp/platform/external/dbus-binding-generator"
+  },
+  "https://chromium.googlesource.com/infra/infra/+/77ef00cb53d90c9d1f984eca434d828de5c167a5": {
+    "commit_hash": "77ef00cb53d90c9d1f984eca434d828de5c167a5",
+    "patch_url": "https://chromium.googlesource.com/infra/infra/+/77ef00cb53d90c9d1f984eca434d828de5c167a5^!?format=TEXT",
+    "url": "https://chromium.googlesource.com/infra/infra/+/77ef00cb53d90c9d1f984eca434d828de5c167a5",
+    "vcs_url": "https://chromium.googlesource.com/infra/infra"
+  },
+  "https://boringssl.googlesource.com/boringssl/+/e759a9cd84198613199259dbed401f4951747cff": {
+    "commit_hash": "e759a9cd84198613199259dbed401f4951747cff",
+    "patch_url": "https://boringssl.googlesource.com/boringssl/+/e759a9cd84198613199259dbed401f4951747cff^!?format=TEXT",
+    "url": "https://boringssl.googlesource.com/boringssl/+/e759a9cd84198613199259dbed401f4951747cff",
+    "vcs_url": "https://boringssl.googlesource.com/boringssl"
+  },
+  "https://fuchsia.googlesource.com/fuchsia/+/40e7fbcdcd013441daf4492f1ead349a9e5b80dc": {
+    "commit_hash": "40e7fbcdcd013441daf4492f1ead349a9e5b80dc",
+    "patch_url": "https://fuchsia.googlesource.com/fuchsia/+/40e7fbcdcd013441daf4492f1ead349a9e5b80dc^!?format=TEXT",
+    "url": "https://fuchsia.googlesource.com/fuchsia/+/40e7fbcdcd013441daf4492f1ead349a9e5b80dc",
+    "vcs_url": "https://fuchsia.googlesource.com/fuchsia"
+  },
+  "https://gerrit.googlesource.com/gerrit/+/45071d6977932bca5a1427c8abad24710fed2e33": {
+    "commit_hash": "45071d6977932bca5a1427c8abad24710fed2e33",
+    "patch_url": "https://gerrit.googlesource.com/gerrit/+/45071d6977932bca5a1427c8abad24710fed2e33^!?format=TEXT",
+    "url": "https://gerrit.googlesource.com/gerrit/+/45071d6977932bca5a1427c8abad24710fed2e33",
+    "vcs_url": "https://gerrit.googlesource.com/gerrit"
+  },
+  "https://go.googlesource.com/go/+/960ffa98ce73ef2c2060c84c7ac28d37a83f345e": {
+    "commit_hash": "960ffa98ce73ef2c2060c84c7ac28d37a83f345e",
+    "patch_url": "https://go.googlesource.com/go/+/960ffa98ce73ef2c2060c84c7ac28d37a83f345e^!?format=TEXT",
+    "url": "https://go.googlesource.com/go/+/960ffa98ce73ef2c2060c84c7ac28d37a83f345e",
+    "vcs_url": "https://go.googlesource.com/go"
+  },
+  "https://kernel.googlesource.com/pub/scm/git/git/+/3ec804490a265f4c418a321428c12f3f18b7eff5": {
+    "commit_hash": "3ec804490a265f4c418a321428c12f3f18b7eff5",
+    "patch_url": "https://kernel.googlesource.com/pub/scm/git/git/+/3ec804490a265f4c418a321428c12f3f18b7eff5^!?format=TEXT",
+    "url": "https://kernel.googlesource.com/pub/scm/git/git/+/3ec804490a265f4c418a321428c12f3f18b7eff5",
+    "vcs_url": "https://kernel.googlesource.com/pub/scm/git/git"
+  },
+  "https://pdfium.googlesource.com/pdfium/+/767aebbef641a89498deebc29369a078207b4dcc": {
+    "commit_hash": "767aebbef641a89498deebc29369a078207b4dcc",
+    "patch_url": "https://pdfium.googlesource.com/pdfium/+/767aebbef641a89498deebc29369a078207b4dcc^!?format=TEXT",
+    "url": "https://pdfium.googlesource.com/pdfium/+/767aebbef641a89498deebc29369a078207b4dcc",
+    "vcs_url": "https://pdfium.googlesource.com/pdfium"
+  },
+  "https://skia.googlesource.com/skia/+/1c577cd3ee331944b9061ee0eec147b211ee563c": {
+    "commit_hash": "1c577cd3ee331944b9061ee0eec147b211ee563c",
+    "patch_url": "https://skia.googlesource.com/skia/+/1c577cd3ee331944b9061ee0eec147b211ee563c^!?format=TEXT",
+    "url": "https://skia.googlesource.com/skia/+/1c577cd3ee331944b9061ee0eec147b211ee563c",
+    "vcs_url": "https://skia.googlesource.com/skia"
+  },
+  "https://sourceforge.net/p/djvu/djvulibre-git/ci/e15d51510048927f172f1bf1f27ede65907d940d": {
+    "commit_hash": "e15d51510048927f172f1bf1f27ede65907d940d",
+    "patch_url": null,
+    "url": "https://sourceforge.net/p/djvu/djvulibre-git/ci/e15d51510048927f172f1bf1f27ede65907d940d",
+    "vcs_url": "https://git.code.sf.net/p/djvu/djvulibre-git"
+  },
+  "https://sourceforge.net/p/expat/code_git/ci/f0bec73b018caa07d3e75ec8dd967f3785d71bde": {
+    "commit_hash": "f0bec73b018caa07d3e75ec8dd967f3785d71bde",
+    "patch_url": null,
+    "url": "https://sourceforge.net/p/expat/code_git/ci/f0bec73b018caa07d3e75ec8dd967f3785d71bde",
+    "vcs_url": "https://git.code.sf.net/p/expat/code_git"
+  },
+  "https://gcc.gnu.org/git/?p=gcc.git;a=commit;h=82cc94e5fb69d1c45a386f83798251de5bff9339": {
+    "commit_hash": "82cc94e5fb69d1c45a386f83798251de5bff9339",
+    "patch_url": "https://gcc.gnu.org/git/?p=gcc.git;a=patch;h=82cc94e5fb69d1c45a386f83798251de5bff9339",
+    "url": "https://gcc.gnu.org/git/?p=gcc.git;a=commit;h=82cc94e5fb69d1c45a386f83798251de5bff9339",
+    "vcs_url": "https://gcc.gnu.org/git/gcc.git"
+  },
+  "https://git.postgresql.org/gitweb/?p=hamn.git;a=commit;h=a796b71a5b3fe7f751f1086a08cb114b9877dea2": {
+    "commit_hash": "a796b71a5b3fe7f751f1086a08cb114b9877dea2",
+    "patch_url": "https://git.postgresql.org/gitweb/?p=hamn.git;a=patch;h=a796b71a5b3fe7f751f1086a08cb114b9877dea2",
+    "url": "https://git.postgresql.org/gitweb/?p=hamn.git;a=commit;h=a796b71a5b3fe7f751f1086a08cb114b9877dea2",
+    "vcs_url": "https://git.postgresql.org/git/hamn.git"
+  },
+  "https://sourceware.org/git/?p=bunsen.git;a=commit;h=6c55933f37099517e050c923527b0b2267e1deed": {
+    "commit_hash": "6c55933f37099517e050c923527b0b2267e1deed",
+    "patch_url": "https://sourceware.org/git/?p=bunsen.git;a=patch;h=6c55933f37099517e050c923527b0b2267e1deed",
+    "url": "https://sourceware.org/git/?p=bunsen.git;a=commit;h=6c55933f37099517e050c923527b0b2267e1deed",
+    "vcs_url": "https://sourceware.org/git/bunsen.git"
+  },
+  "https://gitbox.apache.org/repos/asf?p=xalan-java.git;a=commit;h=da3e0d06b467247643ce04e88d3346739d119f21": {
+    "commit_hash": "da3e0d06b467247643ce04e88d3346739d119f21",
+    "patch_url": "https://gitbox.apache.org/repos/asf/?p=xalan-java.git;a=patch;h=da3e0d06b467247643ce04e88d3346739d119f21",
+    "url": "https://gitbox.apache.org/repos/asf?p=xalan-java.git;a=commit;h=da3e0d06b467247643ce04e88d3346739d119f21",
+    "vcs_url": "https://github.com/apache/xalan-java.git"
+  },
+  "": null,
+  "https://gist.github.com/katzj/ee72f3c2a00590812b2ea3c0c8890e0b": null
+}
