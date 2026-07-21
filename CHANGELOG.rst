@@ -11,6 +11,9 @@ Changelog
 - Fix type hint for ``BasePurlType.allowed_qualifiers``
   https://github.com/package-url/packageurl-python/pull/213
 
+- Fix substring matching on the ``cpan`` and ``mlflow`` type checks
+  https://github.com/package-url/packageurl-python/pull/232
+
 0.17.6 (2025-11-24)
 -------------------
 
