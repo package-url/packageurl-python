@@ -149,7 +149,7 @@ def normalize_namespace(
         "hex",
     ):
         namespace_str = namespace_str.lower()
-    if ptype and ptype in ("cpan"):
+    if ptype == "cpan":
         namespace_str = namespace_str.upper()
     segments = [seg for seg in namespace_str.split("/") if seg.strip()]
     segments_quoted = map(get_quoter(encode), segments)
@@ -189,7 +189,7 @@ def normalize_name(
     quoter = get_quoter(encode)
     name_str = quoter(name_str)
     name_str = name_str.strip().strip("/")
-    if ptype and ptype in ("mlflow"):
+    if ptype == "mlflow":
         return normalize_mlflow_name(name_str, qualifiers)
     if ptype in (
         "bitbucket",

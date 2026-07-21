@@ -31,6 +31,8 @@ import unittest
 
 from packageurl import PackageURL
 from packageurl import normalize
+from packageurl import normalize_name
+from packageurl import normalize_namespace
 from packageurl import normalize_qualifiers
 
 
@@ -388,3 +390,23 @@ def test_no_encoding_to_string():
         p.to_string(encode=False)
         == "pkg:nuget/an:odd:space/libiconv: character set conversion library@1.9?package-id=e11a609df352e292"
     )
+
+
+def test_cpan_namespace_uppercasing_is_not_applied_to_substring_types() -> None:
+    assert normalize_namespace("Some-Namespace", "cpan") == "SOME-NAMESPACE"
+
+    for ptype in ("pan", "cpa", "c", "a", "cp", "an"):
+        assert normalize_namespace("Some-Namespace", ptype) == "Some-Namespace"
+
+    assert PackageURL(type="pan", namespace="Some-Namespace", name="x").to_string() == (
+        "pkg:pan/Some-Namespace/x"
+    )
+
+
+def test_mlflow_name_handling_is_not_applied_to_substring_types() -> None:
+    databricks = {"repository_url": "https://community.cloud.databricks.com"}
+
+    assert normalize_name("MyModel", databricks, "mlflow") == "mymodel"
+
+    for ptype in ("ml", "flow", "low", "m", "w"):
+        assert normalize_name("MyModel", databricks, ptype) == "MyModel"
