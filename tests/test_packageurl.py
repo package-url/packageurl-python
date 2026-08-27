@@ -388,3 +388,40 @@ def test_no_encoding_to_string():
         p.to_string(encode=False)
         == "pkg:nuget/an:odd:space/libiconv: character set conversion library@1.9?package-id=e11a609df352e292"
     )
+
+
+def test_validate_string_reports_dot_segments_in_namespace():
+    # https://github.com/package-url/packageurl-python/issues/228
+    from packageurl import PackageURL
+    from packageurl import ValidationSeverity
+
+    messages = PackageURL.validate_string("pkg:golang/busybox.org/../busybox@1.35.0")
+    assert any(
+        m.severity == ValidationSeverity.ERROR and "'.' or '..' path segment" in m.message
+        for m in messages
+    )
+
+    messages = PackageURL.validate_string("pkg:golang/busybox.org/./busybox@1.35.0")
+    assert any(
+        m.severity == ValidationSeverity.ERROR and "'.' or '..' path segment" in m.message
+        for m in messages
+    )
+
+
+def test_validate_string_reports_dot_segments_as_name():
+    from packageurl import PackageURL
+    from packageurl import ValidationSeverity
+
+    messages = PackageURL.validate_string("pkg:golang/busybox.org/..@1.35.0")
+    assert any(
+        m.severity == ValidationSeverity.ERROR and "'.' or '..'" in m.message
+        for m in messages
+    )
+
+
+def test_validate_string_accepts_dotted_names_and_namespaces():
+    from packageurl import PackageURL
+
+    assert not PackageURL.validate_string("pkg:golang/busybox.org/busybox@1.35.0")
+    # names and namespace segments that merely contain dots are fine
+    assert not PackageURL.validate_string("pkg:golang/example.com/my..pkg@1.0.0")

@@ -142,15 +142,29 @@ class BasePurlType:
                 message=f"Namespace is not lowercased for purl type: {cls.type!r}",
             )
 
+        if purl.namespace and any(
+            segment in (".", "..") for segment in purl.namespace.split("/")
+        ):
+            yield ValidationMessage(
+                severity=ValidationSeverity.ERROR,
+                message=f"Namespace contains a '.' or '..' path segment: {purl.namespace!r}",
+            )
+
     @classmethod
     def _validate_name(cls, purl):
-        if not cls.name_case_sensitive and purl.name and purl.name.lower() != purl.name:
-            from packageurl import ValidationMessage
-            from packageurl import ValidationSeverity
+        from packageurl import ValidationMessage
+        from packageurl import ValidationSeverity
 
+        if not cls.name_case_sensitive and purl.name and purl.name.lower() != purl.name:
             yield ValidationMessage(
                 severity=ValidationSeverity.WARNING,
                 message=f"Name is not lowercased for purl type: {cls.type!r}",
+            )
+
+        if purl.name in (".", ".."):
+            yield ValidationMessage(
+                severity=ValidationSeverity.ERROR,
+                message=f"Name cannot be a '.' or '..' path segment: {purl.name!r}",
             )
 
     @classmethod
