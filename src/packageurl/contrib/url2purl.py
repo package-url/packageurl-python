@@ -176,7 +176,7 @@ def build_npm_download_purl(uri):
         return
 
     base_filename, ext = os.path.splitext(filename)
-    version = base_filename.replace(name, "")
+    version = base_filename.removeprefix(name)
     if version.startswith("-"):
         version = version[1:]  # Removes the "-" prefix
 
