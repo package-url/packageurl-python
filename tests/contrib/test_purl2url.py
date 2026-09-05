@@ -208,5 +208,5 @@ def test_golang_download_without_version(purl):
 
 
 def test_golang_download_without_version_uses_download_qualifier():
-    purl = "pkg:golang/github.com/gorilla/context" "?download_url=https://example.com/context.zip"
+    purl = "pkg:golang/github.com/gorilla/context?download_url=https://example.com/context.zip"
     assert purl2url.get_download_url(purl) == "https://example.com/context.zip"

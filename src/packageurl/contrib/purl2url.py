@@ -481,8 +481,7 @@ def build_golang_download_url(purl):
     if not eversion.startswith("v"):
         eversion = "v" + eversion
 
-    if name and version:
-        return f"https://proxy.golang.org/{ename}/@v/{eversion}.zip"
+    return f"https://proxy.golang.org/{ename}/@v/{eversion}.zip"
 
 
 @download_router.route("pkg:pub/.*")
