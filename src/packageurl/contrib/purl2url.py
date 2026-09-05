@@ -510,7 +510,7 @@ def build_swift_download_url(purl):
     version = purl_data.version
     namespace = purl_data.namespace
 
-    if not (namespace or name or version):
+    if not (namespace and name and version):
         return
 
     return f"https://{namespace}/{name}/archive/{version}.zip"
