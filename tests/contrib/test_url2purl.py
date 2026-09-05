@@ -97,3 +97,10 @@ class TestURL2PURLDataDriven(TestCase):
 
 
 build_tests(clazz=TestURL2PURLDataDriven, regen=False)
+
+
+def test_npm_download_preserves_name_in_prerelease_version():
+    for namespace in ("", "@scope/"):
+        url = f"https://registry.npmjs.org/{namespace}foo/-/foo-1.0.0-foo.1.tgz"
+        expected_namespace = "%40scope/" if namespace else ""
+        assert get_purl(url) == f"pkg:npm/{expected_namespace}foo@1.0.0-foo.1"
