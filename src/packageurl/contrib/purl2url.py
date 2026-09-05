@@ -468,7 +468,7 @@ def build_golang_download_url(purl):
     name = purl_data.name
     version = purl_data.version
 
-    if not name:
+    if not name or not version:
         return
 
     # TODO: https://github.com/package-url/packageurl-python/issues/197
@@ -481,8 +481,7 @@ def build_golang_download_url(purl):
     if not eversion.startswith("v"):
         eversion = "v" + eversion
 
-    if name and version:
-        return f"https://proxy.golang.org/{ename}/@v/{eversion}.zip"
+    return f"https://proxy.golang.org/{ename}/@v/{eversion}.zip"
 
 
 @download_router.route("pkg:pub/.*")

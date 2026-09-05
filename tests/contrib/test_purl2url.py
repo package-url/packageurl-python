@@ -194,3 +194,19 @@ def test_purl2url_get_repo_url_with_invalid_purls():
         with pytest.raises(Exception) as e_info:
             purl2url.get_repo_url(purl)
             assert "Invalid PURL" == e_info
+
+
+@pytest.mark.parametrize(
+    "purl",
+    [
+        "pkg:golang/google.golang.org/genproto#googleapis/api/annotations",
+        "pkg:golang/github.com/gorilla/context",
+    ],
+)
+def test_golang_download_without_version(purl):
+    assert purl2url.get_download_url(purl) is None
+
+
+def test_golang_download_without_version_uses_download_qualifier():
+    purl = "pkg:golang/github.com/gorilla/context?download_url=https://example.com/context.zip"
+    assert purl2url.get_download_url(purl) == "https://example.com/context.zip"
