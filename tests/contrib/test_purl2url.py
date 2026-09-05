@@ -194,3 +194,27 @@ def test_purl2url_get_repo_url_with_invalid_purls():
         with pytest.raises(Exception) as e_info:
             purl2url.get_repo_url(purl)
             assert "Invalid PURL" == e_info
+
+
+@pytest.mark.parametrize(
+    "purl",
+    [
+        "pkg:swift/github.com/apple/swift-nio",
+        "pkg:swift/swift-nio@2.0.0",
+        "pkg:swift/swift-nio",
+    ],
+)
+def test_swift_download_requires_namespace_and_version(purl):
+    assert purl2url.get_download_url(purl) is None
+
+
+def test_swift_download_with_required_fields():
+    assert (
+        purl2url.get_download_url("pkg:swift/github.com/apple/swift-nio@2.0.0")
+        == "https://github.com/apple/swift-nio/archive/2.0.0.zip"
+    )
+
+
+def test_swift_download_missing_version_uses_download_qualifier():
+    purl = "pkg:swift/github.com/apple/swift-nio" "?download_url=https://example.com/swift-nio.zip"
+    assert purl2url.get_download_url(purl) == "https://example.com/swift-nio.zip"
