@@ -218,3 +218,8 @@ def test_swift_download_with_required_fields():
 def test_swift_download_missing_version_uses_download_qualifier():
     purl = "pkg:swift/github.com/apple/swift-nio" "?download_url=https://example.com/swift-nio.zip"
     assert purl2url.get_download_url(purl) == "https://example.com/swift-nio.zip"
+
+
+def test_swift_download_missing_namespace_uses_download_qualifier():
+    purl = "pkg:swift/swift-nio@2.0.0?download_url=https://example.com/swift-nio.zip"
+    assert purl2url.get_download_url(purl) == "https://example.com/swift-nio.zip"
