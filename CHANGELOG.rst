@@ -11,6 +11,9 @@ Changelog
 - Fix type hint for ``BasePurlType.allowed_qualifiers``
   https://github.com/package-url/packageurl-python/pull/213
 
+- Fix ``get_download_url()`` crashing on Golang purls without a version
+  https://github.com/package-url/packageurl-python/issues/220
+
 0.17.6 (2025-11-24)
 -------------------
 

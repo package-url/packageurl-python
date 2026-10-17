@@ -120,6 +120,8 @@ def test_purl2url_get_download_url():
         "pkg:bitbucket/robeden/trove?download_url=https://bitbucket.org/robeden/trove/downloads/trove-3.0.3.zip": "https://bitbucket.org/robeden/trove/downloads/trove-3.0.3.zip",
         "pkg:sourceforge/zclasspath?download_url=http://master.dl.sourceforge.net/project/zclasspath/maven2/org/zclasspath/zclasspath/1.5/zclasspath-1.5.jar": "http://master.dl.sourceforge.net/project/zclasspath/maven2/org/zclasspath/zclasspath/1.5/zclasspath-1.5.jar",
         "pkg:pypi/aboutcode-toolkit@3.4.0rc1?download_url=https://files.pythonhosted.org/packages/87/44/0fa8e9d0cccb8eb86fc1b5170208229dc6d6e9fd6e57ea1fe19cbeea68f5/aboutcode_toolkit-3.4.0rc1-py2.py3-none-any.whl": "https://files.pythonhosted.org/packages/87/44/0fa8e9d0cccb8eb86fc1b5170208229dc6d6e9fd6e57ea1fe19cbeea68f5/aboutcode_toolkit-3.4.0rc1-py2.py3-none-any.whl",
+        # No download URL without a version
+        "pkg:golang/google.golang.org/genproto#googleapis/api/annotations": None,
         # Not-supported
         "pkg:github/tg1999/fetchcode": None,
         "pkg:cargo/abc": None,
