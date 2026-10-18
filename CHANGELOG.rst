@@ -11,6 +11,9 @@ Changelog
 - Fix type hint for ``BasePurlType.allowed_qualifiers``
   https://github.com/package-url/packageurl-python/pull/213
 
+- Return the rate-limit-free ``static.crates.io`` download URL for Cargo packages
+  https://github.com/package-url/packageurl-python/issues/234
+
 0.17.6 (2025-11-24)
 -------------------
 

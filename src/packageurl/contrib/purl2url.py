@@ -348,7 +348,7 @@ def build_cargo_download_url(purl):
     version = purl_data.version
 
     if name and version:
-        return f"https://crates.io/api/v1/crates/{name}/{version}/download"
+        return f"https://static.crates.io/crates/{name}/{name}-{version}.crate"
 
 
 @download_router.route("pkg:(gem|rubygems)/.*")
