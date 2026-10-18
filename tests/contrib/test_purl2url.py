@@ -79,7 +79,7 @@ def test_purl2url_get_repo_url():
 def test_purl2url_get_download_url():
     purls_url = {
         # Generated
-        "pkg:cargo/rand@0.7.2": "https://crates.io/api/v1/crates/rand/0.7.2/download",
+        "pkg:cargo/rand@0.7.2": "https://static.crates.io/crates/rand/rand-0.7.2.crate",
         "pkg:gem/bundler@2.3.23": "https://rubygems.org/downloads/bundler-2.3.23.gem",
         "pkg:npm/is-npm@1.0.0": "https://registry.npmjs.org/is-npm/-/is-npm-1.0.0.tgz",
         "pkg:npm/@clayui/tooltip@3.1.0": "https://registry.npmjs.org/@clayui/tooltip/-/tooltip-3.1.0.tgz",
@@ -137,7 +137,7 @@ def test_purl2url_get_inferred_urls():
     purls_url = {
         "pkg:cargo/rand@0.7.2": [
             "https://crates.io/crates/rand/0.7.2",
-            "https://crates.io/api/v1/crates/rand/0.7.2/download",
+            "https://static.crates.io/crates/rand/rand-0.7.2.crate",
         ],
         "pkg:gem/bundler@2.3.23": [
             "https://rubygems.org/gems/bundler/versions/2.3.23",
