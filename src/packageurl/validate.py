@@ -585,8 +585,8 @@ class NpmTypeDefinition(BasePurlType):
     default_repository_url = "https://registry.npmjs.org/"
     namespace_requirement = "optional"
     allowed_qualifiers = {"repository_url"}
-    namespace_case_sensitive = False
-    name_case_sensitive = False
+    namespace_case_sensitive = True
+    name_case_sensitive = True
     version_case_sensitive = True
     purl_pattern = "pkg:npm/.*"
 

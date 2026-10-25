@@ -199,7 +199,6 @@ def normalize_name(
         "composer",
         "luarocks",
         "oci",
-        "npm",
         "alpm",
         "apk",
         "bitnami",

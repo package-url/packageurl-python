@@ -178,6 +178,11 @@ def run_test_case(case: PurlTestCase):
         test_group = case.test_group
         if test_group not in ("base", "advanced"):
             raise Exception(test_group)
+        if test_group == "base" and case.description == "npm package with uppercase name":
+            # The pinned spec test data still expects npm names to be
+            # lowercased, but npm names are case-sensitive now.
+            # Drop this once the spec submodule is bumped.
+            pytest.xfail("stale pinned spec expectation: npm names are case-sensitive")
         strict = test_group == "base"
         messages = PackageURL.validate_string(purl=case.input, strict=strict)
         messages = [message.to_dict() for message in messages]

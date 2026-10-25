@@ -388,3 +388,22 @@ def test_no_encoding_to_string():
         p.to_string(encode=False)
         == "pkg:nuget/an:odd:space/libiconv: character set conversion library@1.9?package-id=e11a609df352e292"
     )
+
+
+def test_npm_name_case_is_preserved_on_parse():
+    purl = PackageURL.from_string("pkg:npm/Orchestrator@1.0.0")
+    assert purl.name == "Orchestrator"
+    assert purl.to_string() == "pkg:npm/Orchestrator@1.0.0"
+
+
+def test_npm_scoped_name_case_is_preserved_on_parse():
+    purl = PackageURL.from_string("pkg:npm/%40Scope/MyPackage@1.0.0")
+    assert purl.namespace == "@Scope"
+    assert purl.name == "MyPackage"
+    assert purl.to_string() == "pkg:npm/%40Scope/MyPackage@1.0.0"
+
+
+def test_npm_uppercase_name_has_no_case_warning():
+    messages = PackageURL.validate_string(purl="pkg:npm/MyPackage@1.0.0", strict=True)
+    case_warnings = [m for m in messages if "lowercased" in m.message]
+    assert not case_warnings
