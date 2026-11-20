@@ -1,5 +1,6 @@
 graft src
 graft tests
+graft spec
 
 include mit.LICENSE
 include setup.py
